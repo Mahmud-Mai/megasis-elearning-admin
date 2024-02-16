@@ -16,3 +16,9 @@ interface customerObject {
     email: string;
     profilePicture: string;
 }
+
+interface SectionObject {
+    title: string;
+    author: string;
+    imageSource: string;
+}
