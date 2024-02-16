@@ -7,7 +7,7 @@ import topBarStyle from './topBar.module.css'
 
 export default function TopBar() {
     return (
-        <Row className="py-2" style={{ backgroundColor: "white", padding: "0", margin: "0", position: "sticky", top: "0", right: "0", width: "100%" }}>
+        <Row className={`py-2 ${topBarStyle.topBar}`} style={{ backgroundColor: "white", padding: "0", margin: "0", position: "sticky", top: "0", right: "0", width: "100%" }}>
             <Col sm='12' lg='6' md='6'>
                 <div className="container rounded row justify-content-center align-items-center my-1 mx-2 px-2 py-1" style={{ width: "auto", backgroundColor: "#E8E8E8" }}>
                     <div className="col-1 d-flex align-items-center">
