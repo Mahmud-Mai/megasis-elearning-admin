@@ -6,4 +6,8 @@
     bottom: 0;
     background-color: "white";
     width: 300px;
+    -webkit-animation: slide 1s forwards;
+    -webkit-animation-delay: 2s;
+    animation: slide 1s forwards;
+    animation-delay: 2s;
 }

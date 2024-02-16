@@ -1,10 +1,9 @@
 import React from 'react'
-import sideMenuStyle from "./sideBar.module.css"
-import UserInfo from "../userInfo/UserInfo";
 import Link from 'next/link';
 import ImageAvater from '../imageAvater/imageAvater';
-import { Col, Row } from 'react-bootstrap';
 import MenuTile from '../menuTile/menuTile';
+
+
 
 
 export default function SideBar() {
@@ -45,6 +44,8 @@ export default function SideBar() {
             </svg>
         },
     ];
+
+
     return (
         <div style={{ height: "100vh", width: "200px", margin: "0", padding: "0", position: "fixed", left: "0", top: "0", bottom: "0" }}>
             <div className="my-4">

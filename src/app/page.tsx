@@ -27,9 +27,7 @@ export default function Home() {
       </div>
       <Row className=" justify-content-evenly">
         <CounterCard title="USERS" value="143" />
-
         <CounterCard title="REVENUE" value="$14,864" />
-
         <CounterCard title="ADMINS" value="143" />
         <CounterCard title="EMAIL" value="143" />
 
