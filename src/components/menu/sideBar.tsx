@@ -4,8 +4,6 @@ import ImageAvater from '../imageAvater/imageAvater';
 import MenuTile from '../menuTile/menuTile';
 
 
-
-
 export default function SideBar() {
     const navPages: MenuNavLinkObj[] = [
         {
