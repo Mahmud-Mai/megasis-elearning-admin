@@ -4,7 +4,7 @@ import AvaterStyle from "./imageAvater.module.css"
 interface Prop {
     src: string;
     alt: string;
-    size: number;
+    size?: number;
 }
 
 
