@@ -13,7 +13,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <BaseAdminLayout>{children}</BaseAdminLayout>
+
+        {children}
+
         <BootstrapClient />
       </body>
     </html >

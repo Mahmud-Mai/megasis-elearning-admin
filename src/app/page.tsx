@@ -1,37 +1,74 @@
-import Image from "next/image";
-import styles from "./page.module.css";
-import CounterCard from "@/components/counterCard/CounterCard";
-import { Row } from "react-bootstrap";
+"use client"
+import { FormEvent, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Cookies from 'js-cookie'; // install using npm install -D @types/js-cookie
+import axios from 'axios';
+import Link from 'next/link';
 
-export default function Home() {
-  return (
-    <div className="container">
-      <div className="row">
-        <div className="col-12 d-flex align-items-center justify-content-end">
-          <div className="rounded bg-light p-2 m-1">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-grid" viewBox="0 0 16 16">
-              <path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h3A1.5 1.5 0 0 1 7 2.5v3A1.5 1.5 0 0 1 5.5 7h-3A1.5 1.5 0 0 1 1 5.5zM2.5 2a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5zm6.5.5A1.5 1.5 0 0 1 10.5 1h3A1.5 1.5 0 0 1 15 2.5v3A1.5 1.5 0 0 1 13.5 7h-3A1.5 1.5 0 0 1 9 5.5zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5zM1 10.5A1.5 1.5 0 0 1 2.5 9h3A1.5 1.5 0 0 1 7 10.5v3A1.5 1.5 0 0 1 5.5 15h-3A1.5 1.5 0 0 1 1 13.5zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5zm6.5.5A1.5 1.5 0 0 1 10.5 9h3a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 9 13.5zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5z" />
-            </svg>
-          </div>
-          <div className="rounded bg-light p-2 m-1">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-chevron-left" viewBox="0 0 16 16">
-              <path fillRule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0" />
-            </svg>
-          </div>
-          <div className="rounded bg-light p-2 m-1">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-chevron-right" viewBox="0 0 16 16">
-              <path fillRule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708" />
-            </svg>
-          </div>
-        </div>
-      </div>
-      <Row className=" justify-content-evenly">
-        <CounterCard title="USERS" value="143" />
-        <CounterCard title="REVENUE" value="$14,864" />
-        <CounterCard title="ADMINS" value="143" />
-        <CounterCard title="EMAIL" value="143" />
 
-      </Row>
-    </div>
-  );
+
+export default function LoginPage() {
+    const router = useRouter()
+
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [loginErrorMessage, setLoginErrorMessage] = useState("");
+
+    async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+        event.preventDefault()
+
+        // TODO uncomment this lines to use the proper login
+        // try {
+        //     const response = await axios.post('/api/auth/login', {
+        //         headers: { 'Content-Type': 'application/json' },
+        //         body: JSON.stringify({ email, password }),
+        //     })
+
+        //     const { bearerToken } = response.data;
+        //     Cookies.set("bearer-token", bearerToken);
+        //     router.push('/dashboard')
+
+        // } catch (error) {
+        //     setLoginErrorMessage("Invalid email or Password")
+        // }
+        // TODO remove the two lines below for proper login
+        Cookies.set("bearer-token", "bearerToken");
+        router.push('/dashboard')
+    }
+
+    return (
+        <section className="vh-100 gradient-custom">
+            <div className="container py-3 h-100">
+                <div className="row d-flex justify-content-center align-items-center h-100">
+                    <div className="col-12 col-md-8 col-lg-6 col-xl-5">
+                        <div className="shadow rounded m-2 text-dark" style={{ borderRadius: "1rem", backgroundColor: "white" }}>
+                            <div className="card-body p-4 text-center">
+                                <form onSubmit={handleSubmit} className="mb-md-5 mt-md-4">
+                                    <h3 className=" mb-2 fw-bold text-uppercase">Login</h3>
+                                    <p style={{ fontStyle: "italic" }} >Please enter your login and password!</p>
+                                    <div className="form-outline  form-white mb-4">
+                                        <label className="form-label" htmlFor="email">Email</label>
+                                        <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" id="email" className="form-control form-control-lg" />
+                                    </div>
+                                    <div className="form-outline form-white mb-4">
+                                        <label className="form-label" htmlFor="password">Password</label>
+                                        <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" id="password" className="form-control form-control-lg" />
+                                    </div>
+                                    <div className="text-danger" style={{ fontStyle: "italic", fontSize: "12px" }}>{loginErrorMessage}</div>
+                                    <p className="small mb-2 pb-lg-2"><a href="#!">Forgot password?</a></p>
+                                    <button className="btn btn-outline-primary btn-lg px-5" type="submit">Login</button>
+                                </form>
+
+                                <div>
+                                    <p className="mb-0">Don&apos;t have an account? <Link href="/register" className="fw-bold">Sign Up</Link>
+                                    </p>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    )
 }

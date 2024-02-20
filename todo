@@ -1,0 +1,56 @@
+api map
+
+auth:
+    - login: GET auth/loginUser (email, password)
+    - update Password: POST /auth/updatePassword (currentPassword, newPassword)
+    - register: POST /auth/createUser (emailAddress, password, name, user, code, digits, countryCode) 
+    - if user exists: GET /auth/userExists (id)
+    - is auth: GET /auth/isAuth (token, )
+    - auth by level: GET /auth/authByLevel (auth, authLevel)
+    - auth by id: GET /auth/authById (auth, id)
+    - check email availabilability: GET  /auth/checkEmailAvailable (emailAddress)
+
+
+subscriptions: /subscriptions   
+    - get sub:               GET     /getSubscriptionOffer               (userId, subscriptionId)
+    *- get subs:             GET     /getSubscriptionOffers
+    *- get subs bought:      GET     /getSubscriptionsBought             (userId)
+    *- buy sub:              POST    /buySubscription                    (userId, subscriptionId)
+    *- create sub offer:     POST    /createSubscriptionOffer            (title, description, price, period, active?)
+    *- update sub offer:     POST    /updateSubscriptionOffer            (subscriptionId, title, description, price, period, active?)
+    *- delete sub offer:     POST    /deleteSubscriptionOffer            (subscriptionId)
+    - user has sub:          POST    /checkCustomerHasActiveSubscription (userId, )
+    - confirm subscription:  POST    /confirmSubscription                (clientSecret, userId)
+
+
+content: 
+    => /courses/content
+    - create course:        POST    /createCourse       (title, description)
+    - update course:        POST    /updateCourse       (courseId, title, description)
+    - delete course:        POST    /deleteCourse       (courseId)
+    - get course:           GET     /getCourse          (courseId)
+    - get courses:          GET     /getCourses         
+
+    => /chapters
+    - create Chapter:           POST    /createChapter              (courseId, title, description)
+    - update Chapter:           POST    /updateChapter              (chapterId, title, description)
+    - delete chapter:           POST    /deleteChapter              (chapterId)
+    - del chapter by course:    GET     /deleteChaptersByCourseId   (courseId)
+    
+
+    => /media
+    - create media:              POST    /createMedia                (chapterId, title, description, url, mediaType) 
+    - update media:              POST    /updateMedia                (chapterId, title, description, url, mediaType) 
+    - delete media:              POST    /deleteMedia                (mediaId)
+    - delete media by chapterID: GET     /deleteMediaByChapterId     (chapterId)
+    - get media:                 POST    /getMedia                   (mediaID)
+    - get media by chapter:      GET     /getMediaByChapterId        (chapterId)
+    - get all media by type:     GET     /getAllMediaByMediaType     (mediaType)
+
+
+
+admin: dashboard, subs, subs list, plans, users, courses, chapters, media's
+
+student: dashboard, courses, chapters, media's
+
+both: login, register
