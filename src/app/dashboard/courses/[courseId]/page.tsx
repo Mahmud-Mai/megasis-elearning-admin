@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 
 
 
-export default function CourseDetails(courseId: string) {
+export default function CourseDetails({ params }: { params: { courseId: string } }) {
     const [course, setCourse] = useState<CourseInterface>();
     const [chapters, setChapters] = useState<ChapterInterface[]>([]);
     useEffect(() => {

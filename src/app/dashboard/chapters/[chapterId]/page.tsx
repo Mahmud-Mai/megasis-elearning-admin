@@ -6,9 +6,7 @@ import { Row, Col, Image } from "react-bootstrap";
 import ContentCard from '@/components/contentCard/ContentCard';
 
 
-
-
-export default function Sections(chapterId: string) {
+export default function ChapterDetailsPage({ params }: { params: { chapterId: string } }) {
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
@@ -27,8 +25,7 @@ export default function Sections(chapterId: string) {
                         description: "john doe",
                         url: "https://www.wikihow.com/images/9/90/What_type_of_person_are_you_quiz_pic.png",
                         mediaType: "video",
-                    }
-
+                    },
                 ]
             )
         }, []
