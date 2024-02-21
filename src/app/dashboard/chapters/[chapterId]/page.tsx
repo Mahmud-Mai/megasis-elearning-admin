@@ -1,5 +1,5 @@
 "use client"
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Container, Modal } from 'react-bootstrap';
 import { useState } from 'react';
 import { Row, Col, Image } from "react-bootstrap";
@@ -8,41 +8,61 @@ import ContentCard from '@/components/contentCard/ContentCard';
 
 
 
-export default function Sections() {
+export default function Sections(chapterId: string) {
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
-    const sections: SectionObject[] = [
-        {
-            title: "how to record 4k videos on iphone",
-            author: "john doe",
-            imageSource: "https://www.wikihow.com/images/9/90/What_type_of_person_are_you_quiz_pic.png",
-        },
-        {
-            title: "how to record 4k videos on iphone",
-            author: "john doe",
-            imageSource: "https://www.wikihow.com/images/9/90/What_type_of_person_are_you_quiz_pic.png",
-        },
-        {
-            title: "how to record 4k videos on iphone",
-            author: "john doe",
-            imageSource: "https://www.wikihow.com/images/9/90/What_type_of_person_are_you_quiz_pic.png",
-        },
-        {
-            title: "how to record 4k videos on iphone",
-            author: "john doe",
-            imageSource: "https://www.wikihow.com/images/9/90/What_type_of_person_are_you_quiz_pic.png",
-        },
-    ];
+    const [chapter, setChapter] = useState<ChapterInterface>();
+    const [mediaList, setMediaList] = useState<MediaInterface[]>([]);
 
+    // Get and set media list 
+    useEffect(
+        () => {
+            setMediaList(
+                [
+                    {
+                        chapterId: "1",
+                        title: "how to record 4k videos on iphone",
+                        description: "john doe",
+                        url: "https://www.wikihow.com/images/9/90/What_type_of_person_are_you_quiz_pic.png",
+                        mediaType: "video",
+                    }
+
+                ]
+            )
+        }, []
+    );
+
+    // load and set chapter info
+    useEffect(
+        () => {
+            setChapter({
+                id: "1",
+                courseId: "2",
+                title: "loremjh b,jm",
+                description: "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Vero eligendi aliquam temporibus autem adipisci quae?",
+            })
+        }, []
+    );
 
     return (
         <Container className='pt-3'>
             <div>
-                <button
-                    className='btn btn-larg text-light bg-primary'
-                    onClick={handleShow}>Add New Section</button>
+                <div className="text-end">
+                    <button
+                        className='btn btn-larg text-light bg-primary'
+                        onClick={handleShow}>Add Media</button>
+                    <button
+                        className='btn text-light bg-secondary mx-1'
+                        onClick={handleShow}>Edit chapter</button>
+                </div>
+                <div className="text-center">
+                    <h3 className="fw-bold-fs-3 text-capitalize">
+                        {chapter?.title}
+                    </h3>
+                    <p>{chapter?.description}</p>
+                </div>
                 <Modal
                     show={show}
                     onHide={handleClose}
@@ -72,7 +92,6 @@ export default function Sections() {
                                 <textarea name="body" className="form-control" id="body" ></textarea>
                             </div>
                             <div className="d-flex align-items-center justify-content-evenly">
-
                             </div>
                         </form>
                     </Modal.Body>
@@ -82,10 +101,16 @@ export default function Sections() {
                     </Modal.Footer>
                 </Modal>
             </div>
+            <div className="text-start">
+                <span className='fw-bold fs-4 text-uppercase'>
+                    Media List
+                </span>
+            </div>
+            <hr />
             <Row className='my-1'>
-                {sections.map((section, index) =>
+                {mediaList.map((media, index) =>
                     <Col key={index} sm="12" md="6" lg="4" className="my-1" >
-                        <ContentCard title={section.title} author={section.author} imageSource={section.imageSource} />
+                        <ContentCard title={media.title} mediaType={media.mediaType} imageSource={media.url} />
                     </Col>
                 )}
             </Row>

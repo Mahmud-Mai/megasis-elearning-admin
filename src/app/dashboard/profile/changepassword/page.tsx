@@ -1,5 +1,13 @@
+"use client"
+import { useRouter } from "next/navigation"
 
-export default function page() {
+export default function ChangePassword() {
+  const router = useRouter();
+  const handleSubmit = () => {
+    // submit new password to api
+    router.back();
+  }
+
   return (
     <section className="vh-100 gradient-custom">
       <div className="container py-3 h-100">
@@ -17,8 +25,8 @@ export default function page() {
                     <label className="form-label" htmlFor="new-password">New Password</label>
                     <input name="new-password" type="new-password" id="new-password" className="form-control" />
                   </div>
-                  <button className="btn btn-outline-primary btn-lg px-5" type="submit">Submit</button>
                 </form>
+                <button onClick={handleSubmit} className="btn btn-outline-primary btn-lg px-5">Submit</button>
               </div>
             </div>
           </div>

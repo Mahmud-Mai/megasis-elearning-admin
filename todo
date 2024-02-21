@@ -1,14 +1,14 @@
 api map
 
 auth:
-    - login: GET auth/loginUser (email, password)
-    - update Password: POST /auth/updatePassword (currentPassword, newPassword)
-    - register: POST /auth/createUser (emailAddress, password, name, user, code, digits, countryCode) 
-    - if user exists: GET /auth/userExists (id)
-    - is auth: GET /auth/isAuth (token, )
-    - auth by level: GET /auth/authByLevel (auth, authLevel)
-    - auth by id: GET /auth/authById (auth, id)
-    - check email availabilability: GET  /auth/checkEmailAvailable (emailAddress)
+    - login:                        GET     /auth/loginUser             (email, password)
+    - update Password:              POST    /auth/updatePassword        (currentPassword, newPassword)
+    - register:                     POST    /auth/createUser            (emailAddress, password, name, user, code, digits, countryCode) 
+    - if user exists:               GET     /auth/userExists            (id)
+    - is auth:                      GET     /auth/isAuth                (token, )
+    - auth by level:                GET     /auth/authByLevel           (auth, authLevel)
+    - auth by id:                   GET     /auth/authById              (auth, id)
+    - check email availabilability: GET     /auth/checkEmailAvailable   (emailAddress)
 
 
 subscriptions: /subscriptions   
@@ -49,8 +49,17 @@ content:
 
 
 
-admin: dashboard, subs, subs list, plans, users, courses, chapters, media's
+admin: dashboard (subs count, subscriptions), plans, admins, students, courses, chapters, media's
 
 student: dashboard, courses, chapters, media's
 
 both: login, register
+
+
+
+to add:
+    - media thumbnail
+    - severside subscriptions count and amount totalling by date periods (monthly, daily, anua)
+    - severside users counts 
+    - forget password
+

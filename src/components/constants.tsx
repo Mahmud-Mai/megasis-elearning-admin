@@ -22,3 +22,25 @@ interface SectionObject {
     author: string;
     imageSource: string;
 }
+
+
+interface CourseInterface {
+    id: string;
+    title: string;
+    description: string;
+}
+
+interface ChapterInterface {
+    id: string;
+    courseId: string;
+    title: string;
+    description: string;
+}
+
+interface MediaInterface {
+    chapterId: string;
+    title: string;
+    description: string;
+    url: string;
+    mediaType: string;
+}

@@ -25,12 +25,16 @@ export default function Home() {
           </div>
         </div>
       </div>
+      <div className="text-start">Users</div>
       <Row className=" justify-content-evenly">
         <CounterCard title="USERS" value="143" />
-        <CounterCard title="REVENUE" value="$14,864" />
         <CounterCard title="ADMINS" value="143" />
-        <CounterCard title="EMAIL" value="143" />
-
+        <CounterCard title="Subscriptions" value="$14,864" />
+        <CounterCard title="plans" value="143" />
+        <CounterCard title="revenue" value="143" />
+        <CounterCard title="courses" value="143" />
+        <CounterCard title="chapters" value="143" />
+        <CounterCard title="enrolements" value="143" />
       </Row>
     </div>
   );
