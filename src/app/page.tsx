@@ -17,23 +17,19 @@ export default function LoginPage() {
     async function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault()
 
-        // TODO uncomment this lines to use the proper login
-        // try {
-        //     const response = await axios.post('/api/auth/login', {
-        //         headers: { 'Content-Type': 'application/json' },
-        //         body: JSON.stringify({ email, password }),
-        //     })
+        try {
+            const response = await axios.post('/api/auth/login', {
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password }),
+            })
 
-        //     const { bearerToken } = response.data;
-        //     Cookies.set("bearer-token", bearerToken);
-        //     router.push('/dashboard')
+            const { bearerToken } = response.data;
+            Cookies.set("bearer-token", bearerToken);
+            router.push('/dashboard')
 
-        // } catch (error) {
-        //     setLoginErrorMessage("Invalid email or Password")
-        // }
-        // TODO remove the two lines below for proper login
-        Cookies.set("bearer-token", "bearerToken");
-        router.push('/dashboard')
+        } catch (error) {
+            setLoginErrorMessage("Invalid email or Password")
+        }
     }
 
     return (

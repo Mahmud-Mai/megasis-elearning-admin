@@ -3,48 +3,35 @@ import ImageAvater from '@/components/imageAvater/imageAvater'
 import Link from 'next/link';
 import React from 'react'
 import { useState, useEffect } from 'react';
+import axios from 'axios';
+import Cookies from 'js-cookie';
 
 
-interface ProfileInterface {
-  emailAddress: string;
-  name: string;
-  digits: string;
-  countryCode: string;
-}
 
 export default function ProfilePage() {
   const [editMode, setEditMode] = useState(false);
-  const [profileDate, setProfileDate] = useState<ProfileInterface>();
+  const [profileData, setProfileData] = useState<ProfileInterface>();
+  const profileUrl = `${apiRoot}/api/profile`;
 
   // load profile data
   useEffect(
     () => {
-      // TODO uncomment this lines to use the proper password reset
-      //  const profileUrl = `${apiRoot}/api/profile`
-      // try {
-      //     const response = await axios.get(profileUrl, {
-      //         headers: { 'Content-Type': 'application/json' },
-      //     })
-
-      //    const {profileData} = response.data
-      //    setProfileDate(profileData)
-
-      // } catch (error) {
-      //     setLoginErrorMessage("Operation failed")
-      // }  
-      setProfileDate(
-        {
-          emailAddress: "email@mail.com",
-          name: "jon doe",
-          digits: "",
-          countryCode: "USA",
-        }
-      )
-    }, []
-  );
+      var token = Cookies.get("bearer-token");
+      axios.get(profileUrl, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+      }).then((response) => {
+        const { profileData } = response.data
+        setProfileData(profileData)
+      }).catch((error) => {
+        console.log("Operation failed")
+      });
+    });
 
   const handleFormSubmit = () => {
-
+    // TODO implement profile update
   }
 
   return (
@@ -57,15 +44,15 @@ export default function ProfilePage() {
         <form onSubmit={handleFormSubmit}>
           <div className="form-group">
             <label htmlFor="title">Full Name</label>
-            <input readOnly={!editMode} value={profileDate?.name} type="text" className="form-control" id="title" />
+            <input readOnly={!editMode} value={profileData?.name} type="text" className="form-control" id="title" />
           </div>
           <div className="form-group">
             <label htmlFor="email">Email</label>
-            <input readOnly={!editMode} value={profileDate?.emailAddress} type="email" className="form-control" id="email" />
+            <input readOnly={!editMode} value={profileData?.emailAddress} type="email" className="form-control" id="email" />
           </div>
           <div className="form-group">
             <label htmlFor="digits">Digits</label>
-            <input readOnly={!editMode} value={profileDate?.digits} type="tel" className="form-control" id="digits" />
+            <input readOnly={!editMode} value={profileData?.digits} type="tel" className="form-control" id="digits" />
           </div>
           <div className="form-group">
             <label htmlFor="country-code">Country code</label>

@@ -5,7 +5,7 @@ interface MenuNavLinkObj {
     icon: React.ReactNode;
 }
 
-interface adminObject {
+interface AdminObject {
     name: string;
     role: string;
     profilePicture: string;
@@ -44,6 +44,24 @@ interface MediaInterface {
     url: string;
     mediaType: string;
 }
+
+interface PlanInterface {
+    id: string,
+    title: string,
+    description: string,
+    price: string,
+    period: number,
+    active: boolean,
+}
+
+
+interface ProfileInterface {
+    emailAddress: string;
+    name: string;
+    digits: string;
+    countryCode: string;
+}
+
 
 
 

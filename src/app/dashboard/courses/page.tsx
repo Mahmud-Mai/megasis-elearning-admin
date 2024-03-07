@@ -3,6 +3,8 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react'
 import { Modal } from 'react-bootstrap';
 import Cookies from 'js-cookie';
+import axios from 'axios';
+import { useRouter } from 'next/router';
 
 interface CourseInterface {
     id: string;
@@ -11,51 +13,62 @@ interface CourseInterface {
 }
 
 export default function Courses() {
+    const router = useRouter()
     const [show, setShow] = useState(false);
+    const [updating, setUpdating] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
     const [title, setTitle] = useState("");
+    const [courseId, setCourseId] = useState("");
     const [description, setDescription] = useState("");
 
-    const saveCourse = () => { }
+    const coursesUrl = `${apiRoot}/api/getCourses`;
+    const newCourseUrl = `${apiRoot}/api/createCourse`;
+    const updateCourseUrl = `${apiRoot}/api/updateCourse`;
+    const token = Cookies.get("bearer-token");
+
+    const saveCourse = () => {
+        axios.post(newCourseUrl, {
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify({ title, description }),
+        }).then((res) => {
+            if (res.status == 200) {
+                router.reload();
+            }
+        }).catch((err) => {
+            console.log("Unable to save Course")
+        })
+    }
+
+    const updateCourse = () => {
+        axios.post(updateCourseUrl, {
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify({ title, description, courseId }),
+        }).then((res) => {
+            if (res.status == 200) {
+                router.reload();
+            }
+        }).catch((err) => {
+            console.log("Unable to update Course")
+        })
+    }
 
     const [courses, setCourses] = useState<CourseInterface[]>([]);
+    const loadCourses = () => {
+        axios.get(coursesUrl, {
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        }).then((res) => {
+            const { courses } = res.data;
+            setCourses(courses);
+        }).catch((err) => {
+            console.log("Invalid email or Password")
+            setCourses([]);
+        })
+    }
     useEffect(() => {
-        // TODO get list of courses
-        // const coursesUrl = "api/getCourses"
-        // var token =  Cookies.get("bearer-token");
-        // try {
-        //     const response = await axios.get('/api/auth/login', {
-        //         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`},
-        //     })
-
-        //     const { courses } = response.data;
-        // setCourses(courses);
-
-        // } catch (error) {
-        //     console.log("Invalid email or Password")
-        //     setCourses([]);
-        // }
-
-        setCourses([
-            {
-                id: "1",
-                title: "Basic",
-                description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Placeat minus architecto, maiores reiciendis dolorum quos cumque ut ipsam totam recusandae.",
-            },
-            {
-                id: "2",
-                title: "Basic",
-                description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Placeat minus architecto, maiores reiciendis dolorum quos cumque ut ipsam totam recusandae.",
-            },
-            {
-                id: "3",
-                title: "Basic",
-                description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Placeat minus architecto, maiores reiciendis dolorum quos cumque ut ipsam totam recusandae.",
-            },
-        ]);
-    }, []);
+        loadCourses();
+    });
 
     return (
         <div className="container p-3">
@@ -87,7 +100,7 @@ export default function Courses() {
                     </form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <button type="submit" className="btn m-2 px-4" style={{ backgroundColor: "#4ED164", color: "white", height: "40px", borderRadius: "20px" }}>Save</button>
+                    <button type="submit" onClick={() => updating ? updateCourse() : saveCourse()} className="btn m-2 px-4" style={{ backgroundColor: "#4ED164", color: "white", height: "40px", borderRadius: "20px" }}>Save</button>
                 </Modal.Footer>
             </Modal>
             <table className="table table-hover table-responsive">

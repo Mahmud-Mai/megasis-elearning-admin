@@ -1,61 +1,90 @@
 "use client"
 import axios from 'axios';
 import { useState, useEffect } from 'react'
+import Cookies from 'js-cookie';
+import { useRouter } from 'next/router';
 
-
-interface PlanInterface {
-    title: string, description: string, price: string, period: number, active: boolean
-}
 
 export default function Plans() {
+    const router = useRouter();
+    // plan
     const [plans, setPlans] = useState<PlanInterface[]>([]);
+
+    // fields
+    const [id, setId] = useState("");
+    const [title, setTitle] = useState("");
+    const [description, setDescription] = useState("");
+    const [price, setPrice] = useState("");
+    const [period, setPeriod] = useState("");
+    const [active, setActive] = useState(true);
+
+    // urls
+    const plansUrl = `${apiRoot}/subscriptions/getSubscriptionOffers`
+    const newPlanUrl = `${apiRoot}/subscriptions/createSubscriptionOffer`
+    const updatePlanUrl = `${apiRoot}/subscriptions/createSubscriptionOffer`
+
+    // functions
+    const loadPlans = () => {
+        var token = Cookies.get("bearer-token");
+        axios.get(plansUrl, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+        }).then(
+            (res) => {
+                const { offers } = res.data;
+                setPlans(offers);
+            }
+        ).catch((err) => {
+            console.log("Unable to load offers")
+            setPlans([]);
+        })
+    }
+
+    const addNewPlan = () => {
+        var token = Cookies.get("bearer-token");
+        axios.post(newPlanUrl, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: { title, description, price, period, active }
+        }).then(
+            (res) => {
+                if (res.status == 200) {
+                    router.reload();
+                }
+            }
+        ).catch((err) => {
+            console.log("Unable to save offer")
+            setPlans([]);
+        })
+    }
+
+    const updateNewPlan = () => {
+        var token = Cookies.get("bearer-token");
+        axios.post(updatePlanUrl, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: { title, description, price, period, active }
+        }).then(
+            (res) => {
+                if (res.status == 200) {
+                    router.reload();
+                }
+            }
+        ).catch((err) => {
+            console.log("Unable to save offer")
+            setPlans([]);
+        })
+    }
+
     useEffect(() => {
-        // TODO get list of plans
-        // const plansUrl = `${apiRoot}/api/subscriptions/getSubscriptionOffers`
-        // var token =  Cookies.get("bearer-token");
-        // try {
-        //     const response = await axios.get(plansUrl, {
-        //         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`},
-        //     })
-
-        //     const { offers } = response.data;
-        //     setPlans(offers);
-
-        // } catch (error) {
-        //     console.log("Unable to load offers")
-        //     setPlans([]);
-        // } 
-        setPlans([
-            {
-                title: "Basic",
-                description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Placeat minus architecto, maiores reiciendis dolorum quos cumque ut ipsam totam recusandae.",
-                price: "300",
-                period: 5,
-                active: true,
-            },
-            {
-                title: "Basic",
-                description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Placeat minus architecto, maiores reiciendis dolorum quos cumque ut ipsam totam recusandae.",
-                price: "300",
-                period: 5,
-                active: true,
-            },
-            {
-                title: "Basic",
-                description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Placeat minus architecto, maiores reiciendis dolorum quos cumque ut ipsam totam recusandae.",
-                price: "300",
-                period: 5,
-                active: true,
-            },
-            {
-                title: "Basic",
-                description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Placeat minus architecto, maiores reiciendis dolorum quos cumque ut ipsam totam recusandae.",
-                price: "300",
-                period: 5,
-                active: true,
-            },
-        ]);
-    }, []);
+        loadPlans();
+    },);
     return (
         <div className="container p-3">
             <div className='d-flex align-items-center justify-content-between py-3'>

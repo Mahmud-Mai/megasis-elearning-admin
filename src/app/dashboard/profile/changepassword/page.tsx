@@ -1,26 +1,32 @@
 "use client"
 import { useRouter } from "next/navigation"
 import { useState } from 'react';
+import axios from "axios";
+import Cookies from 'js-cookie';
+
 
 
 export default function ChangePassword() {
+  const router = useRouter();
+
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
-  const router = useRouter();
-  const handleSubmit = () => {
-    // TODO uncomment this lines to use the proper password reset
-    //  const pass_resetUrl = `${apiRoot}/api/auth/updatePassword`
-    // try {
-    //     const response = await axios.post(pass_resetUrl, {
-    //         headers: { 'Content-Type': 'application/json' },
-    //         body: JSON.stringify({ currentPassword:oldPassword, newPassword: newPassword }),
-    //     })
-    //     router.back();
 
-    // } catch (error) {
-    //     setLoginErrorMessage("Operation failed")
-    // }
-    router.back();
+  const pass_resetUrl = `${apiRoot}/api/auth/updatePassword`
+
+  const handleSubmit = () => {
+    var token = Cookies.get("bearer-token");
+    axios.post(pass_resetUrl, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify({ currentPassword: oldPassword, newPassword: newPassword }),
+    }).then((response) => {
+      router.replace("/");
+    }).catch((error) => {
+      console.log("Operation failed")
+    })
   }
 
   return (

@@ -4,72 +4,92 @@ import { Container, Modal } from 'react-bootstrap';
 import { useState } from 'react';
 import { Row, Col, Image } from "react-bootstrap";
 import ContentCard from '@/components/contentCard/ContentCard';
-
+import Cookies from 'js-cookie';
+import axios from 'axios';
+import { useRouter } from 'next/router';
 
 export default function ChapterDetailsPage({ params }: { params: { chapterId: string } }) {
+    const router = useRouter()
+
     const [show, setShow] = useState(false);
+    const [title, setTitle] = useState("");
+    const [description, setDescription] = useState("");
+    const [url, setUrl] = useState("");
+    const [mediaType, setMediaType] = useState("");
+    const [id, setId] = useState("");
+    const [updating, setUpdating] = useState(false);
+
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
     const [chapter, setChapter] = useState<ChapterInterface>();
     const [mediaList, setMediaList] = useState<MediaInterface[]>([]);
 
-    useEffect(
-        () => {
-            // TODO get list of media
-            // const mediaUrl = `${apiRoot}/api/getmedia?chapterId=${chapterId}`
-            // var token =  Cookies.get("bearer-token");
-            // try {
-            //     const response = await axios.get(MediaUrl, {
-            //         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`},
-            //     })
+    const mediasUrl = `${apiRoot}/media/getMediaByChapterId?chapterId=${params.chapterId}`
+    const chapterUrl = `${apiRoot}/chapters/getChapter/?chapterId=${params.chapterId}` // TODO missing endpoint for list of chapter details by id
 
-            //     const { medias } = response.data;
-            // setMediaList(medias);
+    const newMediaCreateUrl = `${apiRoot}/media/createMedia`;
+    const updateMediaUrl = `${apiRoot}/media/updateMedia`;
 
-            // } catch (error) {
-            //     console.log("Invalid email or Password")
-            //     setMediaList([]);
-            // } 
-            setMediaList(
-                [
-                    {
-                        chapterId: "1",
-                        title: "how to record 4k videos on iphone",
-                        description: "john doe",
-                        url: "https://www.wikihow.com/images/9/90/What_type_of_person_are_you_quiz_pic.png",
-                        mediaType: "video",
-                    },
-                ]
-            )
-        }, []
-    );
 
-    // load and set chapter info
-    useEffect(
-        () => {
-            // TODO get chapter
-            // const chapterUrl = `api/getChapter?chapterId=${chapterId}`
-            // var token =  Cookies.get("bearer-token");
-            // try {
-            //     const response = await axios.get(chapterUrl, {
-            //         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`},
-            //     })
+    const saveMedia = () => {
+        const chapterId = params.chapterId;
+        var token = Cookies.get("bearer-token");
+        axios.post(newMediaCreateUrl, {
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify({ chapterId, title, description, url, mediaType }),
+        }).then((res) => {
+            if (res.status == 200) {
+                router.reload();
+            }
+        }).catch((err) => {
+            console.log("Unable to save Media")
+        })
+    }
 
-            //     const { chapter } = response.data;
-            // setChapter(chapter);
+    const updateMedia = () => {
+        const chapterId = params.chapterId;
+        var token = Cookies.get("bearer-token");
+        axios.post(newMediaCreateUrl, {
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify({ id, chapterId, title, description, url, mediaType }),
+        }).then((res) => {
+            if (res.status == 200) {
+                router.reload();
+            }
+        }).catch((err) => {
+            console.log("Unable to update Media")
+        })
+    }
 
-            // } catch (error) {
-            //     console.log("Invalid email or Password")
-            // } 
-            setChapter({
-                id: "1",
-                courseId: "2",
-                title: "loremjh b,jm",
-                description: "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Vero eligendi aliquam temporibus autem adipisci quae?",
-            })
-        }, []
-    );
+    // load chapter info
+    useEffect(() => {
+        var token = Cookies.get("bearer-token");
+        axios.get(chapterUrl, {
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        }).then((res) => {
+            const { chapter } = res.data;
+            setChapter(chapter);
+        }).catch((error) => {
+            console.log("Unable to load data")
+        })
+    });
+
+    // get list of media for this chapter
+    useEffect(() => {
+        // TODO get chapters endpoint missing
+        var token = Cookies.get("bearer-token");
+        axios.get(mediasUrl, {
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        }).then((response) => {
+            const { mediaList } = response.data;
+            setMediaList(mediaList);
+        }).catch((error) => {
+            console.log("unable to load data");
+            setMediaList([]);
+        })
+
+    });
 
     return (
         <Container className='pt-3'>
@@ -101,28 +121,23 @@ export default function ChapterDetailsPage({ params }: { params: { chapterId: st
                     <Modal.Body>
                         <form>
                             <div className="form-group form-control">
-                                <label className="form-label" htmlFor="customFile">Section Image</label>
-                                <input type="file" className="form-control" id="customFile" />
+                                <label className="form-label" htmlFor="customFile">Media url</label>
+                                <input value={url} onChange={(e) => setUrl(e.target.value)} type="text" className="form-control" id="customFile" />
                             </div>
                             <div className="form-group">
                                 <label htmlFor="title">Title</label>
-                                <input type="email" className="form-control" id="title" placeholder="name@example.com" />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="author">Author</label>
-                                <input type="text" className="form-control" id="author" placeholder="name@example.com" />
+                                <input value={title} onChange={(e) => setTitle(e.target.value)} type="text" className="form-control" id="title" placeholder="name@example.com" />
                             </div>
                             <div className="form-group">
                                 <label htmlFor="body">Body</label>
-                                <textarea name="body" className="form-control" id="body" ></textarea>
+                                <textarea value={description} onChange={(e) => setDescription(e.target.value)} name="body" className="form-control" id="body" >{description}</textarea>
                             </div>
                             <div className="d-flex align-items-center justify-content-evenly">
                             </div>
                         </form>
                     </Modal.Body>
                     <Modal.Footer>
-                        <button type="submit" className="btn m-2 px-4" style={{ backgroundColor: "#4ED164", color: "white", height: "40px", borderRadius: "20px" }}>Save as Draft</button>
-                        <button type="submit" className="btn m-2 px-4" style={{ backgroundColor: "#4ED164", color: "white", height: "40px", borderRadius: "20px" }}>Save</button>
+                        <button onClick={() => updating ? updateMedia() : saveMedia()} type="submit" className="btn m-2 px-4" style={{ backgroundColor: "#4ED164", color: "white", height: "40px", borderRadius: "20px" }}>Save</button>
                     </Modal.Footer>
                 </Modal>
             </div>

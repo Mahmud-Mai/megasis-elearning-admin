@@ -1,60 +1,42 @@
 "use client"
 import Link from 'next/link';
 import { useEffect, useState } from 'react'
-
-
+import Cookies from 'js-cookie';
+import axios from 'axios';
 
 export default function CourseDetails({ params }: { params: { courseId: string } }) {
     const [course, setCourse] = useState<CourseInterface>();
     const [chapters, setChapters] = useState<ChapterInterface[]>([]);
+    const coursesUrl = `${apiRoot}/courses/content/getCourses/?courseId=${params.courseId}`
+    const chaptersUrl = `${apiRoot}/chapters/getChapters/?courseId=${params.courseId}` // TODO missing endpoint for list of chapters by courseId
+
+    // load chapter info
     useEffect(() => {
-        // TODO get course by id
-        // const coursesUrl = `api/getCourses/?courseId=${courseId}`
-        // var token =  Cookies.get("bearer-token");
-        // try {
-        //     const response = await axios.get(coursesUrl, {
-        //         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`},
-        //     })
+        var token = Cookies.get("bearer-token");
+        axios.get(coursesUrl, {
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        }).then((res) => {
+            const { course } = res.data;
+            setCourse(course);
+        }).catch((error) => {
+            console.log("Unable to load data")
+        })
+    });
 
-        //     const { course } = response.data;
-        // setCourse(course);
-
-        // } catch (error) {
-        //     console.log("Invalid email or Password")
-        // }
-        setCourse(
-            {
-                id: "1",
-                title: "Basic",
-                description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Placeat minus architecto, maiores reiciendis dolorum quos cumque ut ipsam totam recusandae.",
-
-            });
-    }, []);
-
+    // TODO get list of chapters
     useEffect(() => {
-        // TODO get list of chapters
         // TODO get chapters endpoint missing
-        // const chaptersUrl = ""
-        // var token =  Cookies.get("bearer-token");
-        // try {
-        //     const response = await axios.get(chaptersUrl, {
-        //         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`},
-        //     })
+        var token = Cookies.get("bearer-token");
+        axios.get(chaptersUrl, {
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        }).then((response) => {
+            const { chapters } = response.data;
+            setChapters(chapters);
+        }).catch((error) => {
+            console.log("Invalid email or Password")
+            setChapters([]);
+        })
 
-        //     const { chapters } = response.data;
-        //     setChapters(chapters);
-
-        // } catch (error) {
-        //     console.log("Invalid email or Password")
-        //     setChapters([]);
-        // }
-        setChapters(
-            [{
-                id: "1",
-                courseId: "1",
-                title: "Basic",
-                description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Placeat minus architecto, maiores reiciendis dolorum quos cumque ut ipsam totam recusandae.",
-            }]);
     }, []);
 
 
