@@ -2,6 +2,7 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react'
 import { Modal } from 'react-bootstrap';
+import Cookies from 'js-cookie';
 
 interface CourseInterface {
     id: string;
@@ -21,25 +22,37 @@ export default function Courses() {
 
     const [courses, setCourses] = useState<CourseInterface[]>([]);
     useEffect(() => {
-        // TODO call api to get list of courses
+        // TODO get list of courses
+        // const coursesUrl = "api/getCourses"
+        // var token =  Cookies.get("bearer-token");
+        // try {
+        //     const response = await axios.get('/api/auth/login', {
+        //         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`},
+        //     })
+
+        //     const { courses } = response.data;
+        // setCourses(courses);
+
+        // } catch (error) {
+        //     console.log("Invalid email or Password")
+        //     setCourses([]);
+        // }
+
         setCourses([
             {
                 id: "1",
                 title: "Basic",
                 description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Placeat minus architecto, maiores reiciendis dolorum quos cumque ut ipsam totam recusandae.",
-
             },
             {
                 id: "2",
                 title: "Basic",
                 description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Placeat minus architecto, maiores reiciendis dolorum quos cumque ut ipsam totam recusandae.",
-
             },
             {
                 id: "3",
                 title: "Basic",
                 description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Placeat minus architecto, maiores reiciendis dolorum quos cumque ut ipsam totam recusandae.",
-
             },
         ]);
     }, []);

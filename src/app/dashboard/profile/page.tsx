@@ -19,6 +19,19 @@ export default function ProfilePage() {
   // load profile data
   useEffect(
     () => {
+      // TODO uncomment this lines to use the proper password reset
+      //  const profileUrl = `${apiRoot}/api/profile`
+      // try {
+      //     const response = await axios.get(profileUrl, {
+      //         headers: { 'Content-Type': 'application/json' },
+      //     })
+
+      //    const {profileData} = response.data
+      //    setProfileDate(profileData)
+
+      // } catch (error) {
+      //     setLoginErrorMessage("Operation failed")
+      // }  
       setProfileDate(
         {
           emailAddress: "email@mail.com",

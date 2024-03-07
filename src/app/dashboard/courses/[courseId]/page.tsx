@@ -8,7 +8,20 @@ export default function CourseDetails({ params }: { params: { courseId: string }
     const [course, setCourse] = useState<CourseInterface>();
     const [chapters, setChapters] = useState<ChapterInterface[]>([]);
     useEffect(() => {
-        // TODO call api to get course details
+        // TODO get course by id
+        // const coursesUrl = `api/getCourses/?courseId=${courseId}`
+        // var token =  Cookies.get("bearer-token");
+        // try {
+        //     const response = await axios.get(coursesUrl, {
+        //         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`},
+        //     })
+
+        //     const { course } = response.data;
+        // setCourse(course);
+
+        // } catch (error) {
+        //     console.log("Invalid email or Password")
+        // }
         setCourse(
             {
                 id: "1",
@@ -19,14 +32,28 @@ export default function CourseDetails({ params }: { params: { courseId: string }
     }, []);
 
     useEffect(() => {
-        // TODO call api to get list of chapters for course with id courseId
+        // TODO get list of chapters
+        // TODO get chapters endpoint missing
+        // const chaptersUrl = ""
+        // var token =  Cookies.get("bearer-token");
+        // try {
+        //     const response = await axios.get(chaptersUrl, {
+        //         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`},
+        //     })
+
+        //     const { chapters } = response.data;
+        //     setChapters(chapters);
+
+        // } catch (error) {
+        //     console.log("Invalid email or Password")
+        //     setChapters([]);
+        // }
         setChapters(
             [{
                 id: "1",
                 courseId: "1",
                 title: "Basic",
                 description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Placeat minus architecto, maiores reiciendis dolorum quos cumque ut ipsam totam recusandae.",
-
             }]);
     }, []);
 

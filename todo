@@ -12,15 +12,15 @@ auth:
 
 
 subscriptions: /subscriptions   
-    - get sub:               GET     /getSubscriptionOffer               (userId, subscriptionId)
-    *- get subs:             GET     /getSubscriptionOffers
-    *- get subs bought:      GET     /getSubscriptionsBought             (userId)
-    *- buy sub:              POST    /buySubscription                    (userId, subscriptionId)
+    - get sub offer:               GET     /getSubscriptionOffer               (userId, subscriptionId)
+    *- get sub offers:             GET     /getSubscriptionOffers
     *- create sub offer:     POST    /createSubscriptionOffer            (title, description, price, period, active?)
     *- update sub offer:     POST    /updateSubscriptionOffer            (subscriptionId, title, description, price, period, active?)
     *- delete sub offer:     POST    /deleteSubscriptionOffer            (subscriptionId)
     - user has sub:          POST    /checkCustomerHasActiveSubscription (userId, )
     - confirm subscription:  POST    /confirmSubscription                (clientSecret, userId)
+    *- buy sub:              POST    /buySubscription                    (userId, subscriptionId)
+    *- get subs bought:      GET     /getSubscriptionsBought             (userId)
 
 
 content: 
@@ -53,13 +53,12 @@ admin: dashboard (subs count, subscriptions), plans, admins, students, courses, 
 
 student: dashboard, courses, chapters, media's
 
-both: login, register
-
-
+both: login, register, profile
 
 to add:
     - media thumbnail
-    - severside subscriptions count and amount totalling by date periods (monthly, daily, anua)
-    - severside users counts 
+    - severside subscriptions count and amount totalling by date periods (monthly, daily, anually)
+    - severside user counts 
     - forget password
+    - new posted media
 

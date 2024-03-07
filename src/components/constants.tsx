@@ -44,3 +44,7 @@ interface MediaInterface {
     url: string;
     mediaType: string;
 }
+
+
+
+const apiRoot = "";

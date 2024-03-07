@@ -14,9 +14,23 @@ export default function ChapterDetailsPage({ params }: { params: { chapterId: st
     const [chapter, setChapter] = useState<ChapterInterface>();
     const [mediaList, setMediaList] = useState<MediaInterface[]>([]);
 
-    // Get and set media list 
     useEffect(
         () => {
+            // TODO get list of media
+            // const mediaUrl = `${apiRoot}/api/getmedia?chapterId=${chapterId}`
+            // var token =  Cookies.get("bearer-token");
+            // try {
+            //     const response = await axios.get(MediaUrl, {
+            //         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`},
+            //     })
+
+            //     const { medias } = response.data;
+            // setMediaList(medias);
+
+            // } catch (error) {
+            //     console.log("Invalid email or Password")
+            //     setMediaList([]);
+            // } 
             setMediaList(
                 [
                     {
@@ -34,6 +48,20 @@ export default function ChapterDetailsPage({ params }: { params: { chapterId: st
     // load and set chapter info
     useEffect(
         () => {
+            // TODO get chapter
+            // const chapterUrl = `api/getChapter?chapterId=${chapterId}`
+            // var token =  Cookies.get("bearer-token");
+            // try {
+            //     const response = await axios.get(chapterUrl, {
+            //         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`},
+            //     })
+
+            //     const { chapter } = response.data;
+            // setChapter(chapter);
+
+            // } catch (error) {
+            //     console.log("Invalid email or Password")
+            // } 
             setChapter({
                 id: "1",
                 courseId: "2",

@@ -10,7 +10,21 @@ interface PlanInterface {
 export default function Plans() {
     const [plans, setPlans] = useState<PlanInterface[]>([]);
     useEffect(() => {
-        // TODO call api to get list of plans
+        // TODO get list of plans
+        // const plansUrl = `${apiRoot}/api/subscriptions/getSubscriptionOffers`
+        // var token =  Cookies.get("bearer-token");
+        // try {
+        //     const response = await axios.get(plansUrl, {
+        //         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`},
+        //     })
+
+        //     const { offers } = response.data;
+        //     setPlans(offers);
+
+        // } catch (error) {
+        //     console.log("Unable to load offers")
+        //     setPlans([]);
+        // } 
         setPlans([
             {
                 title: "Basic",

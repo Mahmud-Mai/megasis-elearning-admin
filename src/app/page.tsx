@@ -59,10 +59,10 @@ export default function LoginPage() {
                                     <button className="btn btn-outline-primary btn-lg px-5" type="submit">Login</button>
                                 </form>
 
-                                <div>
+                                {/* <div>
                                     <p className="mb-0">Don&apos;t have an account? <Link href="/register" className="fw-bold">Sign Up</Link>
                                     </p>
-                                </div>
+                                </div> */}
 
                             </div>
                         </div>
