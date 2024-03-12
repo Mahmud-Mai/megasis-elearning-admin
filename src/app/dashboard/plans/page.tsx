@@ -40,7 +40,12 @@ export default function Plans() {
     }
 
     const addNewPlan = () => {
+<<<<<<< HEAD
         axios.post(createSubscriptionOfferUrl, {
+=======
+        const token = Cookies.get("bearer-token");
+        axios.post(newPlanUrl, {
+>>>>>>> c6ede610761c06e2f798c5ccf75ae33b4e92a564
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`

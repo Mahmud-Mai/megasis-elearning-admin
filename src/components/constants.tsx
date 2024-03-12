@@ -138,3 +138,5 @@ const getAllMediaByMediaTypeUrl: string = `${apiRoot}/getAllMediaByMediaType`;
 const mediaNameAvailableUrl: string = `${apiRoot}/mediaNameAvailable`;
 const uploadDocumentUrl: string = `${apiRoot}/uploadDocument`;
 const uploadVideoUrl: string = `${apiRoot}/uploadVideo`;
+
+const getChapterByIdUrl: string = ""

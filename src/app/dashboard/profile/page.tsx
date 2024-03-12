@@ -15,7 +15,7 @@ export default function ProfilePage() {
   // load profile data
   useEffect(
     () => {
-      var token = Cookies.get("bearer-token");
+      var token = localStorage.getItem("bearer-token");
       axios.get(profileData, {
         headers: {
           'Content-Type': 'application/json',
