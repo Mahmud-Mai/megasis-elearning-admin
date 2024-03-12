@@ -4,9 +4,8 @@ import { Container, Modal } from 'react-bootstrap';
 import { useState } from 'react';
 import { Row, Col, Image } from "react-bootstrap";
 import ContentCard from '@/components/contentCard/ContentCard';
-import Cookies from 'js-cookie';
-import axios from 'axios';
 import { useRouter } from 'next/router';
+import axios from 'axios';
 
 export default function ChapterDetailsPage({ params }: { params: { chapterId: string } }) {
     const router = useRouter()
@@ -25,17 +24,10 @@ export default function ChapterDetailsPage({ params }: { params: { chapterId: st
     const [chapter, setChapter] = useState<ChapterInterface>();
     const [mediaList, setMediaList] = useState<MediaInterface[]>([]);
 
-    const mediasUrl = `${apiRoot}/media/getMediaByChapterId?chapterId=${params.chapterId}`
-    const chapterUrl = `${apiRoot}/chapters/getChapter/?chapterId=${params.chapterId}` // TODO missing endpoint for list of chapter details by id
-
-    const newMediaCreateUrl = `${apiRoot}/media/createMedia`;
-    const updateMediaUrl = `${apiRoot}/media/updateMedia`;
-
-
     const saveMedia = () => {
         const chapterId = params.chapterId;
-        var token = Cookies.get("bearer-token");
-        axios.post(newMediaCreateUrl, {
+        var token = localStorage.getItem("bearer-token");
+        axios.post(createMediaUrl, {
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
             body: JSON.stringify({ chapterId, title, description, url, mediaType }),
         }).then((res) => {
@@ -49,8 +41,8 @@ export default function ChapterDetailsPage({ params }: { params: { chapterId: st
 
     const updateMedia = () => {
         const chapterId = params.chapterId;
-        var token = Cookies.get("bearer-token");
-        axios.post(newMediaCreateUrl, {
+        var token = localStorage.getItem("bearer-token");
+        axios.post(updateMediaUrl, {
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
             body: JSON.stringify({ id, chapterId, title, description, url, mediaType }),
         }).then((res) => {
@@ -64,9 +56,12 @@ export default function ChapterDetailsPage({ params }: { params: { chapterId: st
 
     // load chapter info
     useEffect(() => {
-        var token = Cookies.get("bearer-token");
-        axios.get(chapterUrl, {
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        var token = localStorage.getItem("bearer-token");
+        axios.post(getChapterByIdUrl, {
+            headers: { 'Content-Type': 'application/json', 
+                        'Authorization': `Bearer ${token}` 
+                    },
+            body: {chapterId: params.chapterId},
         }).then((res) => {
             const { chapter } = res.data;
             setChapter(chapter);
@@ -77,10 +72,11 @@ export default function ChapterDetailsPage({ params }: { params: { chapterId: st
 
     // get list of media for this chapter
     useEffect(() => {
-        // TODO get chapters endpoint missing
-        var token = Cookies.get("bearer-token");
-        axios.get(mediasUrl, {
+        // get chapters endpoint missing
+        var token = localStorage.getItem("bearer-token");
+        axios.post(getMediaByChapterIdUrl, {
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: {chapterId : params.chapterId}
         }).then((response) => {
             const { mediaList } = response.data;
             setMediaList(mediaList);

@@ -1,7 +1,6 @@
 "use client"
 import axios from 'axios';
 import { useState, useEffect } from 'react'
-import Cookies from 'js-cookie';
 import { useRouter } from 'next/router';
 
 
@@ -17,16 +16,14 @@ export default function Plans() {
     const [price, setPrice] = useState("");
     const [period, setPeriod] = useState("");
     const [active, setActive] = useState(true);
+    var token = localStorage.getItem("bearer-token");
 
     // urls
-    const plansUrl = `${apiRoot}/subscriptions/getSubscriptionOffers`
-    const newPlanUrl = `${apiRoot}/subscriptions/createSubscriptionOffer`
     const updatePlanUrl = `${apiRoot}/subscriptions/createSubscriptionOffer`
 
     // functions
     const loadPlans = () => {
-        var token = Cookies.get("bearer-token");
-        axios.get(plansUrl, {
+        axios.get(getSubscriptionOffersUrl, {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
@@ -43,8 +40,7 @@ export default function Plans() {
     }
 
     const addNewPlan = () => {
-        var token = Cookies.get("bearer-token");
-        axios.post(newPlanUrl, {
+        axios.post(createSubscriptionOfferUrl, {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
@@ -63,8 +59,7 @@ export default function Plans() {
     }
 
     const updateNewPlan = () => {
-        var token = Cookies.get("bearer-token");
-        axios.post(updatePlanUrl, {
+        axios.post(updateSubscriptionOfferUrl, {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`

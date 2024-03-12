@@ -1,7 +1,6 @@
 "use client"
 import { FormEvent, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Cookies from 'js-cookie'; // install using npm install -D @types/js-cookie
 import axios from 'axios';
 import Link from 'next/link';
 
@@ -24,7 +23,7 @@ export default function LoginPage() {
             })
 
             const { bearerToken } = response.data;
-            Cookies.set("bearer-token", bearerToken);
+            localStorage.setItem("bearer-token", bearerToken);
             router.push('/dashboard')
 
         } catch (error) {

@@ -2,7 +2,6 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react'
 import { Modal } from 'react-bootstrap';
-import Cookies from 'js-cookie';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 
@@ -16,6 +15,7 @@ export default function Courses() {
     const router = useRouter()
     const [show, setShow] = useState(false);
     const [updating, setUpdating] = useState(false);
+    const [courses, setCourses] = useState<CourseInterface[]>([]);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
@@ -23,13 +23,11 @@ export default function Courses() {
     const [courseId, setCourseId] = useState("");
     const [description, setDescription] = useState("");
 
-    const coursesUrl = `${apiRoot}/api/getCourses`;
-    const newCourseUrl = `${apiRoot}/api/createCourse`;
-    const updateCourseUrl = `${apiRoot}/api/updateCourse`;
-    const token = Cookies.get("bearer-token");
+
+    const token = localStorage.getItem("bearer-token");
 
     const saveCourse = () => {
-        axios.post(newCourseUrl, {
+        axios.post(createCourseUrl, {
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
             body: JSON.stringify({ title, description }),
         }).then((res) => {
@@ -54,9 +52,8 @@ export default function Courses() {
         })
     }
 
-    const [courses, setCourses] = useState<CourseInterface[]>([]);
     const loadCourses = () => {
-        axios.get(coursesUrl, {
+        axios.get(getCoursesUrl, {
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         }).then((res) => {
             const { courses } = res.data;

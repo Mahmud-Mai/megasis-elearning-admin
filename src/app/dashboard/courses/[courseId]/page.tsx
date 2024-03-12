@@ -7,14 +7,13 @@ import axios from 'axios';
 export default function CourseDetails({ params }: { params: { courseId: string } }) {
     const [course, setCourse] = useState<CourseInterface>();
     const [chapters, setChapters] = useState<ChapterInterface[]>([]);
-    const coursesUrl = `${apiRoot}/courses/content/getCourses/?courseId=${params.courseId}`
-    const chaptersUrl = `${apiRoot}/chapters/getChapters/?courseId=${params.courseId}` // TODO missing endpoint for list of chapters by courseId
+    var token = localStorage.getItem("bearer-token");
 
     // load chapter info
     useEffect(() => {
-        var token = Cookies.get("bearer-token");
-        axios.get(coursesUrl, {
+        axios.post(getCourseUrl, {
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: {courseId: params.courseId},
         }).then((res) => {
             const { course } = res.data;
             setCourse(course);
@@ -26,9 +25,9 @@ export default function CourseDetails({ params }: { params: { courseId: string }
     // TODO get list of chapters
     useEffect(() => {
         // TODO get chapters endpoint missing
-        var token = Cookies.get("bearer-token");
-        axios.get(chaptersUrl, {
+        axios.post(getChaptersByCourseIdUrl, {
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: {courseId: params.courseId}
         }).then((response) => {
             const { chapters } = response.data;
             setChapters(chapters);

@@ -12,11 +12,10 @@ export default function ChangePassword() {
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
 
-  const pass_resetUrl = `${apiRoot}/api/auth/updatePassword`
+  var token = localStorage.getItem("bearer-token");
 
   const handleSubmit = () => {
-    var token = Cookies.get("bearer-token");
-    axios.post(pass_resetUrl, {
+    axios.post(updatePasswordUrl, {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`,
