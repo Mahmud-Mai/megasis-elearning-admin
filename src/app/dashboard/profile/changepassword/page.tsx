@@ -12,7 +12,7 @@ export default function ChangePassword() {
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
 
-  const pass_resetUrl = `${apiRoot}/api/auth/updatePassword`
+  const pass_resetUrl = updatePasswordUrl;
 
   const handleSubmit = () => {
     var token = Cookies.get("bearer-token");

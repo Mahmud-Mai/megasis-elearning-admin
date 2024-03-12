@@ -11,12 +11,12 @@ import Cookies from 'js-cookie';
 export default function ProfilePage() {
   const [editMode, setEditMode] = useState(false);
   const [profileData, setProfileData] = useState<ProfileInterface>();
-  const profileUrl = `${apiRoot}/api/profile`;
+  const profileUrl = getProfileUrl;
 
   // load profile data
   useEffect(
     () => {
-      var token = Cookies.get("bearer-token");
+      const token = Cookies.get("bearer-token");
       axios.get(profileUrl, {
         headers: {
           'Content-Type': 'application/json',

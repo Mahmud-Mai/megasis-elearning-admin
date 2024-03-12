@@ -18,7 +18,7 @@ export default function LoginPage() {
         event.preventDefault()
 
         try {
-            const response = await axios.post(`${apiRoot}/auth/login`, {
+            const response = await axios.post(loginUrl, {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password }),
             })

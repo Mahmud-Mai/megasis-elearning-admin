@@ -7,12 +7,13 @@ import axios from 'axios';
 export default function CourseDetails({ params }: { params: { courseId: string } }) {
     const [course, setCourse] = useState<CourseInterface>();
     const [chapters, setChapters] = useState<ChapterInterface[]>([]);
+    //TODO: Fix this part, there are no queries in the backend. The courseId should be passed to the body of the request
     const coursesUrl = `${apiRoot}/courses/content/getCourses/?courseId=${params.courseId}`
     const chaptersUrl = `${apiRoot}/chapters/getChapters/?courseId=${params.courseId}` // TODO missing endpoint for list of chapters by courseId
 
     // load chapter info
     useEffect(() => {
-        var token = Cookies.get("bearer-token");
+        const token = Cookies.get("bearer-token");
         axios.get(coursesUrl, {
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         }).then((res) => {
@@ -26,7 +27,7 @@ export default function CourseDetails({ params }: { params: { courseId: string }
     // TODO get list of chapters
     useEffect(() => {
         // TODO get chapters endpoint missing
-        var token = Cookies.get("bearer-token");
+        const token = Cookies.get("bearer-token");
         axios.get(chaptersUrl, {
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         }).then((response) => {

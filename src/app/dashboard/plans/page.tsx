@@ -19,9 +19,9 @@ export default function Plans() {
     const [active, setActive] = useState(true);
 
     // urls
-    const plansUrl = `${apiRoot}/subscriptions/getSubscriptionOffers`
-    const newPlanUrl = `${apiRoot}/subscriptions/createSubscriptionOffer`
-    const updatePlanUrl = `${apiRoot}/subscriptions/createSubscriptionOffer`
+    const plansUrl = getSubscriptionOffersUrl;
+    const newPlanUrl = createSubscriptionOfferUrl;
+    const updatePlanUrl = updateSubscriptionOfferUrl;
 
     // functions
     const loadPlans = () => {
@@ -43,7 +43,7 @@ export default function Plans() {
     }
 
     const addNewPlan = () => {
-        var token = Cookies.get("bearer-token");
+        const token = Cookies.get("bearer-token");
         axios.post(newPlanUrl, {
             headers: {
                 'Content-Type': 'application/json',

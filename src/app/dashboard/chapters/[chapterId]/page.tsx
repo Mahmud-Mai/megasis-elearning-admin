@@ -28,8 +28,8 @@ export default function ChapterDetailsPage({ params }: { params: { chapterId: st
     const mediasUrl = `${apiRoot}/media/getMediaByChapterId?chapterId=${params.chapterId}`
     const chapterUrl = `${apiRoot}/chapters/getChapter/?chapterId=${params.chapterId}` // TODO missing endpoint for list of chapter details by id
 
-    const newMediaCreateUrl = `${apiRoot}/media/createMedia`;
-    const updateMediaUrl = `${apiRoot}/media/updateMedia`;
+    const newMediaCreateUrl = createMediaUrl;
+    const anUpdateMediaUrl = updateMediaUrl;
 
 
     const saveMedia = () => {

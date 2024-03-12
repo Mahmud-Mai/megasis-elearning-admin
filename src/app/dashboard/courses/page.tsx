@@ -23,9 +23,8 @@ export default function Courses() {
     const [courseId, setCourseId] = useState("");
     const [description, setDescription] = useState("");
 
-    const coursesUrl = `${apiRoot}/api/getCourses`;
-    const newCourseUrl = `${apiRoot}/api/createCourse`;
-    const updateCourseUrl = `${apiRoot}/api/updateCourse`;
+    const coursesUrl = getCoursesUrl;
+    const newCourseUrl = createCourseUrl;
     const token = Cookies.get("bearer-token");
 
     const saveCourse = () => {
