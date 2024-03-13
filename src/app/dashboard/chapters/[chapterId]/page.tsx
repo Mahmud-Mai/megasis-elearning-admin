@@ -57,6 +57,21 @@ export default function ChapterDetailsPage({ params }: { params: { chapterId: st
         })
     }
 
+    const deleteMedia = (media: MediaInterface) => {
+        const chapterId = params.chapterId;
+        fetch(deleteMediaUrl, {
+            method: "post",
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify({ id: media.id }),
+        }).then((res) => {
+            if (res.status == 200) {
+                router.reload();
+            }
+        }).catch((err) => {
+            console.log("Unable to delete Media")
+        })
+    }
+
     const editMedia = (media: MediaInterface) => {
         setTitle(media.title);
         setDescription(media.description);
@@ -164,7 +179,8 @@ export default function ChapterDetailsPage({ params }: { params: { chapterId: st
                 {mediaList.map((media, index) =>
                     <Col key={index} sm="12" md="6" lg="4" className="my-1" >
                         <ContentCard title={media.title} mediaType={media.mediaType} imageSource={media.url} />
-                        <button onClick={() => editMedia(media)} className="btn btn-secondary m-2"></button>
+                        <button onClick={() => editMedia(media)} className="btn btn-secondary m-2">Edit</button>
+                        <button onClick={() => deleteMedia(media)} className="btn btn-danger m-2">Delete</button>
                     </Col>
                 )}
             </Row>

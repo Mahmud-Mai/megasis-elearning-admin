@@ -44,6 +44,16 @@ export default function CourseDetails({ params }: { params: { courseId: string }
             .then((data) => router.refresh())
             .catch((err) => console.log(err))
     }
+    const deleteChapter = (chapter: ChapterInterface) => {
+        fetch(deleteChapterUrl, {
+            method: "POST",
+            mode: "no-cors",
+            body: JSON.stringify({ id: chapter.id }),
+        })
+            .then((response) => response.json())
+            .then((data) => router.refresh())
+            .catch((err) => console.log(err))
+    }
 
     const editChapter = (chapter: ChapterInterface) => {
         setId(chapter.id);
@@ -85,7 +95,6 @@ export default function CourseDetails({ params }: { params: { courseId: string }
                 console.log("failed to load chapters")
                 setChapters([]);
             })
-
     });
 
 
@@ -145,8 +154,9 @@ export default function CourseDetails({ params }: { params: { courseId: string }
                             <td>{chapter.title}</td>
                             <td>{chapter.description}</td>
                             <td>
-                                <div className="btn btn-secondary" onClick={() => editChapter(chapter)}>Edit</div>
                                 <Link href={`/dashboard/chapters/${chapter.id}`} className="btn btn-primary">View</Link>
+                                <button className="btn btn-secondary" onClick={() => editChapter(chapter)}>Edit</button>
+                                <button className="btn btn-danger" onClick={() => deleteChapter(chapter)}>Delete</button>
                             </td>
                         </tr>)
                     }

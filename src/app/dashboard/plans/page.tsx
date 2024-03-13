@@ -194,8 +194,8 @@ export default function Plans() {
                                 <div style={{ height: "15px", width: "15px" }} className={`rounded-circle bg-${plan.active ? 'success' : 'dander'}`}></div>
                             </td>
                             <td>
-                                <div className="btn btn-secondary" onClick={() => editPlan(plan)} >Edit</div>
-                                <div className="btn btn-danger" onClick={() => deletePlan()} >Delete</div>
+                                <button className="btn btn-secondary" onClick={() => editPlan(plan)} >Edit</button>
+                                <button className="btn btn-danger" onClick={() => deletePlan()} >Delete</button>
                             </td>
                         </tr>)
                     }
