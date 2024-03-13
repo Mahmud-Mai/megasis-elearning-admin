@@ -33,7 +33,6 @@ export default function Home() {
         <CounterCard title="revenue" value="143" />
         <CounterCard title="courses" value="143" />
         <CounterCard title="chapters" value="143" />
-        <CounterCard title="enrolements" value="143" />
       </Row>
     </div>
   );

@@ -1,10 +1,6 @@
 "use client"
 import { useRouter } from "next/navigation"
 import { useState } from 'react';
-import axios from "axios";
-import Cookies from 'js-cookie';
-
-
 
 export default function ChangePassword() {
   const router = useRouter();
@@ -15,17 +11,21 @@ export default function ChangePassword() {
   var token = localStorage.getItem("bearer-token");
 
   const handleSubmit = () => {
-    axios.post(updatePasswordUrl, {
+    fetch(updatePasswordUrl, {
+      method: "post",
+      mode: "no-cors",
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`,
       },
       body: JSON.stringify({ currentPassword: oldPassword, newPassword: newPassword }),
-    }).then((response) => {
-      router.replace("/");
-    }).catch((error) => {
-      console.log("Operation failed")
     })
+      .then((res) => res.json())
+      .then((response) => {
+        router.replace("/");
+      }).catch((error) => {
+        console.log("Operation failed")
+      })
   }
 
   return (

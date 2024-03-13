@@ -5,7 +5,6 @@ import { useState } from 'react';
 import { Row, Col, Image } from "react-bootstrap";
 import ContentCard from '@/components/contentCard/ContentCard';
 import { useRouter } from 'next/router';
-import axios from 'axios';
 
 export default function ChapterDetailsPage({ params }: { params: { chapterId: string } }) {
     const router = useRouter()
@@ -17,8 +16,9 @@ export default function ChapterDetailsPage({ params }: { params: { chapterId: st
     const [mediaType, setMediaType] = useState("");
     const [id, setId] = useState("");
     const [updating, setUpdating] = useState(false);
+    var token = localStorage.getItem("bearer-token");
 
-    const handleClose = () => setShow(false);
+    const handleClose = () => { setShow(false); setUpdating(false) };
     const handleShow = () => setShow(true);
 
     const [chapter, setChapter] = useState<ChapterInterface>();
@@ -26,9 +26,12 @@ export default function ChapterDetailsPage({ params }: { params: { chapterId: st
 
     const saveMedia = () => {
         const chapterId = params.chapterId;
-        var token = localStorage.getItem("bearer-token");
-        axios.post(createMediaUrl, {
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        fetch(createMediaUrl, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            },
+            method: "post",
             body: JSON.stringify({ chapterId, title, description, url, mediaType }),
         }).then((res) => {
             if (res.status == 200) {
@@ -41,8 +44,8 @@ export default function ChapterDetailsPage({ params }: { params: { chapterId: st
 
     const updateMedia = () => {
         const chapterId = params.chapterId;
-        var token = localStorage.getItem("bearer-token");
-        axios.post(updateMediaUrl, {
+        fetch(updateMediaUrl, {
+            method: "post",
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
             body: JSON.stringify({ id, chapterId, title, description, url, mediaType }),
         }).then((res) => {
@@ -54,36 +57,50 @@ export default function ChapterDetailsPage({ params }: { params: { chapterId: st
         })
     }
 
+    const editMedia = (media: MediaInterface) => {
+        setTitle(media.title);
+        setDescription(media.description);
+        setUrl(media.url);
+        setMediaType(media.mediaType);
+        setId(media.id ?? "");
+        setUpdating(true);
+        setShow(true);
+    }
+
     // load chapter info
     useEffect(() => {
-        var token = localStorage.getItem("bearer-token");
-        axios.post(getChapterByIdUrl, {
-            headers: { 'Content-Type': 'application/json', 
-                        'Authorization': `Bearer ${token}` 
-                    },
-            body: {chapterId: params.chapterId},
-        }).then((res) => {
-            const { chapter } = res.data;
-            setChapter(chapter);
-        }).catch((error) => {
-            console.log("Unable to load data")
+        fetch(getChapterByIdUrl, {
+            method: "post",
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ chapterId: params.chapterId }),
         })
+            .then(res => res.json())
+            .then((res) => {
+                const { chapter } = res;
+                setChapter(chapter);
+            }).catch((error) => {
+                console.log("Unable to load data")
+            })
     });
 
     // get list of media for this chapter
     useEffect(() => {
-        // get chapters endpoint missing
-        var token = localStorage.getItem("bearer-token");
-        axios.post(getMediaByChapterIdUrl, {
+        fetch(getMediaByChapterIdUrl, {
+            method: "post",
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-            body: {chapterId : params.chapterId}
-        }).then((response) => {
-            const { mediaList } = response.data;
-            setMediaList(mediaList);
-        }).catch((error) => {
-            console.log("unable to load data");
-            setMediaList([]);
+            body: JSON.stringify({ chapterId: params.chapterId }),
         })
+            .then(res => res.json())
+            .then((response) => {
+                const { mediaList } = response;
+                setMediaList(mediaList);
+            }).catch((error) => {
+                console.log("unable to load data");
+                setMediaList([]);
+            })
 
     });
 
@@ -147,6 +164,7 @@ export default function ChapterDetailsPage({ params }: { params: { chapterId: st
                 {mediaList.map((media, index) =>
                     <Col key={index} sm="12" md="6" lg="4" className="my-1" >
                         <ContentCard title={media.title} mediaType={media.mediaType} imageSource={media.url} />
+                        <button onClick={() => editMedia(media)} className="btn btn-secondary m-2"></button>
                     </Col>
                 )}
             </Row>

@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
  
 export function middleware(request: NextRequest) {
-  const currentUserToken = request.cookies.get('bearer-token')?.value
+  const currentUserToken = localStorage.getItem('bearer-token');
  
   if (currentUserToken) {
     return NextResponse.redirect(new URL('/dashboard', request.url))

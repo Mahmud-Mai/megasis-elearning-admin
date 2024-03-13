@@ -38,6 +38,7 @@ interface ChapterInterface {
 }
 
 interface MediaInterface {
+    id?: string;
     chapterId: string;
     title: string;
     description: string;
@@ -74,7 +75,7 @@ interface PlanInterface {
     title: string,
     description: string,
     price: number,
-    active: Boolean,
+    active: boolean,
     createdAt: string,
     updatedAt: string
     countryCode: string;

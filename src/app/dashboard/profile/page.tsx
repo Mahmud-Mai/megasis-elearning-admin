@@ -3,30 +3,49 @@ import ImageAvater from '@/components/imageAvater/imageAvater'
 import Link from 'next/link';
 import React from 'react'
 import { useState, useEffect } from 'react';
-import axios from 'axios';
-import Cookies from 'js-cookie';
-
-
 
 export default function ProfilePage() {
   const [editMode, setEditMode] = useState(false);
   const [profileData, setProfileData] = useState<ProfileInterface>();
+  var token = localStorage.getItem("bearer-token");
 
-  // load profile data
-  useEffect(
-    () => {
-      var token = localStorage.getItem("bearer-token");
-      axios.get(profileData, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-      }).then((response) => {
-        const { profileData } = response.data
+
+
+  const updateProfile = () => {
+    fetch(profileUrl, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(profileData),
+      method: "post",
+      mode: "no-cors",
+    })
+      .then((res) => res.json())
+      .then((response) => {
+        const { profileData } = response
         setProfileData(profileData)
       }).catch((error) => {
         console.log("Operation failed")
       });
+  }
+
+  // load profile data
+  useEffect(
+    () => {
+      fetch(profileUrl, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+      })
+        .then((res) => res.json())
+        .then((response) => {
+          const { profileData } = response
+          setProfileData(profileData)
+        }).catch((error) => {
+          console.log("Operation failed")
+        });
     });
 
   const handleFormSubmit = () => {
@@ -40,7 +59,7 @@ export default function ProfilePage() {
           <Link href="/dashboard/profile/changepassword" className="btn btn-secondary">change password</Link>
         </div>
         <ImageAvater size={60} alt="" src="" />
-        <form onSubmit={handleFormSubmit}>
+        <form method='post' onSubmit={handleFormSubmit}>
           <div className="form-group">
             <label htmlFor="title">Full Name</label>
             <input readOnly={!editMode} value={profileData?.name} type="text" className="form-control" id="title" />

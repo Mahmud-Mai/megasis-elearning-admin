@@ -1,9 +1,6 @@
 "use client"
 import { FormEvent, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import axios from 'axios';
-import Link from 'next/link';
-
 
 
 export default function LoginPage() {
@@ -17,13 +14,15 @@ export default function LoginPage() {
         event.preventDefault()
 
         try {
-            const response = await axios.post(loginUrl, {
+            const response = await fetch(loginUrl, {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password }),
+                method: "post",
+                mode: "no-cors",
             })
 
-            const { bearerToken } = response.data;
-            localStorage.setItem("bearer-token", bearerToken);
+            const { token } = await response.json();
+            localStorage.setItem("bearer-token", token);
             router.push('/dashboard')
 
         } catch (error) {

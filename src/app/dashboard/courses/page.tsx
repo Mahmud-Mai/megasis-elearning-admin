@@ -16,7 +16,7 @@ export default function Courses() {
     const [show, setShow] = useState(false);
     const [updating, setUpdating] = useState(false);
     const [courses, setCourses] = useState<CourseInterface[]>([]);
-    const handleClose = () => setShow(false);
+    const handleClose = () => { setShow(false); setUpdating(false) };
     const handleShow = () => setShow(true);
 
     const [title, setTitle] = useState("");
@@ -27,7 +27,8 @@ export default function Courses() {
     const token = localStorage.getItem("bearer-token");
 
     const saveCourse = () => {
-        axios.post(createCourseUrl, {
+        fetch(createCourseUrl, {
+            method: "post",
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
             body: JSON.stringify({ title, description }),
         }).then((res) => {
@@ -40,7 +41,8 @@ export default function Courses() {
     }
 
     const updateCourse = () => {
-        axios.post(updateCourseUrl, {
+        fetch(updateCourseUrl, {
+            method: "post",
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
             body: JSON.stringify({ title, description, courseId }),
         }).then((res) => {
@@ -53,16 +55,19 @@ export default function Courses() {
     }
 
     const loadCourses = () => {
-        axios.get(getCoursesUrl, {
+        fetch(getCoursesUrl, {
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-        }).then((res) => {
-            const { courses } = res.data;
-            setCourses(courses);
-        }).catch((err) => {
-            console.log("Invalid email or Password")
-            setCourses([]);
         })
+            .then(res => res.json())
+            .then((res) => {
+                const { courses } = res;
+                setCourses(courses);
+            }).catch((err) => {
+                console.log("Invalid email or Password")
+                setCourses([]);
+            })
     }
+
     useEffect(() => {
         loadCourses();
     });
@@ -80,7 +85,7 @@ export default function Courses() {
                 centered
             >
                 <Modal.Header closeButton>
-                    <Modal.Title> Add New Course </Modal.Title>
+                    <Modal.Title> {updating ? "Update" : "Add New"} Course </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <form>
