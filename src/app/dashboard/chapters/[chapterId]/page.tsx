@@ -5,6 +5,14 @@ import { useState } from 'react';
 import { Row, Col, Image } from "react-bootstrap";
 import ContentCard from '@/components/contentCard/ContentCard';
 import { useRouter } from 'next/router';
+import {
+    ChapterInterface,
+    createMediaUrl,
+    deleteMediaUrl,
+    getChapterByIdUrl, getMediaByChapterIdUrl,
+    MediaInterface,
+    updateMediaUrl
+} from "@/components/constants";
 
 export default function ChapterDetailsPage({ params }: { params: { chapterId: string } }) {
     const router = useRouter()

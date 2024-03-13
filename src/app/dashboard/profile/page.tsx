@@ -10,30 +10,31 @@ export default function ProfilePage() {
   var token = localStorage.getItem("bearer-token");
 
 
+  //TODO : FIX This all to coincide with server API
 
-  const updateProfile = () => {
-    fetch(profileUrl, {
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      body: JSON.stringify(profileData),
-      method: "post",
-      mode: "no-cors",
-    })
-      .then((res) => res.json())
-      .then((response) => {
-        const { profileData } = response
-        setProfileData(profileData)
-      }).catch((error) => {
-        console.log("Operation failed")
-      });
-  }
+  // const updateProfile = () => {
+  //   fetch(updateProfileUrl, {
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //       'Authorization': `Bearer ${token}`,
+  //     },
+  //     body: JSON.stringify(profileData),
+  //     method: "post",
+  //     mode: "no-cors",
+  //   })
+  //     .then((res) => res.json())
+  //     .then((response) => {
+  //       const { profileData } = response
+  //       setProfileData(profileData)
+  //     }).catch((error) => {
+  //       console.log("Operation failed")
+  //     });
+  // }
 
   // load profile data
   useEffect(
     () => {
-      fetch(profileUrl, {
+      fetch(getProfileUrl, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,

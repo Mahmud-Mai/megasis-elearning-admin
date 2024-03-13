@@ -5,6 +5,13 @@ import Cookies from 'js-cookie';
 import axios from 'axios';
 import { Modal } from "react-bootstrap"
 import { useRouter } from 'next/navigation';
+import {
+    ChapterInterface,
+    CourseInterface,
+    createChapterUrl,
+    deleteChapterUrl, getChaptersByCourseIdUrl, getCourseUrl,
+    updateChapterUrl
+} from "@/components/constants";
 
 export default function CourseDetails({ params }: { params: { courseId: string } }) {
     const router = useRouter();

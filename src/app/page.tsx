@@ -1,6 +1,7 @@
 "use client"
 import { FormEvent, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import {loginUrl} from "@/components/constants";
 
 
 export default function LoginPage() {
@@ -10,22 +11,27 @@ export default function LoginPage() {
     const [password, setPassword] = useState('');
     const [loginErrorMessage, setLoginErrorMessage] = useState("");
 
+    const user = "ADMIN";
+
     async function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault()
 
         try {
             const response = await fetch(loginUrl, {
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password }),
+                body: JSON.stringify({ email, password , user }),
                 method: "post",
                 mode: "no-cors",
             })
+
+            console.log(response.status)
 
             const { token } = await response.json();
             localStorage.setItem("bearer-token", token);
             router.push('/dashboard')
 
         } catch (error) {
+            console.log(error)
             setLoginErrorMessage("Invalid email or Password")
         }
     }
