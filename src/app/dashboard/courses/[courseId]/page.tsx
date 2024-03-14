@@ -16,6 +16,7 @@ import CourseDTO from "@/core/dto/content/CourseDTO";
 export default function CourseDetails({ params }: { params: { courseId: string } }) {
     const router = useRouter();
 
+    const [refresher, setRefresher] = useState(false);
     const [course, setCourse] = useState<CourseDTO>();
     const [show, setShow] = useState(false);
     const [updating, setUpdating] = useState(false);
@@ -32,18 +33,24 @@ export default function CourseDetails({ params }: { params: { courseId: string }
 
     const createChapterFunction = () => {
         createChapter({ courseId, title, description })
-            .then((_) => router.refresh())
+            .then((_) => {
+                setRefresher(!refresher);
+                setShow(false);
+            })
             .catch((err) => console.log(err))
     }
 
     const updateChapterFunction = () => {
         updateChapter({ chapterId: id,  title, description })
-            .then((_) => router.refresh())
+            .then((_) => {
+                setRefresher(!refresher);
+                setShow(false);
+            })
             .catch((err) => console.log(err))
     }
     const deleteChapterFunction = (chapter: ChapterDTO) => {
         deleteChapter(chapter.id )
-            .then((_) => router.refresh())
+            .then((_) => setRefresher(!refresher))
             .catch((err) => console.log(err))
     }
 
@@ -58,6 +65,7 @@ export default function CourseDetails({ params }: { params: { courseId: string }
 
     // load course info
     useEffect(() => {
+        setCourseId(params.courseId)
         getCourse(params.courseId)
             .then((course) => {
                 setCourse(course);
@@ -75,7 +83,7 @@ export default function CourseDetails({ params }: { params: { courseId: string }
                 console.log("failed to load chapters")
                 setChapters([]);
             })
-    },[params.courseId]);
+    },[params.courseId,refresher]);
 
 
     return (

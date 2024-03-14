@@ -4,13 +4,18 @@ import { Image } from 'react-bootstrap';
 interface Props {
     title: string;
     mediaType: string;
-    imageSource: string;
+    url: string;
 }
 
-export default function ContentCard({ title, mediaType, imageSource }: Props) {
+export default function ContentCard({ title, mediaType, url }: Props) {
     return (
         <div className="shadow rounded p-1">
-            <Image className="img-responsive" width="100%" height={150} src={imageSource} alt={title}  ></Image>
+            {
+                mediaType == "VIDEO" ? <iframe src={url}/>
+                : mediaType == "DOCUMENT"
+                    ? <p>Document</p>
+                    : <p>Unsupported Format</p>
+            }
             <div className="text-center m-2">
                 <span className='text-capitalize fw-bold text-center'>{title}</span>
                 <br />

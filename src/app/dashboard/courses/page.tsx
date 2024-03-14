@@ -49,7 +49,6 @@ export default function Courses() {
 
     useEffect(() => {
         loadCoursesFunction();
-        console.log("refreshed")
     },[refresher]);
 
     return (

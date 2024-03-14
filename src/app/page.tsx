@@ -19,7 +19,7 @@ export default function LoginPage() {
                 .then((data) => {
                     localStorage.setItem("bearer-token", data.token);
                     localStorage.setItem("userId", data.loginId);
-                    router.push('/dashboard')
+                    router.push('/dashboard');
 
                 }).catch((err) => {
                     setLoginErrorMessage("Invalid Email/Password")

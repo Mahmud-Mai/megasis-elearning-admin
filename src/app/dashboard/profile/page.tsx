@@ -7,6 +7,7 @@ import ProfileDTO from "@/core/dto/login/ProfileDTO";
 import {getProfile} from "@/core/services/login-service";
 
 export default function ProfilePage() {
+  const [refresher, setRefresher] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [profileData, setProfileData] = useState<ProfileDTO>();
 
@@ -35,14 +36,13 @@ export default function ProfilePage() {
   // load profile data
   useEffect(
     () => {
-
       getProfile()
         .then((profileData) => {
           setProfileData(profileData)
         }).catch((error) => {
           console.log("Operation failed")
         });
-    });
+    }, [refresher]);
 
   const handleFormSubmit = () => {
     // TODO implement profile update

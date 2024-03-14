@@ -10,7 +10,6 @@ export default function ChangePassword() {
   const [newPassword, setNewPassword] = useState('');
 
 
-
   const handleSubmit = () => {
     const loginId = localStorage.getItem("userId") || "";
     updatePassword({ loginId,  currentPassword,  newPassword })

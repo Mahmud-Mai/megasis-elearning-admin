@@ -12,6 +12,8 @@ import SubscriptionOffer from "@/core/dto/subscription/SubscriptionOffer";
 
 export default function Plans() {
     const router = useRouter();
+
+    const [refresher, setRefresher] = useState(false);
     const [show, setShow] = useState(false);
     const [updating, setUpdating] = useState(false);
     // plan
@@ -44,12 +46,7 @@ export default function Plans() {
 
     const addNewPlan = () => {
         createSubscriptionOffer({ title, description, price, period, active })
-            .then(
-                (res) => {
-                        router.refresh();
-
-                }
-            ).catch((err) => {
+            .then((res) => setRefresher(!refresher)).catch((err) => {
                 console.log("Unable to save offer")
                 setPlans([]);
             })
@@ -57,13 +54,7 @@ export default function Plans() {
 
     const updatePlan = () => {
         updateSubscriptionOffer({ subscriptionId: id, title, description, price, period, active })
-
-            .then(
-                (res) => {
-                        router.refresh();
-
-                }
-            ).catch((err) => {
+            .then((res) => setRefresher(!refresher)).catch((err) => {
                 console.log("Unable to save offer")
                 setPlans([]);
             })
@@ -71,11 +62,7 @@ export default function Plans() {
 
     const deletePlan = () => {
         deleteSubscriptionOffer({ subscriptionId: id })
-            .then(
-                (res) => {
-                        router.refresh();
-                }
-            ).catch((err) => {
+            .then((res) => setRefresher(!refresher)).catch((err) => {
                 console.log("Unable to delete offer")
                 setPlans([]);
             })
@@ -94,7 +81,8 @@ export default function Plans() {
 
     useEffect(() => {
         loadPlans();
-    },);
+    },[refresher]);
+
     return (
         <div className="container p-3">
             <div className='d-flex align-items-center justify-content-between py-3'>
