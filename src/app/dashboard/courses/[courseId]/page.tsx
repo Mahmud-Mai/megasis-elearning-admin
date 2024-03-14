@@ -41,7 +41,7 @@ export default function CourseDetails({ params }: { params: { courseId: string }
     }
 
     const updateChapterFunction = () => {
-        updateChapter({ chapterId: id,  title, description })
+        updateChapter({ chapterId, title, description })
             .then((_) => {
                 setRefresher(!refresher);
                 setShow(false);
@@ -49,15 +49,14 @@ export default function CourseDetails({ params }: { params: { courseId: string }
             .catch((err) => console.log(err))
     }
     const deleteChapterFunction = (chapter: ChapterDTO) => {
-        deleteChapter(chapter.id )
+        deleteChapter(chapter.id)
             .then((_) => setRefresher(!refresher))
             .catch((err) => console.log(err))
     }
 
+
     const editChapter = (chapter: ChapterDTO) => {
         setChapterId(chapter.id);
-    const editChapter = (chapter: ChapterDTO) => {
-        setId(chapter.id);
         setTitle(chapter.title);
         setDescription(chapter.description);
         setCourseId(chapter.courseId);
@@ -74,18 +73,18 @@ export default function CourseDetails({ params }: { params: { courseId: string }
             }).catch((error) => {
                 console.log("Unable to load data")
             })
-    },[params.courseId]);
+    }, [params.courseId]);
 
     // get list of chapters
     useEffect(() => {
-        getChaptersByCourseId( params.courseId )
+        getChaptersByCourseId(params.courseId)
             .then((chapters) => {
                 setChapters(chapters);
             }).catch((error) => {
                 console.log("failed to load chapters")
                 setChapters([]);
             })
-    },[params.courseId,refresher]);
+    }, [params.courseId, refresher]);
 
 
     return (
@@ -155,3 +154,4 @@ export default function CourseDetails({ params }: { params: { courseId: string }
         </div>
     )
 }
+
