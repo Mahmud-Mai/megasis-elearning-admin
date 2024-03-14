@@ -5,14 +5,9 @@ import { useState } from 'react';
 import { Row, Col, Image } from "react-bootstrap";
 import ContentCard from '@/components/contentCard/ContentCard';
 import { useRouter } from 'next/router';
-import {
-    ChapterInterface,
-    createMediaUrl,
-    deleteMediaUrl,
-    getChapterByIdUrl, getMediaByChapterIdUrl,
-    MediaInterface,
-    updateMediaUrl
-} from "@/constants";
+import {createMedia, deleteMedia, getChapter, getMediaByChapterId, updateMedia} from "@/core/services/content-service";
+import ChapterDTO from "@/core/dto/content/ChapterDTO";
+import MediaDTO from "@/core/dto/content/MediaDTO";
 
 export default function ChapterDetailsPage({ params }: { params: { chapterId: string } }) {
     const router = useRouter()
@@ -24,63 +19,41 @@ export default function ChapterDetailsPage({ params }: { params: { chapterId: st
     const [mediaType, setMediaType] = useState("");
     const [id, setId] = useState("");
     const [updating, setUpdating] = useState(false);
-    var token = localStorage.getItem("bearer-token");
 
     const handleClose = () => { setShow(false); setUpdating(false) };
     const handleShow = () => setShow(true);
 
-    const [chapter, setChapter] = useState<ChapterInterface>();
-    const [mediaList, setMediaList] = useState<MediaInterface[]>([]);
+    const [chapter, setChapter] = useState<ChapterDTO>();
+    const [mediaList, setMediaList] = useState<MediaDTO[]>([]);
 
     const saveMedia = () => {
         const chapterId = params.chapterId;
-        fetch(createMediaUrl, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`,
-            },
-            method: "post",
-            body: JSON.stringify({ chapterId, title, description, url, mediaType }),
-        }).then((res) => {
-            if (res.status == 200) {
+
+        createMedia({ chapterId, title, description, url, mediaType })
+            .then((res) => {
                 router.reload();
-            }
         }).catch((err) => {
             console.log("Unable to save Media")
         })
     }
 
-    const updateMedia = () => {
-        const chapterId = params.chapterId;
-        fetch(updateMediaUrl, {
-            method: "post",
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-            body: JSON.stringify({ id, chapterId, title, description, url, mediaType }),
-        }).then((res) => {
-            if (res.status == 200) {
-                router.reload();
-            }
+    const updateMediaFunction = (mediaId: string, title: string) => {
+        updateMedia({  mediaId: id, title }).then((res) => {
+            router.reload();
         }).catch((err) => {
             console.log("Unable to update Media")
         })
     }
 
-    const deleteMedia = (media: MediaInterface) => {
-        const chapterId = params.chapterId;
-        fetch(deleteMediaUrl, {
-            method: "post",
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-            body: JSON.stringify({ id: media.id }),
-        }).then((res) => {
-            if (res.status == 200) {
-                router.reload();
-            }
+    const deleteMediaFunction = (mediaId: string) => {
+        deleteMedia(mediaId).then((res) => {
+            router.reload();
         }).catch((err) => {
             console.log("Unable to delete Media")
         })
     }
 
-    const editMedia = (media: MediaInterface) => {
+    const editMedia = (media: MediaDTO) => {
         setTitle(media.title);
         setDescription(media.description);
         setUrl(media.url);
@@ -92,17 +65,9 @@ export default function ChapterDetailsPage({ params }: { params: { chapterId: st
 
     // load chapter info
     useEffect(() => {
-        fetch(getChapterByIdUrl, {
-            method: "post",
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify({ chapterId: params.chapterId }),
-        })
-            .then(res => res.json())
+        getChapter(params.chapterId)
             .then((res) => {
-                const { chapter } = res;
+
                 setChapter(chapter);
             }).catch((error) => {
                 console.log("Unable to load data")
@@ -111,14 +76,8 @@ export default function ChapterDetailsPage({ params }: { params: { chapterId: st
 
     // get list of media for this chapter
     useEffect(() => {
-        fetch(getMediaByChapterIdUrl, {
-            method: "post",
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-            body: JSON.stringify({ chapterId: params.chapterId }),
-        })
-            .then(res => res.json())
-            .then((response) => {
-                const { mediaList } = response;
+        getMediaByChapterId(params.chapterId)
+            .then((mediaList) => {
                 setMediaList(mediaList);
             }).catch((error) => {
                 console.log("unable to load data");
@@ -173,7 +132,7 @@ export default function ChapterDetailsPage({ params }: { params: { chapterId: st
                         </form>
                     </Modal.Body>
                     <Modal.Footer>
-                        <button onClick={() => updating ? updateMedia() : saveMedia()} type="submit" className="btn m-2 px-4" style={{ backgroundColor: "#4ED164", color: "white", height: "40px", borderRadius: "20px" }}>Save</button>
+                        <button onClick={() => updating ? updateMediaFunction(id, title) : saveMedia()} type="submit" className="btn m-2 px-4" style={{ backgroundColor: "#4ED164", color: "white", height: "40px", borderRadius: "20px" }}>Save</button>
                     </Modal.Footer>
                 </Modal>
             </div>
@@ -188,7 +147,7 @@ export default function ChapterDetailsPage({ params }: { params: { chapterId: st
                     <Col key={index} sm="12" md="6" lg="4" className="my-1" >
                         <ContentCard title={media.title} mediaType={media.mediaType} imageSource={media.url} />
                         <button onClick={() => editMedia(media)} className="btn btn-secondary m-2">Edit</button>
-                        <button onClick={() => deleteMedia(media)} className="btn btn-danger m-2">Delete</button>
+                        <button onClick={() => deleteMediaFunction(media.id)} className="btn btn-danger m-2">Delete</button>
                     </Col>
                 )}
             </Row>
