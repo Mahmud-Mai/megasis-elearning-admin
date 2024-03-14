@@ -1,7 +1,6 @@
 "use client"
 import { useRouter } from "next/navigation"
 import { useState } from 'react';
-import {updatePasswordUrl} from "@/constants";
 import {updatePassword} from "@/core/services/login-service";
 
 export default function ChangePassword() {

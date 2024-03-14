@@ -1,10 +1,7 @@
 "use client"
 import { FormEvent, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import {AuthDataObject} from "@/constants";
-
 import {loginUser} from "@/core/services/login-service";
-import AuthData from "@/core/dto/login/AuthData";
 
 
 export default function LoginPage() {

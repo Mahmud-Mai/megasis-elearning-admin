@@ -1,4 +1,3 @@
-import Image from "next/image";
 import CounterCard from "@/components/counterCard/CounterCard";
 import { Row } from "react-bootstrap";
 

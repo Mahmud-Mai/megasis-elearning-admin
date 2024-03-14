@@ -1,11 +1,13 @@
 import React from 'react'
-import Link from 'next/link';
 import ImageAvater from '../imageAvater/imageAvater';
 import MenuTile from '../menuTile/menuTile';
-import Cookies from 'js-cookie';
 import { useRouter } from 'next/navigation';
-import {MenuNavLinkObj} from "@/constants";
 
+export interface MenuNavLinkObj {
+    name: string;
+    address: string;
+    icon: React.ReactNode;
+}
 
 export default function SideBar() {
     const navPages: MenuNavLinkObj[] = [

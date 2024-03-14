@@ -2,9 +2,7 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react'
 import { Modal } from 'react-bootstrap';
-import axios from 'axios';
 import { useRouter } from 'next/router';
-import {createCourseUrl, getCoursesUrl, updateCourseUrl} from "@/constants";
 import CourseDTO from "@/core/dto/content/CourseDTO";
 import {createCourse, getCourses, updateCourse} from "@/core/services/content-service";
 
