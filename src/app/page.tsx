@@ -1,7 +1,7 @@
 "use client"
 import { FormEvent, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import {loginUser} from "@/core/services/login-service";
+import { loginUser } from "@/core/services/login-service";
 
 
 export default function LoginPage() {
@@ -16,14 +16,14 @@ export default function LoginPage() {
     async function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault()
         loginUser({ emailAddress, password, user })
-                .then((data) => {
-                    localStorage.setItem("bearer-token", data.token);
-                    localStorage.setItem("userId", data.loginId);
-                    router.push('/dashboard');
+            .then((data) => {
+                localStorage.setItem("bearer-token", data.token);
+                localStorage.setItem("userId", data.loginId);
+                router.push('/dashboard');
 
-                }).catch((err) => {
-                    setLoginErrorMessage("Invalid Email/Password")
-                });
+            }).catch((err) => {
+                setLoginErrorMessage("Invalid Email/Password")
+            });
     }
 
     return (

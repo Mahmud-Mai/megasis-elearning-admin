@@ -81,7 +81,7 @@ export default function Plans() {
 
     useEffect(() => {
         loadPlans();
-    },[refresher]);
+    }, [refresher]);
 
     return (
         <div className="container p-3">
@@ -117,9 +117,9 @@ export default function Plans() {
                             <label htmlFor="title">Period (months)</label>
                             <input value={period} onChange={(e) => setPeriod(parseInt(e.target.value))} type="number" className="form-control" id="title" />
                         </div>
-                        <div className="form-group">
-                            <label htmlFor="title">Active</label>
-                            <input checked={active} onChange={(e) => setActive(e.target.checked)} type="checkbox" className="form-control" id="actve" />
+                        <div className="form-check form-switch">
+                            <input className="form-check-input" type="checkbox" id="activeCheckBox" checked={active} onChange={(e) => setActive(e.target.checked)} />
+                            <label className="form-check-label" htmlFor="activeCheckBox"> {active ? "Active" : "Inactive"}</label>
                         </div>
                         <div className="d-flex align-items-center justify-content-evenly">
                         </div>
