@@ -46,7 +46,12 @@ export interface MediaInterface {
     mediaType: string;
 }
 
-
+export interface AuthDataObject {
+    loginId: string;
+    token: string;
+    authLevel: string;
+    tokenExpiration: Date;
+}
 
 export interface ProfileInterface {
     emailAddress: string;
@@ -139,4 +144,3 @@ export const mediaNameAvailableUrl: string = `${apiRoot}/mediaNameAvailable`;
 export const uploadDocumentUrl: string = `${apiRoot}/uploadDocument`;
 export const uploadVideoUrl: string = `${apiRoot}/uploadVideo`;
 
-export const getChapterByIdUrl: string = `${apiRoot}/getChapter`;

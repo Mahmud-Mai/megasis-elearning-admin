@@ -13,7 +13,7 @@ export default function RootLayout({
   const router = useRouter();
 
   useEffect(() => {
-    const token = Cookies.get('bearer-token');
+    const token = localStorage.getItem('bearer-token');
     if (!token) {
       router.push('/');
     }
@@ -21,7 +21,7 @@ export default function RootLayout({
 
   return (
     <html lang="en">
-      <body>
+      <body suppressHydrationWarning={true}>
         <BaseAdminLayout>{children}</BaseAdminLayout>
       </body>
     </html >

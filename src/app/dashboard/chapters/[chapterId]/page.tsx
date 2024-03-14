@@ -12,7 +12,7 @@ import {
     getChapterByIdUrl, getMediaByChapterIdUrl,
     MediaInterface,
     updateMediaUrl
-} from "@/components/constants";
+} from "@/constants";
 
 export default function ChapterDetailsPage({ params }: { params: { chapterId: string } }) {
     const router = useRouter()

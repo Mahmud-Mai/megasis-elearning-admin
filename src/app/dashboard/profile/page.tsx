@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react';
 export default function ProfilePage() {
   const [editMode, setEditMode] = useState(false);
   const [profileData, setProfileData] = useState<ProfileInterface>();
-  var token = localStorage.getItem("bearer-token");
+  const token = localStorage.getItem("bearer-token");
 
 
   //TODO : FIX This all to coincide with server API
@@ -23,8 +23,8 @@ export default function ProfilePage() {
   //     mode: "no-cors",
   //   })
   //     .then((res) => res.json())
-  //     .then((response) => {
-  //       const { profileData } = response
+  //     .then((responses) => {
+  //       const { profileData } = responses
   //       setProfileData(profileData)
   //     }).catch((error) => {
   //       console.log("Operation failed")
@@ -34,6 +34,7 @@ export default function ProfilePage() {
   // load profile data
   useEffect(
     () => {
+
       fetch(getProfileUrl, {
         headers: {
           'Content-Type': 'application/json',

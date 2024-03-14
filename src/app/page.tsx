@@ -1,13 +1,15 @@
 "use client"
 import { FormEvent, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import {loginUrl} from "@/components/constants";
+import {AuthDataObject, loginUrl} from "@/constants";
+
+import {loginUser} from "@/core/services/login-service";
 
 
 export default function LoginPage() {
     const router = useRouter()
 
-    const [email, setEmail] = useState('');
+    const [emailAddress, setEmailAddress] = useState('');
     const [password, setPassword] = useState('');
     const [loginErrorMessage, setLoginErrorMessage] = useState("");
 
@@ -17,22 +19,14 @@ export default function LoginPage() {
         event.preventDefault()
 
         try {
-            const response = await fetch(loginUrl, {
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password , user }),
-                method: "post",
-                mode: "no-cors",
-            })
+            const data : AuthDataObject = await loginUser({ emailAddress, password, user });
 
-            console.log(response.status)
-
-            const { token } = await response.json();
-            localStorage.setItem("bearer-token", token);
+            localStorage.setItem("bearer-token", data.token);
+            localStorage.setItem("userId", data.loginId);
             router.push('/dashboard')
 
         } catch (error) {
-            console.log(error)
-            setLoginErrorMessage("Invalid email or Password")
+            setLoginErrorMessage("Invalid Email/Password")
         }
     }
 
@@ -48,7 +42,7 @@ export default function LoginPage() {
                                     <p style={{ fontStyle: "italic" }} >Please enter your login and password!</p>
                                     <div className="form-outline  form-white mb-4">
                                         <label className="form-label" htmlFor="email">Email</label>
-                                        <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" id="email" className="form-control form-control-lg" />
+                                        <input value={emailAddress} onChange={(e) => setEmailAddress(e.target.value)} type="email" id="email" className="form-control form-control-lg" />
                                     </div>
                                     <div className="form-outline form-white mb-4">
                                         <label className="form-label" htmlFor="password">Password</label>

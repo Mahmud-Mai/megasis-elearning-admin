@@ -3,7 +3,8 @@ import type { NextRequest } from 'next/server'
  
 export function middleware(request: NextRequest) {
   const currentUserToken = localStorage.getItem('bearer-token');
- 
+
+  console.log(currentUserToken)
   if (currentUserToken) {
     return NextResponse.redirect(new URL('/dashboard', request.url))
   }

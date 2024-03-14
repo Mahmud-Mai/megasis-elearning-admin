@@ -11,7 +11,7 @@ import {
     createChapterUrl,
     deleteChapterUrl, getChaptersByCourseIdUrl, getCourseUrl,
     updateChapterUrl
-} from "@/components/constants";
+} from "@/constants";
 
 export default function CourseDetails({ params }: { params: { courseId: string } }) {
     const router = useRouter();

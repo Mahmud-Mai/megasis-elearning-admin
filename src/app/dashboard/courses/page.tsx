@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { Modal } from 'react-bootstrap';
 import axios from 'axios';
 import { useRouter } from 'next/router';
-import {createCourseUrl, getCoursesUrl, updateCourseUrl} from "@/components/constants";
+import {createCourseUrl, getCoursesUrl, updateCourseUrl} from "@/constants";
 
 interface CourseInterface {
     id: string;

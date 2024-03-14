@@ -7,7 +7,7 @@ import {
     getSubscriptionOffersUrl,
     PlanInterface,
     updateSubscriptionOfferUrl
-} from "@/components/constants";
+} from "@/constants";
 
 
 export default function Plans() {
