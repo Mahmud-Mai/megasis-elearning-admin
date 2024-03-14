@@ -3,11 +3,11 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router';
 import { Modal } from 'react-bootstrap';
 import {
-    createSubscriptionOfferUrl, deleteSubscriptionOfferUrl,
-    getSubscriptionOffersUrl,
-    PlanInterface,
-    updateSubscriptionOfferUrl
-} from "@/constants";
+    createSubscriptionOffer, deleteSubscriptionOffer,
+    getSubscriptionOffers,
+    updateSubscriptionOffer
+} from "@/core/services/subscription-service";
+import SubscriptionOffer from "@/core/dto/subscription/SubscriptionOffer";
 
 
 export default function Plans() {
@@ -15,7 +15,7 @@ export default function Plans() {
     const [show, setShow] = useState(false);
     const [updating, setUpdating] = useState(false);
     // plan
-    const [plans, setPlans] = useState<PlanInterface[]>([]);
+    const [plans, setPlans] = useState<SubscriptionOffer[]>([]);
     // fields
     const [id, setId] = useState("");
     const [title, setTitle] = useState("");
@@ -23,7 +23,7 @@ export default function Plans() {
     const [price, setPrice] = useState(0);
     const [period, setPeriod] = useState(1);
     const [active, setActive] = useState(true);
-    var token = localStorage.getItem("bearer-token");
+
 
 
     const handleClose = () => { setShow(false); setUpdating(false) };
@@ -31,16 +31,9 @@ export default function Plans() {
 
     // functions
     const loadPlans = () => {
-        fetch(getSubscriptionOffersUrl, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-        })
-            .then((res) => res.json())
+        getSubscriptionOffers()
             .then(
-                (res) => {
-                    const { subscriptionOffers } = res;
+                (subscriptionOffers) => {
                     setPlans(subscriptionOffers);
                 }
             ).catch((err) => {
@@ -50,21 +43,11 @@ export default function Plans() {
     }
 
     const addNewPlan = () => {
-        fetch(createSubscriptionOfferUrl, {
-            method: "POST",
-            mode: "no-cors",
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify({ title, description, price, period, active })
-        })
-            .then((res) => res.json())
+        createSubscriptionOffer({ title, description, price, period, active })
             .then(
                 (res) => {
-                    if (res.status == 200) {
                         router.reload();
-                    }
+
                 }
             ).catch((err) => {
                 console.log("Unable to save offer")
@@ -73,21 +56,12 @@ export default function Plans() {
     }
 
     const updatePlan = () => {
-        fetch(updateSubscriptionOfferUrl, {
-            method: "POST",
-            mode: "no-cors",
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify({ title, description, price, period, active }),
-        })
-            .then((res) => res.json())
+        updateSubscriptionOffer({ subscriptionId: id, title, description, price, period, active })
+
             .then(
                 (res) => {
-                    if (res.status == 200) {
                         router.reload();
-                    }
+
                 }
             ).catch((err) => {
                 console.log("Unable to save offer")
@@ -96,21 +70,10 @@ export default function Plans() {
     }
 
     const deletePlan = () => {
-        fetch(deleteSubscriptionOfferUrl, {
-            method: "POST",
-            mode: "no-cors",
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify({ subscriptionOfferId: id }),
-        })
-            .then((res) => res.json())
+        deleteSubscriptionOffer({ subscriptionId: id })
             .then(
                 (res) => {
-                    if (res.status == 200) {
                         router.reload();
-                    }
                 }
             ).catch((err) => {
                 console.log("Unable to delete offer")
@@ -118,7 +81,7 @@ export default function Plans() {
             })
     }
 
-    const editPlan = (plan: PlanInterface) => {
+    const editPlan = (plan: SubscriptionOffer) => {
         setId(plan.id);
         setTitle(plan.title);
         setDescription(plan.description);

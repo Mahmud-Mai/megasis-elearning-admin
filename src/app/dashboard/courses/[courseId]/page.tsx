@@ -1,86 +1,64 @@
 "use client"
 import Link from 'next/link';
 import { useEffect, useState } from 'react'
-import Cookies from 'js-cookie';
-import axios from 'axios';
 import { Modal } from "react-bootstrap"
 import { useRouter } from 'next/navigation';
 import {
-    ChapterInterface,
-    CourseInterface,
-    createChapterUrl,
-    deleteChapterUrl, getChaptersByCourseIdUrl, getCourseUrl,
-    updateChapterUrl
-} from "@/constants";
+    createChapter,
+    deleteChapter,
+    getChaptersByCourseId,
+    getCourse,
+    updateChapter
+} from "@/core/services/content-service";
+import ChapterDTO from "@/core/dto/content/ChapterDTO";
+import CourseDTO from "@/core/dto/content/CourseDTO";
 
 export default function CourseDetails({ params }: { params: { courseId: string } }) {
     const router = useRouter();
-    const [course, setCourse] = useState<CourseInterface>();
+    const [course, setCourse] = useState<CourseDTO>();
     const [show, setShow] = useState(false);
-    const [updating, setupdating] = useState(false);
-    const [chapters, setChapters] = useState<ChapterInterface[]>([]);
-    var token = localStorage.getItem("bearer-token");
+    const [updating, setUpdating] = useState(false);
+    const [chapters, setChapters] = useState<ChapterDTO[]>([]);
 
     const [id, setId] = useState("");
     const [courseId, setCourseId] = useState("");
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
 
-    const handleClose = () => { setShow(false); setupdating(false) };
+    const handleClose = () => { setShow(false); setUpdating(false) };
     const handleShow = () => setShow(true);
 
 
-    const saveChapter = () => {
-        fetch(createChapterUrl, {
-            method: "POST",
-            mode: "no-cors",
-            body: JSON.stringify({ courseId, title, description }),
-        })
-            .then((response) => response.json())
-            .then((data) => router.refresh())
+    const createChapterFunction = () => {
+        createChapter({ courseId, title, description })
+            .then((_) => router.refresh())
             .catch((err) => console.log(err))
     }
 
-    const updateChapter = () => {
-        fetch(updateChapterUrl, {
-            method: "POST",
-            mode: "no-cors",
-            body: JSON.stringify({ id, courseId, title, description }),
-        })
-            .then((response) => response.json())
-            .then((data) => router.refresh())
+    const updateChapterFunction = () => {
+        updateChapter({ chapterId: id,  title, description })
+            .then((_) => router.refresh())
             .catch((err) => console.log(err))
     }
-    const deleteChapter = (chapter: ChapterInterface) => {
-        fetch(deleteChapterUrl, {
-            method: "POST",
-            mode: "no-cors",
-            body: JSON.stringify({ id: chapter.id }),
-        })
-            .then((response) => response.json())
-            .then((data) => router.refresh())
+    const deleteChapterFunction = (chapter: ChapterDTO) => {
+        deleteChapter(chapter.id )
+            .then((_) => router.refresh())
             .catch((err) => console.log(err))
     }
 
-    const editChapter = (chapter: ChapterInterface) => {
+    const editChapter = (chapter: ChapterDTO) => {
         setId(chapter.id);
         setTitle(chapter.title);
         setDescription(chapter.description);
         setCourseId(chapter.courseId);
-        setupdating(true);
+        setUpdating(true);
         setShow(true);
     }
 
     // load course info
     useEffect(() => {
-        fetch(getCourseUrl, {
-            method: "post",
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-            body: JSON.stringify({ courseId: params.courseId }),
-        })
-            .then(res => res.json())
-            .then((res) => {
-                const { course } = res;
+        getCourse(params.courseId)
+            .then((course) => {
                 setCourse(course);
             }).catch((error) => {
                 console.log("Unable to load data")
@@ -89,14 +67,8 @@ export default function CourseDetails({ params }: { params: { courseId: string }
 
     // get list of chapters
     useEffect(() => {
-        fetch(getChaptersByCourseIdUrl, {
-            method: "post",
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-            body: JSON.stringify({ courseId: params.courseId }),
-        })
-            .then(res => res.json())
-            .then((response) => {
-                const { chapters } = response;
+        getChaptersByCourseId( params.courseId )
+            .then((chapters) => {
                 setChapters(chapters);
             }).catch((error) => {
                 console.log("failed to load chapters")
@@ -134,7 +106,7 @@ export default function CourseDetails({ params }: { params: { courseId: string }
                     </form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <button onClick={() => updating ? updateChapter() : saveChapter()} type="submit" className="btn m-2 px-4" style={{ backgroundColor: "#4ED164", color: "white", height: "40px", borderRadius: "20px" }}>Save</button>
+                    <button onClick={() => updating ? updateChapterFunction() : createChapterFunction()} type="submit" className="btn m-2 px-4" style={{ backgroundColor: "#4ED164", color: "white", height: "40px", borderRadius: "20px" }}>Save</button>
                 </Modal.Footer>
             </Modal>
             <div className="text-center">
@@ -163,7 +135,7 @@ export default function CourseDetails({ params }: { params: { courseId: string }
                             <td>
                                 <Link href={`/dashboard/chapters/${chapter.id}`} className="btn btn-primary">View</Link>
                                 <button className="btn btn-secondary" onClick={() => editChapter(chapter)}>Edit</button>
-                                <button className="btn btn-danger" onClick={() => deleteChapter(chapter)}>Delete</button>
+                                <button className="btn btn-danger" onClick={() => deleteChapterFunction(chapter)}>Delete</button>
                             </td>
                         </tr>)
                     }

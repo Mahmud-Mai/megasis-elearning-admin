@@ -1,9 +1,10 @@
 "use client"
 import { FormEvent, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import {AuthDataObject, loginUrl} from "@/constants";
+import {AuthDataObject} from "@/constants";
 
 import {loginUser} from "@/core/services/login-service";
+import AuthData from "@/core/dto/login/AuthData";
 
 
 export default function LoginPage() {
@@ -17,17 +18,15 @@ export default function LoginPage() {
 
     async function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault()
+        loginUser({ emailAddress, password, user })
+                .then((data) => {
+                    localStorage.setItem("bearer-token", data.token);
+                    localStorage.setItem("userId", data.loginId);
+                    router.push('/dashboard')
 
-        try {
-            const data : AuthDataObject = await loginUser({ emailAddress, password, user });
-
-            localStorage.setItem("bearer-token", data.token);
-            localStorage.setItem("userId", data.loginId);
-            router.push('/dashboard')
-
-        } catch (error) {
-            setLoginErrorMessage("Invalid Email/Password")
-        }
+                }).catch((err) => {
+                    setLoginErrorMessage("Invalid Email/Password")
+                });
     }
 
     return (
