@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react'
 import { Modal } from "react-bootstrap"
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation"
 import {
     createChapter,
     deleteChapter,
@@ -15,6 +15,7 @@ import CourseDTO from "@/core/dto/content/CourseDTO";
 
 export default function CourseDetails({ params }: { params: { courseId: string } }) {
     const router = useRouter();
+
     const [course, setCourse] = useState<CourseDTO>();
     const [show, setShow] = useState(false);
     const [updating, setUpdating] = useState(false);
@@ -63,7 +64,7 @@ export default function CourseDetails({ params }: { params: { courseId: string }
             }).catch((error) => {
                 console.log("Unable to load data")
             })
-    });
+    },[params.courseId]);
 
     // get list of chapters
     useEffect(() => {
@@ -74,7 +75,7 @@ export default function CourseDetails({ params }: { params: { courseId: string }
                 console.log("failed to load chapters")
                 setChapters([]);
             })
-    });
+    },[params.courseId]);
 
 
     return (

@@ -4,7 +4,7 @@ import { Container, Modal } from 'react-bootstrap';
 import { useState } from 'react';
 import { Row, Col, Image } from "react-bootstrap";
 import ContentCard from '@/components/contentCard/ContentCard';
-import { useRouter } from 'next/router';
+import { useRouter } from "next/navigation"
 import {createMedia, deleteMedia, getChapter, getMediaByChapterId, updateMedia} from "@/core/services/content-service";
 import ChapterDTO from "@/core/dto/content/ChapterDTO";
 import MediaDTO from "@/core/dto/content/MediaDTO";
@@ -31,7 +31,7 @@ export default function ChapterDetailsPage({ params }: { params: { chapterId: st
 
         createMedia({ chapterId, title, description, url, mediaType })
             .then((res) => {
-                router.reload();
+                router.refresh();
         }).catch((err) => {
             console.log("Unable to save Media")
         })
@@ -39,7 +39,7 @@ export default function ChapterDetailsPage({ params }: { params: { chapterId: st
 
     const updateMediaFunction = (mediaId: string, title: string) => {
         updateMedia({  mediaId: id, title }).then((res) => {
-            router.reload();
+            router.refresh();
         }).catch((err) => {
             console.log("Unable to update Media")
         })
@@ -47,7 +47,7 @@ export default function ChapterDetailsPage({ params }: { params: { chapterId: st
 
     const deleteMediaFunction = (mediaId: string) => {
         deleteMedia(mediaId).then((res) => {
-            router.reload();
+            router.refresh();
         }).catch((err) => {
             console.log("Unable to delete Media")
         })
@@ -67,7 +67,6 @@ export default function ChapterDetailsPage({ params }: { params: { chapterId: st
     useEffect(() => {
         getChapter(params.chapterId)
             .then((res) => {
-
                 setChapter(chapter);
             }).catch((error) => {
                 console.log("Unable to load data")

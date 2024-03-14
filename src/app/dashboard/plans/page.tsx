@@ -1,6 +1,6 @@
 "use client"
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/router';
+import { useRouter } from "next/navigation"
 import { Modal } from 'react-bootstrap';
 import {
     createSubscriptionOffer, deleteSubscriptionOffer,
@@ -46,7 +46,7 @@ export default function Plans() {
         createSubscriptionOffer({ title, description, price, period, active })
             .then(
                 (res) => {
-                        router.reload();
+                        router.refresh();
 
                 }
             ).catch((err) => {
@@ -60,7 +60,7 @@ export default function Plans() {
 
             .then(
                 (res) => {
-                        router.reload();
+                        router.refresh();
 
                 }
             ).catch((err) => {
@@ -73,7 +73,7 @@ export default function Plans() {
         deleteSubscriptionOffer({ subscriptionId: id })
             .then(
                 (res) => {
-                        router.reload();
+                        router.refresh();
                 }
             ).catch((err) => {
                 console.log("Unable to delete offer")

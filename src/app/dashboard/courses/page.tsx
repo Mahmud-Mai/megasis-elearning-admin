@@ -2,12 +2,13 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react'
 import { Modal } from 'react-bootstrap';
-import { useRouter } from 'next/router';
+import { useRouter } from "next/navigation"
 import CourseDTO from "@/core/dto/content/CourseDTO";
 import {createCourse, getCourses, updateCourse} from "@/core/services/content-service";
 
 export default function Courses() {
     const router = useRouter()
+    const [refresher, setRefresher] = useState(false);
     const [show, setShow] = useState(false);
     const [updating, setUpdating] = useState(false);
     const [courses, setCourses] = useState<CourseDTO[]>([]);
@@ -22,7 +23,7 @@ export default function Courses() {
     const createCourseFunction = () => {
         createCourse({ title, description })
             .then((res) => {
-                router.reload();
+                setRefresher(!refresher);
         }).catch((err) => {
             console.log("Unable to save Course")
         })
@@ -30,7 +31,7 @@ export default function Courses() {
 
     const updateCourseFunction = () => {
         updateCourse({ title, description, courseId }).then((res) => {
-                router.reload();
+            setRefresher(!refresher);
         }).catch((err) => {
             console.log("Unable to update Course")
         })
@@ -41,14 +42,15 @@ export default function Courses() {
             .then((courses) => {
                 setCourses(courses);
             }).catch((err) => {
-                console.log("Invalid email or Password")
+                console.log("Could not load courses")
                 setCourses([]);
             })
     }
 
     useEffect(() => {
         loadCoursesFunction();
-    });
+        console.log("refreshed")
+    },[refresher]);
 
     return (
         <div className="container p-3">

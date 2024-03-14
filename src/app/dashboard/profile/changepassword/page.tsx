@@ -15,6 +15,8 @@ export default function ChangePassword() {
     const loginId = localStorage.getItem("userId") || "";
     updatePassword({ loginId,  currentPassword,  newPassword })
       .then((response) => {
+        localStorage.removeItem("bearer-token");
+        localStorage.removeItem("userId");
         router.replace("/");
       }).catch((error) => {
         console.log("Operation failed")
