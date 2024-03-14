@@ -12,16 +12,16 @@ auth:
 
 
 subscriptions: /subscriptions   
-    - get sub offer:               GET     /getSubscriptionOffer               (userId, subscriptionId)
-    *- get offers:             GET     /getSubscriptionOffers
-    *- create offer:     POST    /createSubscriptionOffer            (title, description, price, period, active?)
+    - get sub offer:            GET     /getSubscriptionOffer               (userId, subscriptionId)
+    *- get offers:              GET     /getSubscriptionOffers
+    *- create offer:            POST    /createSubscriptionOffer            (title, description, price, period, active?)
 
-    *- update sub :     POST    /updateSubscriptionOffer            (subscriptionId, title, description, price, period, active?)
-    *- delete sub :     POST    /deleteSubscriptionOffer            (subscriptionId)
-    - user has sub:          POST    /checkCustomerHasActiveSubscription (userId, )
-    - confirm subscription:  POST    /confirmSubscription                (clientSecret, userId)
-    *- buy sub:              POST    /buySubscription                    (userId, subscriptionId)
-    *- get subs bought:      GET     /getSubscriptionsBought             (userId)
+    *- update sub :             POST    /updateSubscriptionOffer            (subscriptionId, title, description, price, period, active?)
+    *- delete sub :             POST    /deleteSubscriptionOffer            (subscriptionId)
+    - user has sub:             POST    /checkCustomerHasActiveSubscription (userId, )
+    - confirm subscription:     POST    /confirmSubscription                (clientSecret, userId)
+    *- buy sub:                 POST    /buySubscription                    (userId, subscriptionId)
+    *- get subs bought:         GET     /getSubscriptionsBought             (userId)
 
 
 content: 

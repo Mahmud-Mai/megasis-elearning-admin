@@ -2,21 +2,16 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react'
 import { Modal } from 'react-bootstrap';
-import axios from 'axios';
 import { useRouter } from 'next/router';
-import {createCourseUrl, getCoursesUrl, updateCourseUrl} from "@/constants";
-
-interface CourseInterface {
-    id: string;
-    title: string;
-    description: string;
-}
+import CourseDTO from '@/core/dto/content/CourseDTO';
+import { createCourse, updateCourse } from '@/core/services/content-service';
+// import {createCourseUrl, getCoursesUrl, updateCourseUrl} from "@/constants";
 
 export default function Courses() {
     const router = useRouter()
     const [show, setShow] = useState(false);
     const [updating, setUpdating] = useState(false);
-    const [courses, setCourses] = useState<CourseInterface[]>([]);
+    const [courses, setCourses] = useState<CourseDTO[]>([]);
     const handleClose = () => { setShow(false); setUpdating(false) };
     const handleShow = () => setShow(true);
 
@@ -25,34 +20,21 @@ export default function Courses() {
     const [description, setDescription] = useState("");
 
 
-    const token = localStorage.getItem("bearer-token");
 
     const saveCourse = () => {
-        fetch(createCourseUrl, {
-            method: "post",
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-            body: JSON.stringify({ title, description }),
-        }).then((res) => {
-            if (res.status == 200) {
-                router.reload();
-            }
-        }).catch((err) => {
-            console.log("Unable to save Course")
-        })
+        createCourse({ title, description })
+            .then((res) => router.reload())
+            .catch((err) => {
+                console.log("Unable to save Course")
+            })
     }
 
-    const updateCourse = () => {
-        fetch(updateCourseUrl, {
-            method: "post",
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-            body: JSON.stringify({ title, description, courseId }),
-        }).then((res) => {
-            if (res.status == 200) {
-                router.reload();
-            }
-        }).catch((err) => {
-            console.log("Unable to update Course")
-        })
+    const updateCourseFunction = () => {
+        updateCourse({ title, description, courseId })
+            .then((res) => router.reload())
+            .catch((err) => {
+                console.log("Unable to update Course")
+            })
     }
 
     const loadCourses = () => {
@@ -103,7 +85,7 @@ export default function Courses() {
                     </form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <button type="submit" onClick={() => updating ? updateCourse() : saveCourse()} className="btn m-2 px-4" style={{ backgroundColor: "#4ED164", color: "white", height: "40px", borderRadius: "20px" }}>Save</button>
+                    <button type="submit" onClick={() => updating ? updateCourseFunction() : saveCourse()} className="btn m-2 px-4" style={{ backgroundColor: "#4ED164", color: "white", height: "40px", borderRadius: "20px" }}>Save</button>
                 </Modal.Footer>
             </Modal>
             <table className="table table-hover table-responsive">
