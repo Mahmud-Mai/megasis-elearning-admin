@@ -20,10 +20,8 @@ export default function RootLayout({
   });
 
   return (
-    <html lang="en">
-      <body suppressHydrationWarning={true}>
-        <BaseAdminLayout>{children}</BaseAdminLayout>
-      </body>
-    </html >
+    <>
+      <BaseAdminLayout>{children}</BaseAdminLayout>
+    </>
   );
 }

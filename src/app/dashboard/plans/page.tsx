@@ -1,21 +1,23 @@
 "use client"
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/router';
+import { useRouter } from "next/navigation"
 import { Modal } from 'react-bootstrap';
 import {
-    createSubscriptionOfferUrl, deleteSubscriptionOfferUrl,
-    getSubscriptionOffersUrl,
-    PlanInterface,
-    updateSubscriptionOfferUrl
-} from "@/constants";
+    createSubscriptionOffer, deleteSubscriptionOffer,
+    getSubscriptionOffers,
+    updateSubscriptionOffer
+} from "@/core/services/subscription-service";
+import SubscriptionOffer from "@/core/dto/subscription/SubscriptionOffer";
 
 
 export default function Plans() {
     const router = useRouter();
+
+    const [refresher, setRefresher] = useState(false);
     const [show, setShow] = useState(false);
     const [updating, setUpdating] = useState(false);
     // plan
-    const [plans, setPlans] = useState<PlanInterface[]>([]);
+    const [plans, setPlans] = useState<SubscriptionOffer[]>([]);
     // fields
     const [id, setId] = useState("");
     const [title, setTitle] = useState("");
@@ -23,7 +25,7 @@ export default function Plans() {
     const [price, setPrice] = useState(0);
     const [period, setPeriod] = useState(1);
     const [active, setActive] = useState(true);
-    var token = localStorage.getItem("bearer-token");
+
 
 
     const handleClose = () => { setShow(false); setUpdating(false) };
@@ -31,16 +33,9 @@ export default function Plans() {
 
     // functions
     const loadPlans = () => {
-        fetch(getSubscriptionOffersUrl, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-        })
-            .then((res) => res.json())
+        getSubscriptionOffers()
             .then(
-                (res) => {
-                    const { subscriptionOffers } = res;
+                (subscriptionOffers) => {
                     setPlans(subscriptionOffers);
                 }
             ).catch((err) => {
@@ -50,75 +45,30 @@ export default function Plans() {
     }
 
     const addNewPlan = () => {
-        fetch(createSubscriptionOfferUrl, {
-            method: "POST",
-            mode: "no-cors",
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify({ title, description, price, period, active })
-        })
-            .then((res) => res.json())
-            .then(
-                (res) => {
-                    if (res.status == 200) {
-                        router.reload();
-                    }
-                }
-            ).catch((err) => {
+        createSubscriptionOffer({ title, description, price, period, active })
+            .then((res) => setRefresher(!refresher)).catch((err) => {
                 console.log("Unable to save offer")
                 setPlans([]);
             })
     }
 
     const updatePlan = () => {
-        fetch(updateSubscriptionOfferUrl, {
-            method: "POST",
-            mode: "no-cors",
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify({ title, description, price, period, active }),
-        })
-            .then((res) => res.json())
-            .then(
-                (res) => {
-                    if (res.status == 200) {
-                        router.reload();
-                    }
-                }
-            ).catch((err) => {
+        updateSubscriptionOffer({ subscriptionId: id, title, description, price, period, active })
+            .then((res) => setRefresher(!refresher)).catch((err) => {
                 console.log("Unable to save offer")
                 setPlans([]);
             })
     }
 
     const deletePlan = () => {
-        fetch(deleteSubscriptionOfferUrl, {
-            method: "POST",
-            mode: "no-cors",
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify({ subscriptionOfferId: id }),
-        })
-            .then((res) => res.json())
-            .then(
-                (res) => {
-                    if (res.status == 200) {
-                        router.reload();
-                    }
-                }
-            ).catch((err) => {
+        deleteSubscriptionOffer({ subscriptionId: id })
+            .then((res) => setRefresher(!refresher)).catch((err) => {
                 console.log("Unable to delete offer")
                 setPlans([]);
             })
     }
 
-    const editPlan = (plan: PlanInterface) => {
+    const editPlan = (plan: SubscriptionOffer) => {
         setId(plan.id);
         setTitle(plan.title);
         setDescription(plan.description);
@@ -131,7 +81,8 @@ export default function Plans() {
 
     useEffect(() => {
         loadPlans();
-    },);
+    },[refresher]);
+
     return (
         <div className="container p-3">
             <div className='d-flex align-items-center justify-content-between py-3'>

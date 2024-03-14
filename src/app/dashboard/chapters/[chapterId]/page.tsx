@@ -4,7 +4,7 @@ import { Container, Modal } from 'react-bootstrap';
 import { useState } from 'react';
 import { Row, Col, Image } from "react-bootstrap";
 import ContentCard from '@/components/contentCard/ContentCard';
-import { useRouter } from 'next/router';
+import { useRouter } from "next/navigation"
 import {createMedia, deleteMedia, getChapter, getMediaByChapterId, updateMedia} from "@/core/services/content-service";
 import ChapterDTO from "@/core/dto/content/ChapterDTO";
 import MediaDTO from "@/core/dto/content/MediaDTO";
@@ -12,12 +12,13 @@ import MediaDTO from "@/core/dto/content/MediaDTO";
 export default function ChapterDetailsPage({ params }: { params: { chapterId: string } }) {
     const router = useRouter()
 
+    const [refresher, setRefresher] = useState(false);
     const [show, setShow] = useState(false);
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [url, setUrl] = useState("");
     const [mediaType, setMediaType] = useState("");
-    const [id, setId] = useState("");
+    const [mediaId, setMediaId] = useState("");
     const [updating, setUpdating] = useState(false);
 
     const handleClose = () => { setShow(false); setUpdating(false) };
@@ -31,15 +32,17 @@ export default function ChapterDetailsPage({ params }: { params: { chapterId: st
 
         createMedia({ chapterId, title, description, url, mediaType })
             .then((res) => {
-                router.reload();
+                setRefresher(!refresher);
+                setShow(false);
         }).catch((err) => {
             console.log("Unable to save Media")
         })
     }
 
-    const updateMediaFunction = (mediaId: string, title: string) => {
-        updateMedia({  mediaId: id, title }).then((res) => {
-            router.reload();
+    const updateMediaFunction = ( ) => {
+        updateMedia({  mediaId, title }).then((res) => {
+            setRefresher(!refresher);
+            setShow(false);
         }).catch((err) => {
             console.log("Unable to update Media")
         })
@@ -47,7 +50,7 @@ export default function ChapterDetailsPage({ params }: { params: { chapterId: st
 
     const deleteMediaFunction = (mediaId: string) => {
         deleteMedia(mediaId).then((res) => {
-            router.reload();
+            setRefresher(!refresher);
         }).catch((err) => {
             console.log("Unable to delete Media")
         })
@@ -58,7 +61,7 @@ export default function ChapterDetailsPage({ params }: { params: { chapterId: st
         setDescription(media.description);
         setUrl(media.url);
         setMediaType(media.mediaType);
-        setId(media.id ?? "");
+        setMediaId(media.id ?? "");
         setUpdating(true);
         setShow(true);
     }
@@ -67,12 +70,11 @@ export default function ChapterDetailsPage({ params }: { params: { chapterId: st
     useEffect(() => {
         getChapter(params.chapterId)
             .then((res) => {
-
                 setChapter(chapter);
             }).catch((error) => {
                 console.log("Unable to load data")
             })
-    });
+    },[params.chapterId]);
 
     // get list of media for this chapter
     useEffect(() => {
@@ -84,7 +86,7 @@ export default function ChapterDetailsPage({ params }: { params: { chapterId: st
                 setMediaList([]);
             })
 
-    });
+    },[refresher]);
 
     return (
         <Container className='pt-3'>
@@ -121,18 +123,25 @@ export default function ChapterDetailsPage({ params }: { params: { chapterId: st
                             </div>
                             <div className="form-group">
                                 <label htmlFor="title">Title</label>
-                                <input value={title} onChange={(e) => setTitle(e.target.value)} type="text" className="form-control" id="title" placeholder="name@example.com" />
+                                <input value={title} onChange={(e) => setTitle(e.target.value)} type="text" className="form-control" id="title" />
                             </div>
                             <div className="form-group">
                                 <label htmlFor="body">Body</label>
                                 <textarea value={description} onChange={(e) => setDescription(e.target.value)} name="body" className="form-control" id="body" >{description}</textarea>
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="media-type">Media Type</label>
+                                <select value={mediaType} onChange={(e) => setMediaType(e.target.value)} className="form-control" id="media-type">
+                                    <option value="VIDEO">Video</option>
+                                    <option value="DOCUMENT">Document</option>
+                                </select>
                             </div>
                             <div className="d-flex align-items-center justify-content-evenly">
                             </div>
                         </form>
                     </Modal.Body>
                     <Modal.Footer>
-                        <button onClick={() => updating ? updateMediaFunction(id, title) : saveMedia()} type="submit" className="btn m-2 px-4" style={{ backgroundColor: "#4ED164", color: "white", height: "40px", borderRadius: "20px" }}>Save</button>
+                        <button onClick={() => updating ? updateMediaFunction() : saveMedia()} type="submit" className="btn m-2 px-4" style={{ backgroundColor: "#4ED164", color: "white", height: "40px", borderRadius: "20px" }}>Save</button>
                     </Modal.Footer>
                 </Modal>
             </div>
@@ -145,7 +154,7 @@ export default function ChapterDetailsPage({ params }: { params: { chapterId: st
             <Row className='my-1'>
                 {mediaList.map((media, index) =>
                     <Col key={index} sm="12" md="6" lg="4" className="my-1" >
-                        <ContentCard title={media.title} mediaType={media.mediaType} imageSource={media.url} />
+                        <ContentCard title={media.title} mediaType={media.mediaType} url={media.url} />
                         <button onClick={() => editMedia(media)} className="btn btn-secondary m-2">Edit</button>
                         <button onClick={() => deleteMediaFunction(media.id)} className="btn btn-danger m-2">Delete</button>
                     </Col>

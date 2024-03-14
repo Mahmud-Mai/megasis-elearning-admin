@@ -2,75 +2,90 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react'
 import { Modal } from "react-bootstrap"
-import { useRouter } from 'next/navigation';
-import ChapterDTO from '@/core/dto/content/ChapterDTO';
-import CourseDTO from '@/core/dto/content/CourseDTO';
-import { createChapter, deleteChapter, getChaptersByCourseId, getCourse, updateChapter } from '@/core/services/content-service';
+import { useRouter } from "next/navigation"
+import {
+    createChapter,
+    deleteChapter,
+    getChaptersByCourseId,
+    getCourse,
+    updateChapter
+} from "@/core/services/content-service";
+import ChapterDTO from "@/core/dto/content/ChapterDTO";
+import CourseDTO from "@/core/dto/content/CourseDTO";
 
 export default function CourseDetails({ params }: { params: { courseId: string } }) {
     const router = useRouter();
+
+    const [refresher, setRefresher] = useState(false);
     const [course, setCourse] = useState<CourseDTO>();
     const [show, setShow] = useState(false);
-    const [updating, setupdating] = useState(false);
+    const [updating, setUpdating] = useState(false);
     const [chapters, setChapters] = useState<ChapterDTO[]>([]);
-    var token = localStorage.getItem("bearer-token");
 
     const [chapterId, setChapterId] = useState("");
     const [courseId, setCourseId] = useState("");
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
 
-    const handleClose = () => { setShow(false); setupdating(false) };
+    const handleClose = () => { setShow(false); setUpdating(false) };
     const handleShow = () => setShow(true);
 
 
-    const saveChapter = () => {
+    const createChapterFunction = () => {
         createChapter({ courseId, title, description })
-            .then((data) => router.refresh())
+            .then((_) => {
+                setRefresher(!refresher);
+                setShow(false);
+            })
             .catch((err) => console.log(err))
     }
 
     const updateChapterFunction = () => {
-        updateChapter({ chapterId, title, description })
-            .then((data) => router.refresh())
+        updateChapter({ chapterId: id,  title, description })
+            .then((_) => {
+                setRefresher(!refresher);
+                setShow(false);
+            })
             .catch((err) => console.log(err))
     }
-
-    const deleteChapterFunction = (id: string) => {
-        deleteChapter(id)
-            .then((data) => router.refresh())
+    const deleteChapterFunction = (chapter: ChapterDTO) => {
+        deleteChapter(chapter.id )
+            .then((_) => setRefresher(!refresher))
             .catch((err) => console.log(err))
     }
 
     const editChapter = (chapter: ChapterDTO) => {
         setChapterId(chapter.id);
+    const editChapter = (chapter: ChapterDTO) => {
+        setId(chapter.id);
         setTitle(chapter.title);
         setDescription(chapter.description);
         setCourseId(chapter.courseId);
-        setupdating(true);
+        setUpdating(true);
         setShow(true);
     }
 
     // load course info
     useEffect(() => {
+        setCourseId(params.courseId)
         getCourse(params.courseId)
-            .then((res) => {
-                setCourse(res);
+            .then((course) => {
+                setCourse(course);
             }).catch((error) => {
                 console.log("Unable to load data")
             })
-    });
+    },[params.courseId]);
 
     // get list of chapters
     useEffect(() => {
-        getChaptersByCourseId(params.courseId)
-            .then((response) => {
-                setChapters(response);
+        getChaptersByCourseId( params.courseId )
+            .then((chapters) => {
+                setChapters(chapters);
             }).catch((error) => {
                 console.log("failed to load chapters")
                 setChapters([]);
             })
-    });
+    },[params.courseId,refresher]);
 
 
     return (
@@ -102,7 +117,7 @@ export default function CourseDetails({ params }: { params: { courseId: string }
                     </form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <button onClick={() => updating ? updateChapterFunction() : saveChapter()} type="submit" className="btn m-2 px-4" style={{ backgroundColor: "#4ED164", color: "white", height: "40px", borderRadius: "20px" }}>Save</button>
+                    <button onClick={() => updating ? updateChapterFunction() : createChapterFunction()} type="submit" className="btn m-2 px-4" style={{ backgroundColor: "#4ED164", color: "white", height: "40px", borderRadius: "20px" }}>Save</button>
                 </Modal.Footer>
             </Modal>
             <div className="text-center">
@@ -131,7 +146,7 @@ export default function CourseDetails({ params }: { params: { courseId: string }
                             <td>
                                 <Link href={`/dashboard/chapters/${chapter.id}`} className="btn btn-primary">View</Link>
                                 <button className="btn btn-secondary" onClick={() => editChapter(chapter)}>Edit</button>
-                                <button className="btn btn-danger" onClick={() => deleteChapterFunction(chapter.id)}>Delete</button>
+                                <button className="btn btn-danger" onClick={() => deleteChapterFunction(chapter)}>Delete</button>
                             </td>
                         </tr>)
                     }

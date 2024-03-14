@@ -1,28 +1,21 @@
 "use client"
 import { useRouter } from "next/navigation"
 import { useState } from 'react';
-import {updatePasswordUrl} from "@/constants";
+import {updatePassword} from "@/core/services/login-service";
 
 export default function ChangePassword() {
   const router = useRouter();
 
-  const [oldPassword, setOldPassword] = useState('');
+  const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
 
-  var token = localStorage.getItem("bearer-token");
 
   const handleSubmit = () => {
-    fetch(updatePasswordUrl, {
-      method: "post",
-      mode: "no-cors",
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      body: JSON.stringify({ currentPassword: oldPassword, newPassword: newPassword }),
-    })
-      .then((res) => res.json())
+    const loginId = localStorage.getItem("userId") || "";
+    updatePassword({ loginId,  currentPassword,  newPassword })
       .then((response) => {
+        localStorage.removeItem("bearer-token");
+        localStorage.removeItem("userId");
         router.replace("/");
       }).catch((error) => {
         console.log("Operation failed")
@@ -40,7 +33,7 @@ export default function ChangePassword() {
                   <h3 className=" mb-2 fw-bold text-uppercase">Change Password</h3>
                   <div className="form-group text-start my-3">
                     <label className="form-label" htmlFor="password">Current Password</label>
-                    <input value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} name="password" type="password" id="password" className="form-control" />
+                    <input value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} name="password" type="password" id="password" className="form-control" />
                   </div>
                   <div className="form-group text-start my-3" >
                     <label className="form-label" htmlFor="new-password">New Password</label>

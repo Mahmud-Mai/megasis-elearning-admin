@@ -2,13 +2,13 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react'
 import { Modal } from 'react-bootstrap';
-import { useRouter } from 'next/router';
-import CourseDTO from '@/core/dto/content/CourseDTO';
-import { createCourse, updateCourse } from '@/core/services/content-service';
-// import {createCourseUrl, getCoursesUrl, updateCourseUrl} from "@/constants";
+import { useRouter } from "next/navigation"
+import CourseDTO from "@/core/dto/content/CourseDTO";
+import {createCourse, getCourses, updateCourse} from "@/core/services/content-service";
 
 export default function Courses() {
     const router = useRouter()
+    const [refresher, setRefresher] = useState(false);
     const [show, setShow] = useState(false);
     const [updating, setUpdating] = useState(false);
     const [courses, setCourses] = useState<CourseDTO[]>([]);
@@ -20,40 +20,36 @@ export default function Courses() {
     const [description, setDescription] = useState("");
 
 
-
-    const saveCourse = () => {
+    const createCourseFunction = () => {
         createCourse({ title, description })
-            .then((res) => router.reload())
-            .catch((err) => {
-                console.log("Unable to save Course")
-            })
+            .then((res) => {
+                setRefresher(!refresher);
+        }).catch((err) => {
+            console.log("Unable to save Course")
+        })
     }
 
     const updateCourseFunction = () => {
-        updateCourse({ title, description, courseId })
-            .then((res) => router.reload())
-            .catch((err) => {
-                console.log("Unable to update Course")
-            })
+        updateCourse({ title, description, courseId }).then((res) => {
+            setRefresher(!refresher);
+        }).catch((err) => {
+            console.log("Unable to update Course")
+        })
     }
 
-    const loadCourses = () => {
-        fetch(getCoursesUrl, {
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-        })
-            .then(res => res.json())
-            .then((res) => {
-                const { courses } = res;
+    const loadCoursesFunction = () => {
+        getCourses()
+            .then((courses) => {
                 setCourses(courses);
             }).catch((err) => {
-                console.log("Invalid email or Password")
+                console.log("Could not load courses")
                 setCourses([]);
             })
     }
 
     useEffect(() => {
-        loadCourses();
-    });
+        loadCoursesFunction();
+    },[refresher]);
 
     return (
         <div className="container p-3">
@@ -85,7 +81,7 @@ export default function Courses() {
                     </form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <button type="submit" onClick={() => updating ? updateCourseFunction() : saveCourse()} className="btn m-2 px-4" style={{ backgroundColor: "#4ED164", color: "white", height: "40px", borderRadius: "20px" }}>Save</button>
+                    <button type="submit" onClick={() => updating ? updateCourseFunction() : createCourseFunction()} className="btn m-2 px-4" style={{ backgroundColor: "#4ED164", color: "white", height: "40px", borderRadius: "20px" }}>Save</button>
                 </Modal.Footer>
             </Modal>
             <table className="table table-hover table-responsive">

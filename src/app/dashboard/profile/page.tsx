@@ -3,11 +3,13 @@ import ImageAvater from '@/components/imageAvater/imageAvater'
 import Link from 'next/link';
 import React from 'react'
 import { useState, useEffect } from 'react';
+import ProfileDTO from "@/core/dto/login/ProfileDTO";
+import {getProfile} from "@/core/services/login-service";
 
 export default function ProfilePage() {
+  const [refresher, setRefresher] = useState(false);
   const [editMode, setEditMode] = useState(false);
-  const [profileData, setProfileData] = useState<ProfileInterface>();
-  const token = localStorage.getItem("bearer-token");
+  const [profileData, setProfileData] = useState<ProfileDTO>();
 
 
   //TODO : FIX This all to coincide with server API
@@ -34,21 +36,13 @@ export default function ProfilePage() {
   // load profile data
   useEffect(
     () => {
-
-      fetch(getProfileUrl, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-      })
-        .then((res) => res.json())
-        .then((response) => {
-          const { profileData } = response
+      getProfile()
+        .then((profileData) => {
           setProfileData(profileData)
         }).catch((error) => {
           console.log("Operation failed")
         });
-    });
+    }, [refresher]);
 
   const handleFormSubmit = () => {
     // TODO implement profile update
