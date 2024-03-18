@@ -27,7 +27,7 @@ export default function BaseAdminLayout({ children }: { children: React.ReactNod
         </div>
         : <></>}
       <div className='h-screen w-[100%] flex flex-row'>
-        <div className="h-screen hidden lg:block xl:block ">
+        <div className="h-screen hidden lg:block xl:block z-50" >
           <SideBar />
         </div>
         <div className="w-[100%] h-screen p-0 m-0" style={{ backgroundColor: "#F6F6F6" }}>

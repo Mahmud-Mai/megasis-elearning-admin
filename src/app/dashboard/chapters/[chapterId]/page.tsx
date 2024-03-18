@@ -1,13 +1,41 @@
 "use client"
 import React, { useEffect } from 'react';
-import { Container, Modal } from 'react-bootstrap';
 import { useState } from 'react';
-import { Row, Col, Image } from "react-bootstrap";
 import ContentCard from '@/components/contentCard/ContentCard';
 import { useRouter } from "next/navigation"
-import {createMedia, deleteMedia, getChapter, getMediaByChapterId, updateMedia} from "@/core/services/content-service";
+import { createMedia, deleteMedia, getChapter, getMediaByChapterId, updateMedia } from "@/core/services/content-service";
 import ChapterDTO from "@/core/dto/content/ChapterDTO";
 import MediaDTO from "@/core/dto/content/MediaDTO";
+
+import { Button } from "@/components/ui/button"
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card"
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Textarea } from '@/components/ui/textarea';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
+
 
 export default function ChapterDetailsPage({ params }: { params: { chapterId: string } }) {
     const router = useRouter()
@@ -34,13 +62,13 @@ export default function ChapterDetailsPage({ params }: { params: { chapterId: st
             .then((res) => {
                 setRefresher(!refresher);
                 setShow(false);
-        }).catch((err) => {
-            console.log("Unable to save Media")
-        })
+            }).catch((err) => {
+                console.log("Unable to save Media")
+            })
     }
 
-    const updateMediaFunction = ( ) => {
-        updateMedia({  mediaId, title }).then((res) => {
+    const updateMediaFunction = () => {
+        updateMedia({ mediaId, title }).then((res) => {
             setRefresher(!refresher);
             setShow(false);
         }).catch((err) => {
@@ -74,7 +102,7 @@ export default function ChapterDetailsPage({ params }: { params: { chapterId: st
             }).catch((error) => {
                 console.log("Unable to load data")
             })
-    },[params.chapterId]);
+    }, [params.chapterId]);
 
     // get list of media for this chapter
     useEffect(() => {
@@ -86,80 +114,92 @@ export default function ChapterDetailsPage({ params }: { params: { chapterId: st
                 setMediaList([]);
             })
 
-    },[refresher]);
+    }, [refresher]);
 
     return (
-        <Container className='pt-3'>
-            <div>
-                <div className="text-end">
-                    <button
-                        className='btn btn-larg text-light bg-primary'
-                        onClick={handleShow}>Add Media</button>
-                    <button
-                        className='btn text-light bg-secondary mx-1'
-                        onClick={handleShow}>Edit chapter</button>
-                </div>
-                <div className="text-center">
-                    <h3 className="fw-bold-fs-3 text-capitalize">
-                        {chapter?.title}
-                    </h3>
-                    <p>{chapter?.description}</p>
-                </div>
-                <Modal
-                    show={show}
-                    onHide={handleClose}
-                    backdrop="static"
-                    keyboard={false}
-                    centered
-                >
-                    <Modal.Header closeButton>
-                        <Modal.Title> Add New Section </Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <form>
-                            <div className="form-group form-control">
-                                <label className="form-label" htmlFor="customFile">Media url</label>
-                                <input value={url} onChange={(e) => setUrl(e.target.value)} type="text" className="form-control" id="customFile" />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="title">Title</label>
-                                <input value={title} onChange={(e) => setTitle(e.target.value)} type="text" className="form-control" id="title" />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="body">Body</label>
-                                <textarea value={description} onChange={(e) => setDescription(e.target.value)} name="body" className="form-control" id="body" >{description}</textarea>
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="media-type">Media Type</label>
-                                <select value={mediaType} onChange={(e) => setMediaType(e.target.value)} className="form-control" id="media-type">
-                                    <option value="VIDEO">Video</option>
-                                    <option value="DOCUMENT">Document</option>
-                                </select>
-                            </div>
-                            <div className="d-flex align-items-center justify-content-evenly">
-                            </div>
-                        </form>
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <button onClick={() => updating ? updateMediaFunction() : saveMedia()} type="submit" className="btn m-2 px-4" style={{ backgroundColor: "#4ED164", color: "white", height: "40px", borderRadius: "20px" }}>Save</button>
-                    </Modal.Footer>
-                </Modal>
+        <div className='pt-3'>
+            <div className="text-center">
+                <h3 className="fw-bold-fs-3 text-capitalize">
+                    {chapter?.title}
+                </h3>
+                <p>{chapter?.description}</p>
             </div>
+            <Dialog>
+                <DialogTrigger asChild>
+                    <Button variant="outline">Add New Media </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                        <DialogTitle>{updating ? "Update" : "Add New"} Media </DialogTitle>
+                    </DialogHeader>
+                    <div className="grid gap-4 py-4">
+                        <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="name" className="text-right">Media url</Label>
+                            <Input
+                                id="url"
+                                className="col-span-3"
+                                value={url} onChange={(e) => setUrl(e.target.value)}
+                                placeholder="https://youtube.com"
+                            />
+                        </div>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="name" className="text-right">Title</Label>
+                            <Input
+                                id="title"
+                                className="col-span-3"
+                                value={title} onChange={(e) => setTitle(e.target.value)}
+                                placeholder="Media Title"
+                            />
+                        </div>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="description" className="text-right">Description</Label>
+                            <Textarea
+                                id="description"
+                                className="col-span-3"
+                                value={description} onChange={(e) => setDescription(e.target.value)}
+                                placeholder="Description"
+                            >{description}</Textarea>
+                        </div>
+
+                        <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="description" className="text-right">Media Type</Label>
+                            <Select value={mediaType} onValueChange={(e) => setMediaType(e)}>
+                                <SelectTrigger id="media-type">
+                                    <SelectValue placeholder="Select" />
+                                </SelectTrigger>
+                                <SelectContent position="popper">
+                                    <SelectItem value="DOCUMENT">Document</SelectItem>
+                                    <SelectItem value="VIDEO">Video</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                    </div>
+                    <DialogFooter>
+                        <Button onClick={() => updating ? updateMediaFunction() : saveMedia()} type="submit" >Save</Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
             <div className="text-start">
-                <span className='fw-bold fs-4 text-uppercase'>
+                <span className='font-bold uppercase'>
                     Media List
                 </span>
             </div>
             <hr />
-            <Row className='my-1'>
+            <div className='grid'>
                 {mediaList.map((media, index) =>
-                    <Col key={index} sm="12" md="6" lg="4" className="my-1" >
-                        <ContentCard title={media.title} mediaType={media.mediaType} url={media.url} />
-                        <button onClick={() => editMedia(media)} className="btn btn-secondary m-2">Edit</button>
-                        <button onClick={() => deleteMediaFunction(media.id)} className="btn btn-danger m-2">Delete</button>
-                    </Col>
+                    <Card key={index} className="w-[350px]">
+                        <CardContent>
+                            <ContentCard title={media.title} mediaType={media.mediaType} url={media.url} />
+                        </CardContent>
+                        <CardFooter className="flex justify-between">
+                            <Button onClick={() => editMedia(media)} variant="secondary">Edit</Button>
+                            <Button onClick={() => deleteMediaFunction(media.id)} variant="destructive">Delete</Button>
+                        </CardFooter>
+                    </Card>
+
                 )}
-            </Row>
-        </Container>
+            </div>
+        </div>
     )
 }

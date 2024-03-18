@@ -1,20 +1,42 @@
 "use client"
 import { useState, useEffect } from 'react'
 import { useRouter } from "next/navigation"
-import { Modal } from 'react-bootstrap';
 import {
     createSubscriptionOffer, deleteSubscriptionOffer,
     getSubscriptionOffers,
     updateSubscriptionOffer
 } from "@/core/services/subscription-service";
 import SubscriptionOffer from "@/core/dto/subscription/SubscriptionOffer";
+import {
+    Table,
+    TableBody,
+    TableCaption,
+    TableCell,
+    TableFooter,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/components/ui/table"
+import { Button } from "@/components/ui/button";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import { Checkbox } from "@/components/ui/checkbox"
 
 
 export default function Plans() {
     const router = useRouter();
 
     const [refresher, setRefresher] = useState(false);
-    const [show, setShow] = useState(false);
     const [updating, setUpdating] = useState(false);
     // plan
     const [plans, setPlans] = useState<SubscriptionOffer[]>([]);
@@ -24,12 +46,8 @@ export default function Plans() {
     const [description, setDescription] = useState("");
     const [price, setPrice] = useState(0);
     const [period, setPeriod] = useState(1);
-    const [active, setActive] = useState(true);
+    const [active, setActive] = useState(false);
 
-
-
-    const handleClose = () => { setShow(false); setUpdating(false) };
-    const handleShow = () => setShow(true);
 
     // functions
     const loadPlans = () => {
@@ -46,7 +64,8 @@ export default function Plans() {
 
     const addNewPlan = () => {
         createSubscriptionOffer({ title, description, price, period, active })
-            .then((res) => setRefresher(!refresher)).catch((err) => {
+            .then((res) => setRefresher(!refresher))
+            .catch((err) => {
                 console.log("Unable to save offer")
                 setPlans([]);
             })
@@ -76,7 +95,7 @@ export default function Plans() {
         setPeriod(plan.period);
         setActive(plan.active);
         setUpdating(true);
-        setShow(true);
+        // setShow(true);
     }
 
     useEffect(() => {
@@ -85,79 +104,95 @@ export default function Plans() {
 
     return (
         <div className="container p-3">
-            <div className='d-flex align-items-center justify-content-between py-3'>
-                <span className='fw-bold text-uppercase fs-4'>List of Subscription Plans</span> <span><button className="btn btn-primary text-end" onClick={handleShow}>Add New Plan</button></span>
-            </div>
-            <Modal
-                show={show}
-                onHide={handleClose}
-                backdrop="static"
-                keyboard={false}
-                centered
-            >
-                <Modal.Header closeButton>
-                    <Modal.Title> {updating ? "Update" : "Add New"} Subscription Offer </Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <form>
+            <Dialog>
+                <DialogTrigger asChild>
+                    <Button variant="outline">Add New Subscription Offer </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                        <DialogTitle>Add Subscription Offer</DialogTitle>
+                    </DialogHeader>
+                    <div className="grid gap-4 py-4">
                         <input value={id} type="hidden" className="form-control" id="customFile" />
-                        <div className="form-group">
-                            <label htmlFor="title">Title</label>
-                            <input value={title} onChange={(e) => setTitle(e.target.value)} type="text" className="form-control" id="title" placeholder="name@example.com" />
+                        <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="name" className="text-right">Title</Label>
+                            <Input
+                                id="title"
+                                defaultValue="Pedro Duarte"
+                                className="col-span-3"
+                                value={title} onChange={(e) => setTitle(e.target.value)}
+                                placeholder="name@example.com"
+                            />
                         </div>
-                        <div className="form-group">
-                            <label htmlFor="body">Description</label>
-                            <textarea value={description} onChange={(e) => setDescription(e.target.value)} name="body" className="form-control" id="body" >{description}</textarea>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="description" className="text-right">Description</Label>
+                            <Textarea
+                                id="description"
+                                className="col-span-3"
+                                value={description} onChange={(e) => setDescription(e.target.value)}
+                                placeholder="Description"
+                            />
                         </div>
-                        <div className="form-group">
-                            <label htmlFor="title">Price</label>
-                            <input value={price} onChange={(e) => setPrice(parseFloat(e.target.value))} type="number" className="form-control" id="title" />
+                        <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="price" className="text-right">Price</Label>
+                            <Input
+                                id="price"
+                                className="col-span-3"
+                                value={price}
+                                onChange={(e) => setPrice(parseFloat(e.target.value))}
+                                type="number"
+                            />
                         </div>
-                        <div className="form-group">
-                            <label htmlFor="title">Period (months)</label>
-                            <input value={period} onChange={(e) => setPeriod(parseInt(e.target.value))} type="number" className="form-control" id="title" />
+                        <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="period" className="text-right">Period (Months)</Label>
+                            <Input
+                                id="period"
+                                className="col-span-3"
+                                value={period}
+                                onChange={(e) => setPeriod(parseInt(e.target.value))}
+                                type="number"
+                            />
                         </div>
-                        <div className="form-check form-switch">
-                            <input className="form-check-input" type="checkbox" id="activeCheckBox" checked={active} onChange={(e) => setActive(e.target.checked)} />
-                            <label className="form-check-label" htmlFor="activeCheckBox"> {active ? "Active" : "Inactive"}</label>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="active" className="text-right">Active </Label>
+                            <Checkbox checked={active} onCheckedChange={() => setActive(!active)} />
                         </div>
-                        <div className="d-flex align-items-center justify-content-evenly">
-                        </div>
-                    </form>
-                </Modal.Body>
-                <Modal.Footer>
-                    <button onClick={() => updating ? updatePlan() : addNewPlan()} type="submit" className="btn m-2 px-4" style={{ backgroundColor: "#4ED164", color: "white", height: "40px", borderRadius: "20px" }}>Save</button>
-                </Modal.Footer>
-            </Modal>
-            <table className="table table-hover table-responsive">
-                <thead className="thead-dark bg-dark">
-                    <tr className='text-uppercase'>
-                        <th scope="col">Title</th>
-                        <th scope="col">Description</th>
-                        <th scope="col">Price</th>
-                        <th scope="col">period</th>
-                        <th scope="col">Active</th>
-                        <th scope="col">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {
-                        plans.map((plan, index) => <tr key={index}>
-                            <td>{plan.title}</td>
-                            <td>{plan.description}</td>
-                            <td>${plan.price}</td>
-                            <td>{plan.period} Months</td>
-                            <td>
-                                <div style={{ height: "15px", width: "15px" }} className={`rounded-circle bg-${plan.active ? 'success' : 'dander'}`}></div>
-                            </td>
-                            <td>
-                                <button className="btn btn-secondary" onClick={() => editPlan(plan)} >Edit</button>
-                                <button className="btn btn-danger" onClick={() => deletePlan()} >Delete</button>
-                            </td>
-                        </tr>)
-                    }
-                </tbody>
-            </table>
+                    </div>
+                    <DialogFooter>
+                        <Button onClick={() => updating ? updatePlan() : addNewPlan()} type="submit" >Save</Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+            <Table>
+                <TableCaption>A list of Subscription Offers.</TableCaption>
+                <TableHeader>
+                    <TableRow>
+                        <TableHead>Title</TableHead>
+                        <TableHead>Description</TableHead>
+                        <TableHead>Price</TableHead>
+                        <TableHead>period</TableHead>
+                        <TableHead>Active</TableHead>
+                        <TableHead>Action</TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    {plans.map((plan, index) => (
+                        <TableRow key={index}>
+                            <TableCell className="font-medium">{plan.title}</TableCell>
+                            <TableCell>{plan.description}</TableCell>
+                            <TableCell>{plan.price}</TableCell>
+                            <TableCell>{plan.period} Months</TableCell>
+                            <TableCell>
+                                <div style={{ height: "15px", width: "15px", borderRadius: "50%", backgroundColor: plan.active ? "green" : "red" }}></div>
+                            </TableCell>
+                            <TableCell>
+                                <Button variant="secondary" onClick={() => editPlan(plan)} >Edit</Button>
+                                <Button variant="destructive" onClick={() => deletePlan()} >Delete</Button>
+                            </TableCell>
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
         </div >
     )
 }

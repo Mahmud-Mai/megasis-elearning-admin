@@ -11,12 +11,12 @@ export default function RootLayout({
 }>) {
   const router = useRouter();
 
-  // useEffect(() => {
-  //   const token = localStorage.getItem('bearer-token');
-  //   if (!token) {
-  //     router.push('/');
-  //   }
-  // });
+  useEffect(() => {
+    const token = localStorage.getItem('bearer-token');
+    if (!token) {
+      router.push('/');
+    }
+  });
 
   return (
     <BaseAdminLayout>

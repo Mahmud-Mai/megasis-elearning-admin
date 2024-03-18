@@ -1,7 +1,19 @@
 "use client"
 import { useRouter } from "next/navigation"
 import { useState } from 'react';
-import {updatePassword} from "@/core/services/login-service";
+import { updatePassword } from "@/core/services/login-service";
+import { Button } from "@/components/ui/button"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Alert } from "react-bootstrap";
 
 export default function ChangePassword() {
   const router = useRouter();
@@ -12,7 +24,10 @@ export default function ChangePassword() {
 
   const handleSubmit = () => {
     const loginId = localStorage.getItem("userId") || "";
-    updatePassword({ loginId,  currentPassword,  newPassword })
+    if (currentPassword == "" || newPassword == "") {
+      alert("Both fields are required");
+    }
+    updatePassword({ loginId, currentPassword, newPassword })
       .then((response) => {
         localStorage.removeItem("bearer-token");
         localStorage.removeItem("userId");
@@ -23,29 +38,29 @@ export default function ChangePassword() {
   }
 
   return (
-    <section className="vh-100 gradient-custom">
-      <div className="container py-3 h-100">
-        <div className="row d-flex justify-content-center align-items-center h-100">
-          <div className="col-12 col-md-8 col-lg-6 col-xl-5">
-            <div className="shadow rounded m-2 text-dark" style={{ borderRadius: "1rem", backgroundColor: "white" }}>
-              <div className="card-body p-4 text-center">
-                <form className="mb-md-5 mt-md-4">
-                  <h3 className=" mb-2 fw-bold text-uppercase">Change Password</h3>
-                  <div className="form-group text-start my-3">
-                    <label className="form-label" htmlFor="password">Current Password</label>
-                    <input value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} name="password" type="password" id="password" className="form-control" />
-                  </div>
-                  <div className="form-group text-start my-3" >
-                    <label className="form-label" htmlFor="new-password">New Password</label>
-                    <input value={newPassword} onChange={(e) => setNewPassword(e.target.value)} name="new-password" type="new-password" id="new-password" className="form-control" />
-                  </div>
-                </form>
-                <button onClick={handleSubmit} className="btn btn-outline-primary btn-lg px-5">Submit</button>
+    <section className="flex  align-middle justify-center">
+      <Card className="w-[350px] m-5">
+        <CardHeader>
+          <CardTitle className="text-center uppercase font-bold">Change Password</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form>
+            <div className="grid w-full items-center gap-4">
+              <div className="flex flex-col space-y-1.5">
+                <Label htmlFor="name">Current Password</Label>
+                <Input value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} id="currentPassword" placeholder="Your Current Password" type="password" />
+              </div>
+              <div className="flex flex-col space-y-1.5">
+                <Label htmlFor="name">New Password</Label>
+                <Input value={newPassword} onChange={(e) => setNewPassword(e.target.value)} id="newPassword" placeholder="New Current Password" type="password" />
               </div>
             </div>
-          </div>
-        </div>
-      </div>
+          </form>
+        </CardContent>
+        <CardFooter className="flex justify-evenly">
+          <Button onClick={handleSubmit} >Submit</Button>
+        </CardFooter>
+      </Card>
     </section>
   )
 }

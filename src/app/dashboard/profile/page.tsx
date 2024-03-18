@@ -4,12 +4,38 @@ import Link from 'next/link';
 import React from 'react'
 import { useState, useEffect } from 'react';
 import ProfileDTO from "@/core/dto/login/ProfileDTO";
-import {getProfile} from "@/core/services/login-service";
+import { getProfile } from "@/core/services/login-service";
+
+import { Button } from "@/components/ui/button"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+
+
 
 export default function ProfilePage() {
   const [refresher, setRefresher] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [profileData, setProfileData] = useState<ProfileDTO>();
+
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [digits, setDigits] = useState("");
+  const [country, setCountry] = useState("");
 
 
   //TODO : FIX This all to coincide with server API
@@ -49,44 +75,51 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="py-3 px-5">
-      <div className="rounded p-5 shadow">
-        <div className="text-end">
-          <Link href="/dashboard/profile/changepassword" className="btn btn-secondary">change password</Link>
-        </div>
-        <ImageAvater size={60} alt="" src="" />
-        <form method='post' onSubmit={handleFormSubmit}>
-          <div className="form-group">
-            <label htmlFor="title">Full Name</label>
-            <input readOnly={!editMode} value={profileData?.name} type="text" className="form-control" id="title" />
-          </div>
-          <div className="form-group">
-            <label htmlFor="email">Email</label>
-            <input readOnly={!editMode} value={profileData?.emailAddress} type="email" className="form-control" id="email" />
-          </div>
-          <div className="form-group">
-            <label htmlFor="digits">Digits</label>
-            <input readOnly={!editMode} value={profileData?.digits} type="tel" className="form-control" id="digits" />
-          </div>
-          <div className="form-group">
-            <label htmlFor="country-code">Country code</label>
-            <select disabled={!editMode} className="form-control" id="country-code">
-              <option>1</option>
-              <option>2</option>
-              <option>3</option>
-              <option>4</option>
-              <option>5</option>
-            </select>
-          </div>
-          <div className="text-center">
-            {editMode && <button className="btn btn-success px-5 m-2">Save</button>}
-            {editMode && <button onClick={() => setEditMode(false)} className="btn btn-danger px-5 m-1">Cancel</button>}
-            {!editMode && <button onClick={() => setEditMode(true)} className="btn btn-secondary px-5 m-1">Edit</button>}
-          </div>
-          <div className="d-flex align-items-center justify-content-evenly">
-          </div>
-        </form>
-      </div>
+    <div className="py-3 px-5 flex items-center justify-center align-middle">
+      <Card className="w-[350px]">
+        <CardHeader>
+          <CardTitle className="text-center uppercase font-bold">My Profile</CardTitle>
+          <CardDescription className="text-center">
+            <Button variant="ghost">
+              <Link href="/dashboard/profile/changepassword">change password</Link>
+            </Button>
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form>
+            <div className="grid w-full items-center gap-4">
+              <div className="flex flex-col space-y-1.5">
+                <Label htmlFor="name">Name</Label>
+                <Input readOnly={!editMode} value={name} onChange={(e) => setName(e.target.value)} id="name" placeholder="Your Full Name" />
+              </div>
+              <div className="flex flex-col space-y-1.5">
+                <Label htmlFor="name">Email Address</Label>
+                <Input readOnly={!editMode} value={email} onChange={(e) => setEmail(e.target.value)} id="email" placeholder="Your Email Address" />
+              </div>
+              <div className="flex flex-col space-y-1.5">
+                <Label htmlFor="name">Phone Number</Label>
+                <Input readOnly={!editMode} value={digits} onChange={(e) => setDigits(e.target.value)} id="phone" placeholder="Your Phone Number" />
+              </div>
+              <div className="flex flex-col space-y-1.5">
+                <Label htmlFor="framework">Country</Label>
+                <Select disabled={!editMode}>
+                  <SelectTrigger id="framework">
+                    <SelectValue placeholder="Select" />
+                  </SelectTrigger>
+                  <SelectContent position="popper">
+                    <SelectItem value="next">Next.js</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </form>
+        </CardContent>
+        <CardFooter className="flex justify-evenly">
+          {editMode && <Button>Save</Button>}
+          {editMode && <Button variant="destructive" onClick={() => setEditMode(false)} >Cancel</Button>}
+          {!editMode && <Button variant="secondary" onClick={() => setEditMode(true)} >Edit</Button>}
+        </CardFooter>
+      </Card>
     </div>
   )
 }

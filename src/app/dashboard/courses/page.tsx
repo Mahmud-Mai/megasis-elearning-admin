@@ -1,10 +1,35 @@
 "use client"
 import Link from 'next/link';
 import { useEffect, useState } from 'react'
-import { Modal } from 'react-bootstrap';
+// import { Modal } from 'react-bootstrap';
 import { useRouter } from "next/navigation"
 import CourseDTO from "@/core/dto/content/CourseDTO";
-import {createCourse, getCourses, updateCourse} from "@/core/services/content-service";
+import { createCourse, getCourses, updateCourse } from "@/core/services/content-service";
+
+import {
+    Table,
+    TableBody,
+    TableCaption,
+    TableCell,
+    TableFooter,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/components/ui/table"
+import { Button } from "@/components/ui/button";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Textarea } from '@/components/ui/textarea';
+
 
 export default function Courses() {
     const router = useRouter()
@@ -12,8 +37,6 @@ export default function Courses() {
     const [show, setShow] = useState(false);
     const [updating, setUpdating] = useState(false);
     const [courses, setCourses] = useState<CourseDTO[]>([]);
-    const handleClose = () => { setShow(false); setUpdating(false) };
-    const handleShow = () => setShow(true);
 
     const [title, setTitle] = useState("");
     const [courseId, setCourseId] = useState("");
@@ -24,9 +47,9 @@ export default function Courses() {
         createCourse({ title, description })
             .then((res) => {
                 setRefresher(!refresher);
-        }).catch((err) => {
-            console.log("Unable to save Course")
-        })
+            }).catch((err) => {
+                console.log("Unable to save Course")
+            })
     }
 
     const updateCourseFunction = () => {
@@ -49,59 +72,69 @@ export default function Courses() {
 
     useEffect(() => {
         loadCoursesFunction();
-    },[refresher]);
+    }, [refresher]);
 
     return (
         <div className="container p-3">
-            <div className='d-flex align-items-center justify-content-between py-3'>
-                <span className='fw-bold text-uppercase fs-4'>List of Courses</span> <span><button onClick={handleShow} className="btn btn-primary text-end">Add New Course</button></span>
-            </div>
-            <Modal
-                show={show}
-                onHide={handleClose}
-                backdrop="static"
-                keyboard={false}
-                centered
-            >
-                <Modal.Header closeButton>
-                    <Modal.Title> {updating ? "Update" : "Add New"} Course </Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <form>
-                        <div className="form-group">
-                            <label htmlFor="title">Course Title</label>
-                            <input value={title} onChange={(e) => setTitle(e.target.value)} type="text" className="form-control" id="title" />
+            <Dialog>
+                <DialogTrigger asChild>
+                    <Button variant="outline">Add New Course </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                        <DialogTitle>{updating ? "Update" : "Add New"} Course </DialogTitle>
+                    </DialogHeader>
+                    <div className="grid gap-4 py-4">
+                        <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="name" className="text-right">Course Title</Label>
+                            <Input
+                                id="title"
+                                defaultValue="Pedro Duarte"
+                                className="col-span-3"
+                                value={title} onChange={(e) => setTitle(e.target.value)}
+                                placeholder="name@example.com"
+                            />
                         </div>
-                        <div className="form-group">
-                            <label htmlFor="body">Description</label>
-                            <textarea value={description} onChange={(e) => setDescription(e.target.value)} name="description" className="form-control" id="body" >{description}</textarea>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="description" className="text-right">Description</Label>
+                            <Textarea
+                                id="description"
+                                className="col-span-3"
+                                value={description} onChange={(e) => setDescription(e.target.value)}
+                                placeholder="Description"
+                            />
                         </div>
-                        <div className="d-flex align-items-center justify-content-evenly">
-                        </div>
-                    </form>
-                </Modal.Body>
-                <Modal.Footer>
-                    <button type="submit" onClick={() => updating ? updateCourseFunction() : createCourseFunction()} className="btn m-2 px-4" style={{ backgroundColor: "#4ED164", color: "white", height: "40px", borderRadius: "20px" }}>Save</button>
-                </Modal.Footer>
-            </Modal>
-            <table className="table table-hover table-responsive">
-                <thead className="thead-dark">
-                    <tr className='text-uppercase'>
-                        <th scope="col">Title</th>
-                        <th scope="col">Description</th>
-                        <th scope="col"></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {
-                        courses.map((course) => <tr key={course.id}>
-                            <td>{course.title}</td>
-                            <td>{course.description}</td>
-                            <td><Link href={`/dashboard/courses/${course.id}`} className="btn btn-primary">Open</Link></td>
-                        </tr>)
-                    }
-                </tbody>
-            </table>
+                    </div>
+                    <DialogFooter>
+                        <Button onClick={() => updating ? updateCourseFunction() : createCourseFunction()} type="submit" >Save</Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+
+            <Table>
+                <TableCaption>A list of Courses.</TableCaption>
+                <TableHeader>
+                    <TableRow>
+                        <TableHead>Title</TableHead>
+                        <TableHead>Description</TableHead>
+                        <TableHead>Action</TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    {courses.map((course) => (
+                        <TableRow key={course.id}>
+                            <TableCell>{course.title}</TableCell>
+                            <TableCell>{course.description}</TableCell>
+                            <TableCell>
+                                <Button variant="link" >
+                                    <Link href={`/dashboard/courses/${course.id}`} className="btn btn-primary">Open</Link>
+                                </Button>
+                            </TableCell>
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
         </div>
     )
 }

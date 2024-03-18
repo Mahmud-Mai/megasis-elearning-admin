@@ -1,7 +1,6 @@
 "use client"
 import Link from 'next/link';
 import { useEffect, useState } from 'react'
-import { Modal } from "react-bootstrap"
 import { useRouter } from "next/navigation"
 import {
     createChapter,
@@ -12,6 +11,30 @@ import {
 } from "@/core/services/content-service";
 import ChapterDTO from "@/core/dto/content/ChapterDTO";
 import CourseDTO from "@/core/dto/content/CourseDTO";
+
+import {
+    Table,
+    TableBody,
+    TableCaption,
+    TableCell,
+    TableFooter,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/components/ui/table"
+import { Button } from "@/components/ui/button";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Textarea } from '@/components/ui/textarea';
 
 export default function CourseDetails({ params }: { params: { courseId: string } }) {
     const router = useRouter();
@@ -88,69 +111,75 @@ export default function CourseDetails({ params }: { params: { courseId: string }
 
 
     return (
-        <div className="container p-3">
-            <Modal
-                show={show}
-                onHide={handleClose}
-                backdrop="static"
-                keyboard={false}
-                centered
-            >
-                <Modal.Header closeButton>
-                    <Modal.Title> {updating ? "Update" : "Add New"} Chapter </Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <form>
+        <div className="p-3">
+            <Dialog>
+                <DialogTrigger asChild>
+                    <Button variant="outline">Add New Chapter </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                        <DialogTitle>{updating ? "Update" : "Add New"} Chapter </DialogTitle>
+                    </DialogHeader>
+                    <div className="grid gap-4 py-4">
                         <input value={params.courseId} type="hidden" className="form-control" id="customFile" />
                         <input value={chapterId} type="hidden" className="form-control" id="customFile" />
-                        <div className="form-group">
-                            <label htmlFor="title">Title</label>
-                            <input value={title} onChange={(e) => setTitle(e.target.value)} type="text" className="form-control" id="title" placeholder="name@example.com" />
+
+                        <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="name" className="text-right">Course Title</Label>
+                            <Input
+                                id="title"
+                                defaultValue="Pedro Duarte"
+                                className="col-span-3"
+                                value={title} onChange={(e) => setTitle(e.target.value)}
+                                placeholder="name@example.com"
+                            />
                         </div>
-                        <div className="form-group">
-                            <label htmlFor="body">Body</label>
-                            <textarea value={description} onChange={(e) => setDescription(e.target.value)} name="body" className="form-control" id="body" >{description}</textarea>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="description" className="text-right">Description</Label>
+                            <Textarea
+                                id="description"
+                                className="col-span-3"
+                                value={description} onChange={(e) => setDescription(e.target.value)}
+                                placeholder="Description"
+                            />
                         </div>
-                        <div className="d-flex align-items-center justify-content-evenly">
-                        </div>
-                    </form>
-                </Modal.Body>
-                <Modal.Footer>
-                    <button onClick={() => updating ? updateChapterFunction() : createChapterFunction()} type="submit" className="btn m-2 px-4" style={{ backgroundColor: "#4ED164", color: "white", height: "40px", borderRadius: "20px" }}>Save</button>
-                </Modal.Footer>
-            </Modal>
+                    </div>
+                    <DialogFooter>
+                        <Button onClick={() => updating ? updateChapterFunction() : createChapterFunction()} type="submit" >Save</Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
             <div className="text-center">
                 <h3>{course?.title}</h3>
                 <p>{course?.description}</p>
             </div>
-            <div className='d-flex align-items-center justify-content-between py-3'>
-                <span className='fw-bold text-uppercase fs-4'>Chapters</span>
-                <span>
-                    <button className="btn btn-primary mx-1" onClick={() => handleShow()}>Add New Chapter</button>
-                </span>
-            </div>
-            <table className="table table-hover table-responsive">
-                <thead className="thead-dark">
-                    <tr className='text-uppercase'>
-                        <th scope="col">Title</th>
-                        <th scope="col">Description</th>
-                        <th scope="col"></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {
-                        chapters.map((chapter) => <tr key={chapter.id}>
-                            <td>{chapter.title}</td>
-                            <td>{chapter.description}</td>
-                            <td>
-                                <Link href={`/dashboard/chapters/${chapter.id}`} className="btn btn-primary">View</Link>
-                                <button className="btn btn-secondary" onClick={() => editChapter(chapter)}>Edit</button>
-                                <button className="btn btn-danger" onClick={() => deleteChapterFunction(chapter)}>Delete</button>
-                            </td>
-                        </tr>)
-                    }
-                </tbody>
-            </table>
+
+            <Table>
+                <TableCaption>A list of Chapters.</TableCaption>
+                <TableHeader>
+                    <TableRow>
+                        <TableHead>Title</TableHead>
+                        <TableHead>Description</TableHead>
+                        <TableHead>Action</TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    {chapters.map((chapter) => (
+                        <TableRow key={chapter.id}>
+                            <TableCell>{chapter.title}</TableCell>
+                            <TableCell>{chapter.description}</TableCell>
+                            <TableCell>
+                                <Button variant="link" >
+                                    <Link href={`/dashboard/chapters/${chapter.id}`} className="btn btn-primary">View</Link>
+                                </Button>
+                                <Button variant='secondary' onClick={() => editChapter(chapter)}>Edit</Button>
+                                <Button variant="destructive" onClick={() => deleteChapterFunction(chapter)}>Delete</Button>
+                            </TableCell>
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
         </div>
     )
 }
