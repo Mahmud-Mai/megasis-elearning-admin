@@ -1,9 +1,8 @@
 "use client"
-import 'bootstrap/dist/css/bootstrap.css';
+// import 'bootstrap/dist/css/bootstrap.css';
 import BaseAdminLayout from "@/components/baseLayout/BaseLayout";
 import { useRouter } from 'next/navigation';
-import Cookies from 'js-cookie';
-import { useEffect } from 'react'; 
+import { useEffect } from 'react';
 
 export default function RootLayout({
   children,
@@ -12,16 +11,16 @@ export default function RootLayout({
 }>) {
   const router = useRouter();
 
-  useEffect(() => {
-    const token = localStorage.getItem('bearer-token');
-    if (!token) {
-      router.push('/');
-    }
-  });
+  // useEffect(() => {
+  //   const token = localStorage.getItem('bearer-token');
+  //   if (!token) {
+  //     router.push('/');
+  //   }
+  // });
 
   return (
-    <>
-      <BaseAdminLayout>{children}</BaseAdminLayout>
-    </>
+    <BaseAdminLayout>
+      {children}
+    </BaseAdminLayout>
   );
 }

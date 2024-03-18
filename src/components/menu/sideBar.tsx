@@ -1,7 +1,8 @@
-import React from 'react'
 import ImageAvater from '../imageAvater/imageAvater';
 import MenuTile from '../menuTile/menuTile';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { Button } from '../ui/button';
 
 export interface MenuNavLinkObj {
     name: string;
@@ -47,37 +48,37 @@ export default function SideBar() {
         router.replace("/");
     }
     return (
-        <div style={{ height: "100vh", width: "200px", margin: "0", padding: "0", position: "fixed", left: "0", top: "0", bottom: "0" }}>
-            <div className="my-4">
-                <div className='mt-4 text-center'>
-                    <ImageAvater size={60} alt="" src="https://www.wikihow.com/images/9/90/What_type_of_person_are_you_quiz_pic.png" />
-                </div>
-                <div className=" text-center">
-                    <span className="fw-bold text-uppercase">admin</span>
-                    <br />
-                    <span className="text-capitalize">mike edwards</span>
-                    <br />
-                    <a onClick={logout} className="text-danger text-dark p-0 m-0" style={{ textDecoration: "none", fontSize: "12px", cursor: "pointer" }}>
-                        <div className='p-1 py-2 my-1'>
+        <aside id="default-sidebar" className="w-60 h-full" aria-label="Sidebar">
+            <div className="h-screen px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
+                <center className="content-center">
+                    <div className='flex align-middle justify-center'>
+                        <ImageAvater size={60} alt="" src="https://www.wikihow.com/images/9/90/What_type_of_person_are_you_quiz_pic.png" />
+                    </div>
+                    <div className="">
+                        <span className="capitalize font-bold">admin</span>
+                        <br />
+                        <span className="capitalize">mike edwards</span>
+                    </div>
+                </center>
+                <ul className="space-y-2 font-medium">
+                    {
+                        navPages.map((e) =>
+                            <li key={e.name}>
+                                <MenuTile name={e.name} icon={e.icon} address={e.address} />
+                            </li>
+                        )
+                    }
+                    <li>
+                        <Button variant="link">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="red" className="bi bi-box-arrow-right" viewBox="0 0 16 16">
                                 <path fillRule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0z" />
                                 <path fillRule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708z" />
                             </svg>
-                            <span className='m-2 text-danger'>Logout</span>
-                        </div>
-                    </a>
-                </div>
+                            <span className="mx-2 text-destructive"> Logout</span>
+                        </Button>
+                    </li>
+                </ul>
             </div>
-            <div>
-                <div>
-                    {
-                        navPages.map((e) =>
-                            <MenuTile name={e.name} key={e.name} icon={e.icon} address={e.address} />
-                        )
-                    }
-                </div>
-
-            </div>
-        </div>
+        </aside>
     )
 }
