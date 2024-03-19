@@ -33,6 +33,7 @@ export default function ChangePassword() {
         localStorage.removeItem("userId");
         router.replace("/");
       }).catch((error) => {
+        alert("Failed to update password!")
         console.log("Operation failed")
       })
   }

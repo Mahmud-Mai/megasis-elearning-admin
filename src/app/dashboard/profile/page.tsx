@@ -66,7 +66,7 @@ export default function ProfilePage() {
         .then((profileData) => {
           setProfileData(profileData)
         }).catch((error) => {
-          console.log("Operation failed")
+          alert("Failed to load Profile")
         });
     }, [refresher]);
 
@@ -102,7 +102,7 @@ export default function ProfilePage() {
               </div>
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="framework">Country</Label>
-                <Select disabled={!editMode}>
+                <Select onValueChange={(val) => setCountry(val)} disabled={!editMode}>
                   <SelectTrigger id="framework">
                     <SelectValue placeholder="Select" />
                   </SelectTrigger>

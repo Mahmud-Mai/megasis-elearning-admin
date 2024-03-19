@@ -1,14 +1,22 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import TopNavBar from '../topNavBar/topBar'
 import SideMenu from '../menu/sideBar'
 import SideBar from "@/components/menu/sideBar";
 import TopBar from '@/components/topNavBar/topBar';
 import { useState } from 'react';
 import { Button } from '../ui/button';
+import ProfileDTO from '@/core/dto/login/ProfileDTO';
+import { getProfile } from '@/core/services/login-service';
 
 
 export default function BaseAdminLayout({ children }: { children: React.ReactNode }) {
   const [expanded, setExpanded] = useState(false);
+  const [profile, setProfile] = useState<ProfileDTO>();
+  const [pageTitle, setPageTitle] = useState("");
+
+  useEffect(() => {
+    getProfile().then(res => setProfile(res));
+  })
 
   return (
     <div className="w-[100%] flex felx-row  m-0 p-0">
@@ -23,15 +31,15 @@ export default function BaseAdminLayout({ children }: { children: React.ReactNod
       {expanded ?
         <div
           className="block lg:hidden xl:hidden fixed top-0 left-0" style={{ zIndex: "49" }}>
-          <SideBar />
+          <SideBar username={profile?.name} onPageChanged={setPageTitle} />
         </div>
         : <></>}
       <div className='h-screen w-[100%] flex flex-row'>
         <div className="h-screen hidden lg:block xl:block z-50" >
-          <SideBar />
+          <SideBar username={profile?.name} onPageChanged={setPageTitle} />
         </div>
         <div className="w-[100%] h-screen p-0 m-0" style={{ backgroundColor: "#F6F6F6" }}>
-          <TopBar />
+          <TopBar title={pageTitle} />
           <main className='p-3 m-0'>
             {children}
           </main>

@@ -34,6 +34,7 @@ import { Textarea } from '@/components/ui/textarea';
 export default function Courses() {
     const router = useRouter()
     const [refresher, setRefresher] = useState(false);
+    const [loading, setLoading] = useState(false);
     const [show, setShow] = useState(false);
     const [updating, setUpdating] = useState(false);
     const [courses, setCourses] = useState<CourseDTO[]>([]);
@@ -44,20 +45,29 @@ export default function Courses() {
 
 
     const createCourseFunction = () => {
+        setLoading(true);
         createCourse({ title, description })
             .then((res) => {
+                setLoading(false);
                 setRefresher(!refresher);
             }).catch((err) => {
+                setLoading(false);
+                alert("Unable to save course");
                 console.log("Unable to save Course")
             })
     }
 
     const updateCourseFunction = () => {
-        updateCourse({ title, description, courseId }).then((res) => {
-            setRefresher(!refresher);
-        }).catch((err) => {
-            console.log("Unable to update Course")
-        })
+        setLoading(true);
+        updateCourse({ title, description, courseId })
+            .then((res) => {
+                setLoading(false);
+                setRefresher(!refresher);
+            }).catch((err) => {
+                setLoading(false);
+                alert("Unable to save course");
+                console.log("Unable to update Course")
+            })
     }
 
     const loadCoursesFunction = () => {
@@ -106,7 +116,7 @@ export default function Courses() {
                         </div>
                     </div>
                     <DialogFooter>
-                        <Button onClick={() => updating ? updateCourseFunction() : createCourseFunction()} type="submit" >Save</Button>
+                        <Button disabled={loading} onClick={() => updating ? updateCourseFunction() : createCourseFunction()} type="submit" >{loading ? "Saving..." : "Save"}</Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>

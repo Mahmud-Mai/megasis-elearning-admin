@@ -41,6 +41,7 @@ export default function CourseDetails({ params }: { params: { courseId: string }
 
     const [refresher, setRefresher] = useState(false);
     const [course, setCourse] = useState<CourseDTO>();
+    const [loading, setLoading] = useState(false);
     const [show, setShow] = useState(false);
     const [updating, setUpdating] = useState(false);
     const [chapters, setChapters] = useState<ChapterDTO[]>([]);
@@ -55,21 +56,32 @@ export default function CourseDetails({ params }: { params: { courseId: string }
 
 
     const createChapterFunction = () => {
+        setLoading(true);
         createChapter({ courseId, title, description })
             .then((_) => {
-                setRefresher(!refresher);
+                setLoading(false);
                 setShow(false);
+                setRefresher(!refresher);
             })
-            .catch((err) => console.log(err))
+            .catch((err) => {
+                setLoading(true);
+                alert("Failed to save new chapter")
+                console.log(err)
+            })
     }
 
     const updateChapterFunction = () => {
+        setLoading(true);
         updateChapter({ chapterId, title, description })
             .then((_) => {
-                setRefresher(!refresher);
+                setLoading(false);
                 setShow(false);
+                setRefresher(!refresher);
             })
-            .catch((err) => console.log(err))
+            .catch((err) => {
+                setLoading(false);
+                console.log(err)
+            })
     }
     const deleteChapterFunction = (chapter: ChapterDTO) => {
         deleteChapter(chapter.id)
@@ -145,7 +157,7 @@ export default function CourseDetails({ params }: { params: { courseId: string }
                         </div>
                     </div>
                     <DialogFooter>
-                        <Button onClick={() => updating ? updateChapterFunction() : createChapterFunction()} type="submit" >Save</Button>
+                        <Button disabled={loading} onClick={() => updating ? updateChapterFunction() : createChapterFunction()} type="submit" >{loading ? "Saving..." : "Save"}</Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>

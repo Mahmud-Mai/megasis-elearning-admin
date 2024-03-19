@@ -48,6 +48,7 @@ export default function ChapterDetailsPage({ params }: { params: { chapterId: st
     const [mediaType, setMediaType] = useState("");
     const [mediaId, setMediaId] = useState("");
     const [updating, setUpdating] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const handleClose = () => { setShow(false); setUpdating(false) };
     const handleShow = () => setShow(true);
@@ -57,21 +58,28 @@ export default function ChapterDetailsPage({ params }: { params: { chapterId: st
 
     const saveMedia = () => {
         const chapterId = params.chapterId;
-
+        setLoading(true);
         createMedia({ chapterId, title, description, url, mediaType })
             .then((res) => {
-                setRefresher(!refresher);
+                setLoading(false);
                 setShow(false);
+                setRefresher(!refresher);
             }).catch((err) => {
+                setLoading(false);
+                alert("Failed to save new media")
                 console.log("Unable to save Media")
             })
     }
 
     const updateMediaFunction = () => {
+        setLoading(true);
         updateMedia({ mediaId, title }).then((res) => {
-            setRefresher(!refresher);
+            setLoading(false);
             setShow(false);
+            setRefresher(!refresher);
         }).catch((err) => {
+            setLoading(false);
+            alert("Failed to update media")
             console.log("Unable to update Media")
         })
     }
@@ -175,7 +183,7 @@ export default function ChapterDetailsPage({ params }: { params: { chapterId: st
                         </div>
                     </div>
                     <DialogFooter>
-                        <Button onClick={() => updating ? updateMediaFunction() : saveMedia()} type="submit" >Save</Button>
+                        <Button disabled={loading} onClick={() => updating ? updateMediaFunction() : saveMedia()} type="submit" >{loading ? "Saving..." : "Save"}</Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>

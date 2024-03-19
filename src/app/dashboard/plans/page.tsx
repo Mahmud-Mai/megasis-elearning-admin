@@ -38,6 +38,7 @@ export default function Plans() {
 
     const [refresher, setRefresher] = useState(false);
     const [updating, setUpdating] = useState(false);
+    const [loading, setLoading] = useState(false);
     // plan
     const [plans, setPlans] = useState<SubscriptionOffer[]>([]);
     // fields
@@ -63,18 +64,25 @@ export default function Plans() {
     }
 
     const addNewPlan = () => {
+        setLoading(true);
         createSubscriptionOffer({ title, description, price, period, active })
             .then((res) => setRefresher(!refresher))
+            .then(() => setLoading(false))
             .catch((err) => {
                 console.log("Unable to save offer")
+                setLoading(false);
                 setPlans([]);
             })
     }
 
     const updatePlan = () => {
+        setLoading(true);
         updateSubscriptionOffer({ subscriptionId: id, title, description, price, period, active })
-            .then((res) => setRefresher(!refresher)).catch((err) => {
+            .then((res) => setRefresher(!refresher))
+            .then(() => setLoading(false))
+            .catch((err) => {
                 console.log("Unable to save offer")
+                setLoading(false);
                 setPlans([]);
             })
     }
@@ -159,7 +167,7 @@ export default function Plans() {
                         </div>
                     </div>
                     <DialogFooter>
-                        <Button onClick={() => updating ? updatePlan() : addNewPlan()} type="submit" >Save</Button>
+                        <Button disabled={loading} onClick={() => updating ? updatePlan() : addNewPlan()} type="submit" >{loading ? "Saving..." : "Save"}</Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
