@@ -124,7 +124,7 @@ export default function CourseDetails({ params }: { params: { courseId: string }
 
     return (
         <div className="p-3">
-            <Dialog>
+            <Dialog open={show} onOpenChange={setShow}>
                 <DialogTrigger asChild>
                     <Button variant="outline">Add New Chapter </Button>
                 </DialogTrigger>

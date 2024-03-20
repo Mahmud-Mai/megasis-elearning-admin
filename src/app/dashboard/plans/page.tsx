@@ -39,6 +39,7 @@ export default function Plans() {
     const [refresher, setRefresher] = useState(false);
     const [updating, setUpdating] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [showForm, setShowForm] = useState<boolean>(false);
     // plan
     const [plans, setPlans] = useState<SubscriptionOffer[]>([]);
     // fields
@@ -67,7 +68,10 @@ export default function Plans() {
         setLoading(true);
         createSubscriptionOffer({ title, description, price, period, active })
             .then((res) => setRefresher(!refresher))
-            .then(() => setLoading(false))
+            .then(() => {
+                setShowForm(false);
+                setLoading(false);
+            })
             .catch((err) => {
                 console.log("Unable to save offer")
                 setLoading(false);
@@ -79,7 +83,10 @@ export default function Plans() {
         setLoading(true);
         updateSubscriptionOffer({ subscriptionId: id, title, description, price, period, active })
             .then((res) => setRefresher(!refresher))
-            .then(() => setLoading(false))
+            .then(() => {
+                setShowForm(false);
+                setLoading(false)
+            })
             .catch((err) => {
                 console.log("Unable to save offer")
                 setLoading(false);
@@ -103,7 +110,7 @@ export default function Plans() {
         setPeriod(plan.period);
         setActive(plan.active);
         setUpdating(true);
-        // setShow(true);
+        setShowForm(true);
     }
 
     useEffect(() => {
@@ -112,7 +119,7 @@ export default function Plans() {
 
     return (
         <div className="container p-3">
-            <Dialog>
+            <Dialog open={showForm} onOpenChange={setShowForm}>
                 <DialogTrigger asChild>
                     <Button variant="outline">Add New Subscription Offer </Button>
                 </DialogTrigger>

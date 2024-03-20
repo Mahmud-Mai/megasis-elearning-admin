@@ -132,7 +132,7 @@ export default function ChapterDetailsPage({ params }: { params: { chapterId: st
                 </h3>
                 <p>{chapter?.description}</p>
             </div>
-            <Dialog>
+            <Dialog open={show} onOpenChange={setShow}>
                 <DialogTrigger asChild>
                     <Button variant="outline">Add New Media </Button>
                 </DialogTrigger>

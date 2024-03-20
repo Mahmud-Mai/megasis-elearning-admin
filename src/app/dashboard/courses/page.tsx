@@ -35,10 +35,9 @@ export default function Courses() {
     const router = useRouter()
     const [refresher, setRefresher] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [show, setShow] = useState(false);
     const [updating, setUpdating] = useState(false);
     const [courses, setCourses] = useState<CourseDTO[]>([]);
-
+    const [show, setShow] = useState(false);
     const [title, setTitle] = useState("");
     const [courseId, setCourseId] = useState("");
     const [description, setDescription] = useState("");
@@ -49,6 +48,7 @@ export default function Courses() {
         createCourse({ title, description })
             .then((res) => {
                 setLoading(false);
+                setShow(false);
                 setRefresher(!refresher);
             }).catch((err) => {
                 setLoading(false);
@@ -62,6 +62,7 @@ export default function Courses() {
         updateCourse({ title, description, courseId })
             .then((res) => {
                 setLoading(false);
+                setShow(false);
                 setRefresher(!refresher);
             }).catch((err) => {
                 setLoading(false);
@@ -86,7 +87,7 @@ export default function Courses() {
 
     return (
         <div className="container p-3">
-            <Dialog>
+            <Dialog open={show} onOpenChange={setShow}>
                 <DialogTrigger asChild>
                     <Button variant="outline">Add New Course </Button>
                 </DialogTrigger>
