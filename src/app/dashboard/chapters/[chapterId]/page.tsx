@@ -3,10 +3,11 @@ import React, { useEffect } from 'react';
 import { useState } from 'react';
 import ContentCard from '@/components/contentCard/ContentCard';
 import { useRouter } from "next/navigation"
-import { createMedia, deleteMedia, getChapter, getMediaByChapterId, updateMedia } from "@/core/services/content-service";
+import { createMedia, deleteMedia, getChapter, getMediaByChapterId, getSignedUploadUrl, updateMedia, uploadFile } from "@/core/services/content-service";
 import ChapterDTO from "@/core/dto/content/ChapterDTO";
 import MediaDTO from "@/core/dto/content/MediaDTO";
 
+import { Progress } from "@/components/ui/progress"
 import { Button } from "@/components/ui/button"
 import {
     Card,
@@ -35,6 +36,8 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
+import { MediaSource } from '@/core/enums/MediaSource.enum';
+import { MediaType } from '@/core/enums/MediaType.enum';
 
 
 export default function ChapterDetailsPage({ params }: { params: { chapterId: string } }) {
@@ -48,18 +51,50 @@ export default function ChapterDetailsPage({ params }: { params: { chapterId: st
     const [mediaType, setMediaType] = useState("");
     const [mediaId, setMediaId] = useState("");
     const [updating, setUpdating] = useState(false);
+    const [file, setFile] = useState<File>();
     const [loading, setLoading] = useState(false);
 
-    const handleClose = () => { setShow(false); setUpdating(false) };
-    const handleShow = () => setShow(true);
+
+    const [uploadingFile, setUploadingFile] = useState(false);
+    const [mediaSource, setMediaSource] = useState<string>(MediaSource.URL)
+
+    const [uploadProgress, setUploadProgress] = useState(0);
+
 
     const [chapter, setChapter] = useState<ChapterDTO>();
     const [mediaList, setMediaList] = useState<MediaDTO[]>([]);
 
-    const saveMedia = () => {
+    const onUploadProgress = (progressEvent: ProgressEvent) => {
+        const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+        setUploadProgress(percentCompleted);
+    }
+
+    const performFileUpload = async () => {
+        // get signed upload url and upload file to S3
+        if (mediaSource == MediaSource.UPLOAD) {
+            if (!file) { return; }
+            const result = await getSignedUploadUrl({
+                fileName: file.name,
+                fileSize: file.size,
+                fileType: file.type,
+            });
+
+            setUploadingFile(true);
+            await uploadFile(result.url, file, onUploadProgress);
+
+            setUrl(result.objectRef);
+            setUploadingFile(false);
+        }
+    }
+
+    const saveMedia = async () => {
         const chapterId = params.chapterId;
         setLoading(true);
-        createMedia({ chapterId, title, description, url, mediaType })
+
+        await performFileUpload();
+
+
+        createMedia({ chapterId, title, description, url, mediaType, source: mediaSource })
             .then((res) => {
                 setLoading(false);
                 setShow(false);
@@ -71,8 +106,11 @@ export default function ChapterDetailsPage({ params }: { params: { chapterId: st
             })
     }
 
-    const updateMediaFunction = () => {
+    const updateMediaFunction = async () => {
         setLoading(true);
+
+        await performFileUpload();
+
         updateMedia({ mediaId, title }).then((res) => {
             setLoading(false);
             setShow(false);
@@ -134,7 +172,7 @@ export default function ChapterDetailsPage({ params }: { params: { chapterId: st
             </div>
             <Dialog open={show} onOpenChange={setShow}>
                 <DialogTrigger asChild>
-                    <Button variant="outline">Add New Media </Button>
+                    <Button disabled={chapter == null} variant="outline">Add New Media </Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
@@ -142,14 +180,51 @@ export default function ChapterDetailsPage({ params }: { params: { chapterId: st
                     </DialogHeader>
                     <div className="grid gap-4 py-4">
                         <div className="grid grid-cols-4 items-center gap-4">
-                            <Label htmlFor="name" className="text-right">Media url</Label>
-                            <Input
-                                id="url"
-                                className="col-span-3"
-                                value={url} onChange={(e) => setUrl(e.target.value)}
-                                placeholder="https://youtube.com"
-                            />
+                            <Label htmlFor="media-type" className="text-right">Media Type</Label>
+                            <div className="col-span-3">
+
+                                <Select value={mediaType} onValueChange={(e) => setMediaType(e)}>
+                                    <SelectTrigger id="media-type">
+                                        <SelectValue placeholder="Select" />
+                                    </SelectTrigger>
+                                    <SelectContent position="popper">
+                                        <SelectItem value={MediaType.DOCUMENT}>Document</SelectItem>
+                                        <SelectItem value={MediaType.VIDEO}>Video</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
                         </div>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="description" className="text-right">Media Source</Label>
+                            <div className="col-span-3">
+                                <Select value={mediaSource} onValueChange={(e) => setMediaSource(e)}>
+                                    <SelectTrigger id="media-type">
+                                        <SelectValue placeholder="Select Media Source" />
+                                    </SelectTrigger>
+                                    <SelectContent position="popper">
+                                        <SelectItem value={MediaSource.UPLOAD}>File Upload</SelectItem>
+                                        <SelectItem value={MediaSource.URL}>Externala URL</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        </div>
+                        {
+                            mediaSource == MediaSource.URL ?
+                                <div className="grid grid-cols-4 items-center gap-4">
+                                    <Label htmlFor="name" className="text-right">Media url</Label>
+                                    <Input
+                                        id="url"
+                                        className="col-span-3"
+                                        value={url} onChange={(e) => setUrl(e.target.value)}
+                                        placeholder="https://youtube.com"
+                                    />
+                                </div>
+                                : <></>
+                        }
+                        {mediaSource == MediaSource.UPLOAD ? <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="file" className="text-right">Select File</Label>
+                            <Input id="file" type="file" className="col-span-3" />
+                        </div> : <></>}
                         <div className="grid grid-cols-4 items-center gap-4">
                             <Label htmlFor="name" className="text-right">Title</Label>
                             <Input
@@ -168,21 +243,16 @@ export default function ChapterDetailsPage({ params }: { params: { chapterId: st
                                 placeholder="Description"
                             >{description}</Textarea>
                         </div>
-
-                        <div className="grid grid-cols-4 items-center gap-4">
-                            <Label htmlFor="description" className="text-right">Media Type</Label>
-                            <Select value={mediaType} onValueChange={(e) => setMediaType(e)}>
-                                <SelectTrigger id="media-type">
-                                    <SelectValue placeholder="Select" />
-                                </SelectTrigger>
-                                <SelectContent position="popper">
-                                    <SelectItem value="DOCUMENT">Document</SelectItem>
-                                    <SelectItem value="VIDEO">Video</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
                     </div>
                     <DialogFooter>
+                        {uploadingFile ?
+                            <div className="w-full text-center">
+                                <div className="text-center">
+                                    Uploading Document... <span>{uploadProgress} % completed</span>
+                                </div>
+                                <Progress value={uploadProgress} className="w-[60%]" />
+                            </div>
+                            : <span></span>}
                         <Button disabled={loading} onClick={() => updating ? updateMediaFunction() : saveMedia()} type="submit" >{loading ? "Saving..." : "Save"}</Button>
                     </DialogFooter>
                 </DialogContent>

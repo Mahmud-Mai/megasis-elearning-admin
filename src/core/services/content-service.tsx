@@ -1,4 +1,4 @@
-import {apiRoot} from "@/constants";
+import { apiRoot } from "@/constants";
 import CreateCourseRequest from "@/core/dto/content/requests/CreateCourseRequest";
 import CourseDTO from "@/core/dto/content/CourseDTO";
 import UpdateCourseRequest from "@/core/dto/content/requests/UpdateCourseRequest";
@@ -8,6 +8,9 @@ import UpdateChapterRequest from "@/core/dto/content/requests/UpdateChapterReque
 import CreateMediaRequest from "@/core/dto/content/requests/CreateMediaRequest";
 import MediaDTO from "@/core/dto/content/MediaDTO";
 import UpdateMediaRequest from "@/core/dto/content/requests/UpdateMediaRequest";
+import GetSignedUploadUrlRequest from "../dto/content/requests/GetSignedUploadUrlRequest";
+import SignedUploadUrlDTO from "../dto/content/SignedUploadUrl";
+import axios from "axios";
 
 export const createCourseUrl: string = `${apiRoot}/createCourse`;
 export const updateCourseUrl: string = `${apiRoot}/updateCourse`;
@@ -29,7 +32,7 @@ export const getMediaByChapterIdUrl: string = `${apiRoot}/getMediaByChapterId`;
 export const getAllMediaByMediaTypeUrl: string = `${apiRoot}/getAllMediaByMediaType`;
 export const mediaNameAvailableUrl: string = `${apiRoot}/mediaNameAvailable`;
 export const uploadDocumentUrl: string = `${apiRoot}/uploadDocument`;
-export const uploadVideoUrl: string = `${apiRoot}/uploadVideo`;
+export const getSingedUploadUrlUrl: string = `${apiRoot}/uploadVideo`; // TODO update this for the correct url 
 
 export async function createCourse(req: CreateCourseRequest): Promise<CourseDTO> {
     return await fetch(createCourseUrl, {
@@ -218,12 +221,23 @@ export async function mediaNameAvailable(name: string, chapterId: string): Promi
 
 
 //TODO: Implement Multi part form upload later on!
-export async function uploadDocument(formData: FormData): Promise<MediaDTO> {
-    return await fetch(uploadDocumentUrl, {
+export async function getSignedUploadUrl(req: GetSignedUploadUrlRequest): Promise<SignedUploadUrlDTO> {
+    return await fetch(getSingedUploadUrlUrl, {
         method: "POST",
         headers: {
             "Authorization": `Bearer ${localStorage.getItem("bearer-token")}`,
         },
-        body: formData
+        body: JSON.stringify(req)
     }).then(res => res.json());
+}
+
+export async function uploadFile(signedUrl: string, file: File, onUploadProgress: (prog: ProgressEvent) => void): Promise<void> {
+    return await axios.put(signedUrl, {
+        method: 'PUT',
+        body: file,
+        headers: {
+            'Content-Type': file.type,
+        },
+        onUploadProgress,
+    });
 }
