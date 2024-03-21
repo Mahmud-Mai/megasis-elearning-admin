@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import RevenueStatsDTO from "@/core/dto/content/RevenueStatsDTO";
 import SubscriptionStatsDTO from "@/core/dto/content/SubscriptionStatsDTO";
 import UserStatsDTO from "@/core/dto/content/UserStatsDTO";
-import { getRevenueStats, getSubscriptionsStats, getUsersStats } from "@/core/services/stats-service";
+import { getRevenueStats, getSubscriptionStats, getUserStats } from "@/core/services/stats-service";
 import { useEffect, useState } from "react";
 import PieChart from "@/components/charts/pieChart";
 import BarChart from "@/components/charts/barChart";
@@ -66,9 +66,9 @@ export default function Home() {
   }
 
   const loadStats = () => {
-    getUsersStats().then(res => setUserCount(res)).catch(err => console.log("failed to load users"));
+    getUserStats().then(res => setUserCount(res)).catch(err => console.log("failed to load users"));
 
-    getSubscriptionsStats().then(res => setSubscriptionsCount(res)).catch(err => console.log("failed to load subscriptions"))
+    getSubscriptionStats().then(res => setSubscriptionsCount(res)).catch(err => console.log("failed to load subscriptions"))
 
     getRevenueStats().then(res => setRevenueCount(res)).catch(err => console.log("failed to load revenue"))
   }
