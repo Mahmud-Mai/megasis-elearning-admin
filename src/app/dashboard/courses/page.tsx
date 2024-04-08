@@ -75,6 +75,7 @@ export default function Courses() {
         getCourses()
             .then((courses) => {
                 setCourses(courses);
+                console.log("🚀 ~ .then ~ courses:", courses)
             }).catch((err) => {
                 console.log("Could not load courses")
                 setCourses([]);

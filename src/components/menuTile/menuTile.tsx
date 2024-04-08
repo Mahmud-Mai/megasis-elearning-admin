@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { usePathname } from 'next/navigation';
 import React from 'react'
 export interface MenuNavLinkObj {
     name: string;
@@ -9,9 +10,9 @@ export interface MenuNavLinkObj {
 
 
 export default function MenuTile({ name, address, icon }: MenuNavLinkObj) {
-
+    const pathname = usePathname()
     return (
-        <Link href={address} className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+        <Link href={address} className={`flex items-center px-8 py-3 text-white hover:bg-[#509CDB] group ${pathname === address && "bg-[#509CDB]"}`}>
             {icon}
             <span className="ms-3">{name}</span>
         </Link>

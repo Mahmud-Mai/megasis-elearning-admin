@@ -48,16 +48,16 @@ export default function SideBar({ username, onPageChanged }: { username?: string
     }
     return (
         <aside id="default-sidebar" className="w-60 h-full" aria-label="Sidebar">
-            <div className="h-screen px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
-                <center className="content-center">
+            <div className="relative h-screen py-4 overflow-y-auto bg-[#152259] text-white">
+                <center className="content-center py-6 border-[1px] border-transparent border-b-gray-400">
                     <div className='flex align-middle justify-center'>
                         <ImageAvater size={60} alt={username ?? ""} src="" />
                     </div>
                     <div className="my-4">
-                        <span className="uppercase font-bold">admin</span>
+                        <span className="capitalize font-bold">Megasis Learning | admin</span>
                     </div>
                 </center>
-                <ul className="space-y-2 font-medium">
+                <ul className="my-6 mx-6 space-y-4 font-medium ">
                     {
                         navPages.map((e) =>
                             <li onClick={() => onPageChanged!(e.name)} key={e.name}>
@@ -65,14 +65,14 @@ export default function SideBar({ username, onPageChanged }: { username?: string
                             </li>
                         )
                     }
-                    <li>
-                        <Button onClick={logout} variant="link">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="red" className="bi bi-box-arrow-right" viewBox="0 0 16 16">
+                    <li className='absolute bottom-7 left-35'>
+                        <button onClick={logout} className='flex items-center bg-black/35 hover:scale-110 duration-200 ease-linear px-8 py-3 shadow-2xl text-white'>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" className="bi bi-box-arrow-right" viewBox="0 0 16 16">
                                 <path fillRule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0z" />
                                 <path fillRule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708z" />
                             </svg>
-                            <span className="mx-2 text-destructive"> Logout</span>
-                        </Button>
+                            <span className="mx-2"> Logout</span>
+                        </button>
                     </li>
                 </ul>
             </div>
