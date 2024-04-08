@@ -34,7 +34,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import PageHeading from "@/components/reusables/PageHeading";
-import BtnPrimary from "@/components/reusables/BtnPrimary";
+import DialogTriggerBtn from "@/components/reusables/DialogTriggerBtn";
 
 export default function Courses() {
   const router = useRouter();
@@ -98,7 +98,7 @@ export default function Courses() {
       <PageHeading>
         <Dialog open={show} onOpenChange={setShow}>
           <DialogTrigger asChild className="grid justify-end">
-            <BtnPrimary>Add New Course</BtnPrimary>
+            <DialogTriggerBtn>Add New Course</DialogTriggerBtn>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>

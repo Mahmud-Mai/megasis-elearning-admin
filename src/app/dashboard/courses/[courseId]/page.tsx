@@ -30,17 +30,15 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import PageHeading from "@/components/reusables/PageHeading";
-import BtnPrimary from "@/components/reusables/BtnPrimary";
+import DialogTriggerBtn from "@/components/reusables/DialogTriggerBtn";
 
 export default function CourseDetails({
   params,
@@ -138,9 +136,9 @@ export default function CourseDetails({
     <div className="container p-16">
       <PageHeading>
         <Dialog open={show} onOpenChange={setShow}>
-          <DialogTrigger asChild>
-            <BtnPrimary>Add New Chapter</BtnPrimary>
-          </DialogTrigger>
+          <DialogTriggerBtn onClick={handleShow}>
+            Add New Chapter
+          </DialogTriggerBtn>
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
               <DialogTitle>
@@ -230,7 +228,7 @@ export default function CourseDetails({
               <TableCell>{chapter.title}</TableCell>
               <TableCell width={"600px"}>{chapter.description}</TableCell>
               <TableCell className="flex space-x-8 items-center">
-                <button variant="link">
+                <button>
                   <Link href={`/dashboard/chapters/${chapter.id}`}>
                     <IoEyeOutline
                       size={22}
