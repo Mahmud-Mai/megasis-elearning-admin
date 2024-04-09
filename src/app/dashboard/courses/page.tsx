@@ -7,28 +7,25 @@ import CourseDTO from "@/core/dto/content/CourseDTO";
 import {
   createCourse,
   getCourses,
-  updateCourse,
+  updateCourse
 } from "@/core/services/content-service";
 
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
-  TableRow,
+  TableRow
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
+  DialogTrigger
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -81,7 +78,6 @@ export default function Courses() {
     getCourses()
       .then((courses) => {
         setCourses(courses);
-        console.log("🚀 ~ .then ~ courses:", courses);
       })
       .catch((err) => {
         console.log("Could not load courses");
