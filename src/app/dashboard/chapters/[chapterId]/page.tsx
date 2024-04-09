@@ -10,7 +10,7 @@ import {
   getMediaByChapterId,
   getSignedUploadUrl,
   updateMedia,
-  uploadFile,
+  uploadFile
 } from "@/core/services/content-service";
 import ChapterDTO from "@/core/dto/content/ChapterDTO";
 import MediaDTO from "@/core/dto/content/MediaDTO";
@@ -23,16 +23,14 @@ import {
   CardDescription,
   CardFooter,
   CardHeader,
-  CardTitle,
+  CardTitle
 } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
-  DialogTrigger,
+  DialogTitle
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -42,13 +40,15 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
+  SelectValue
 } from "@/components/ui/select";
 import { MediaSource } from "@/core/enums/MediaSource.enum";
 import { MediaType } from "@/core/enums/MediaType.enum";
+import DialogTriggerBtn from "@/components/reusables/DialogTriggerBtn";
+import PageHeading from "@/components/reusables/PageHeading";
 
 export default function ChapterDetailsPage({
-  params,
+  params
 }: {
   params: { chapterId: string };
 }) {
@@ -89,7 +89,7 @@ export default function ChapterDetailsPage({
       const result = await getSignedUploadUrl({
         fileName: file.name,
         fileSize: file.size,
-        fileType: file.type,
+        fileType: file.type
       });
 
       setUploadingFile(true);
@@ -112,14 +112,16 @@ export default function ChapterDetailsPage({
       description,
       url,
       mediaType,
-      source: mediaSource,
+      source: mediaSource
     })
       .then((res) => {
+        console.log("🚀 ~ .then ~ res:", res);
         setLoading(false);
         setShow(false);
         setRefresher(!refresher);
       })
       .catch((err) => {
+        console.log("🚀 ~ saveMedia ~ err:", err);
         setLoading(false);
         alert("Failed to save new media");
         console.log("Unable to save Media");
@@ -168,8 +170,8 @@ export default function ChapterDetailsPage({
   useEffect(() => {
     getChapter(params.chapterId)
       .then((res) => {
+        console.log("🚀 ~ .then ~ res:", res);
         setChapter(chapter);
-        console.log("🚀 ~ .then ~ chapter:", chapter);
       })
       .catch((error) => {
         console.log("Unable to load data");
@@ -189,17 +191,16 @@ export default function ChapterDetailsPage({
   }, [refresher]);
 
   return (
-    <div className="pt-3">
-      <div className="text-center">
+    <div className="container p-16">
+      <div className="text-center mb-8">
         <h3 className="fw-bold-fs-3 text-capitalize">{chapter?.title}</h3>
         <p>{chapter?.description}</p>
       </div>
+
       <Dialog open={show} onOpenChange={setShow}>
-        <DialogTrigger asChild>
-          <Button disabled={chapter == null} variant="outline">
-            Add New Media{" "}
-          </Button>
-        </DialogTrigger>
+        <PageHeading>
+          <DialogTriggerBtn>Add New Media</DialogTriggerBtn>
+        </PageHeading>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>{updating ? "Update" : "Add New"} Media </DialogTitle>
@@ -323,11 +324,11 @@ export default function ChapterDetailsPage({
         </DialogContent>
       </Dialog>
 
-      <div className="text-start">
+      <div className="text-start my-8">
         <span className="font-bold uppercase">Media List</span>
       </div>
       <hr />
-      <div className="grid">
+      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-24">
         {mediaList.map((media, index) => (
           <Card key={index} className="w-[350px]">
             <CardContent>
