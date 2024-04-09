@@ -1,11 +1,10 @@
 "use client";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import {
   createSubscriptionOffer,
   deleteSubscriptionOffer,
   getSubscriptionOffers,
-  updateSubscriptionOffer,
+  updateSubscriptionOffer
 } from "@/core/services/subscription-service";
 import SubscriptionOffer from "@/core/dto/subscription/SubscriptionOffer";
 import {
@@ -16,30 +15,27 @@ import {
   TableFooter,
   TableHead,
   TableHeader,
-  TableRow,
+  TableRow
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
+  DialogTrigger
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import PageHeading from "@/components/reusables/PageHeading";
-import DialogTriggerBtn from "@/components/reusables/DialogTriggerBtn";
 import { GoPencil } from "react-icons/go";
 import { IoTrashOutline } from "react-icons/io5";
+import DialogTriggerBtn from "@/components/reusables/DialogTriggerBtn";
 
 export default function Plans() {
-  const router = useRouter();
-
   const [refresher, setRefresher] = useState(false);
   const [updating, setUpdating] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -89,7 +85,7 @@ export default function Plans() {
       description,
       price,
       period,
-      active,
+      active
     })
       .then((res) => setRefresher(!refresher))
       .then(() => {
@@ -256,7 +252,7 @@ export default function Plans() {
                     height: "15px",
                     width: "15px",
                     borderRadius: "50%",
-                    backgroundColor: plan.active ? "green" : "red",
+                    backgroundColor: plan.active ? "green" : "red"
                   }}
                 ></div>
               </TableCell>
