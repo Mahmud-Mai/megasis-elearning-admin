@@ -90,7 +90,7 @@ export default function Courses() {
   }, [refresher]);
 
   return (
-    <div className="container p-16">
+    <div className="container p-16 h-full">
       <PageHeading>
         <Dialog open={show} onOpenChange={setShow}>
           <DialogTrigger asChild className="grid justify-end">

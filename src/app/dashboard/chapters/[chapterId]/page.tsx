@@ -73,13 +73,6 @@ export default function ChapterDetailsPage({
   const [chapter, setChapter] = useState<ChapterDTO>();
   const [mediaList, setMediaList] = useState<MediaDTO[]>([]);
 
-  const onUploadProgress = (progressEvent: ProgressEvent) => {
-    const percentCompleted = Math.round(
-      (progressEvent.loaded * 100) / progressEvent.total
-    );
-    setUploadProgress(percentCompleted);
-  };
-
   const performFileUpload = async () => {
     // get signed upload url and upload file to S3
     if (mediaSource == MediaSource.UPLOAD) {
@@ -93,7 +86,7 @@ export default function ChapterDetailsPage({
       });
 
       setUploadingFile(true);
-      await uploadFile(result.url, file, onUploadProgress);
+      await uploadFile(result.url, file, uploadProgress);
 
       setUrl(result.objectRef);
       setUploadingFile(false);
@@ -176,22 +169,23 @@ export default function ChapterDetailsPage({
       .catch((error) => {
         console.log("Unable to load data");
       });
-  }, [params.chapterId]);
+  }, [chapter, params.chapterId]);
 
   // get list of media for this chapter
   useEffect(() => {
     getMediaByChapterId(params.chapterId)
       .then((mediaList) => {
+        console.log("🚀 ~ .then ~ mediaList:", mediaList);
         setMediaList(mediaList);
       })
       .catch((error) => {
         console.log("unable to load data");
         setMediaList([]);
       });
-  }, [refresher]);
+  }, [params.chapterId, refresher]);
 
   return (
-    <div className="container p-16">
+    <div className="container p-16 h-full">
       <div className="text-center mb-8">
         <h3 className="fw-bold-fs-3 text-capitalize">{chapter?.title}</h3>
         <p>{chapter?.description}</p>

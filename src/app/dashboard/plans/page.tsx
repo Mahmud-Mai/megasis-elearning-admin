@@ -124,7 +124,7 @@ export default function Plans() {
   }, [refresher]);
 
   return (
-    <div className="container p-16">
+    <div className="container p-16 h-full">
       <PageHeading>
         <Dialog open={showForm} onOpenChange={setShowForm}>
           <DialogTrigger asChild>

@@ -11,7 +11,7 @@ import {
   deleteChapter,
   getChaptersByCourseId,
   getCourse,
-  updateChapter,
+  updateChapter
 } from "@/core/services/content-service";
 import ChapterDTO from "@/core/dto/content/ChapterDTO";
 import CourseDTO from "@/core/dto/content/CourseDTO";
@@ -24,7 +24,7 @@ import {
   TableFooter,
   TableHead,
   TableHeader,
-  TableRow,
+  TableRow
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import {
@@ -32,7 +32,7 @@ import {
   DialogContent,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
+  DialogTitle
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -41,7 +41,7 @@ import PageHeading from "@/components/reusables/PageHeading";
 import DialogTriggerBtn from "@/components/reusables/DialogTriggerBtn";
 
 export default function CourseDetails({
-  params,
+  params
 }: {
   params: { courseId: string };
 }) {
@@ -93,6 +93,7 @@ export default function CourseDetails({
         console.log(err);
       });
   };
+
   const deleteChapterFunction = (chapter: ChapterDTO) => {
     deleteChapter(chapter.id)
       .then((_) => setRefresher(!refresher))
@@ -133,7 +134,7 @@ export default function CourseDetails({
   }, [params.courseId, refresher]);
 
   return (
-    <div className="container p-16">
+    <div className="container p-16 h-full">
       <PageHeading>
         <Dialog open={show} onOpenChange={setShow}>
           <DialogTriggerBtn onClick={handleShow}>
