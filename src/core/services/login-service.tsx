@@ -47,14 +47,14 @@ export async function updatePassword(
 }
 
 export async function createUser(req: CreateUserRequest): Promise<AuthData> {
-  return await fetch(registerUrl, {
+  return await axios(registerUrl, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${localStorage.getItem("bearer-token")}`
     },
-    body: JSON.stringify(req)
-  }).then((res) => res.json());
+    data: req
+  }).then((res) => res.data);
 }
 
 export async function userExists(userId: string): Promise<boolean> {
