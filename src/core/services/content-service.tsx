@@ -255,7 +255,7 @@ export async function uploadFile(
   signedUrl: string,
   file: File,
     onUploadProgress: (prog: any)
-){
+): Promise<any> {
   return await axios.put(signedUrl, {
     method: "PUT",
     body: file,
