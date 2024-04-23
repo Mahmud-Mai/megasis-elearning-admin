@@ -22,15 +22,29 @@ export async function getProfile(): Promise<ProfileDTO> {
   }).then((res) => res.json());
 }
 
-export async function loginUser(req: LoginUserRequest): Promise<AuthData> {
-  return await axios(loginUrl, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${localStorage.getItem("bearer-token")}`
-    },
-    data: req
-  }).then((res) => res.data);
+export async function loginUser(
+  req: LoginUserRequest
+): Promise<AuthData | undefined> {
+  try {
+    const response = await fetch(loginUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(req)
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData?.message || "Login failed");
+    }
+
+    const authData = await response.json();
+    return authData;
+  } catch (error) {
+    console.error("Error logging in user:", error);
+    return undefined;
+  }
 }
 
 export async function updatePassword(

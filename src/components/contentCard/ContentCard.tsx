@@ -1,5 +1,6 @@
 "use client";
 import Image from "next/image";
+import Link from "next/link";
 import React from "react";
 import ReactPlayer from "react-player";
 
@@ -16,14 +17,14 @@ export default function ContentCard({ title, mediaType, url }: Props) {
         <ReactPlayer className="react-player" url={url} width="100%" />
       ) : mediaType == "DOCUMENT" ? (
         <div className="flex my-4 items-center justify-center h-full">
-          <a
+          <Link
             href={url}
             target="_blank"
             download={title}
             className="text-blue-500 hover:underline"
           >
             <Image alt="pdf icon" src={"/pdf.png"} width={120} height={120} />
-          </a>
+          </Link>
         </div>
       ) : (
         <p>Unsupported Format</p>
