@@ -54,7 +54,7 @@ export default function LoginPage() {
     <section className="h-screen flex flex-col items-center pt-56 bg-[#fcfafa]">
       <div className="mb-10">
         <h1 className="capitalize px-2 text-xl lg:text-4xl">
-          Welcome to Megasis E-Learning Student platform.
+          Welcome to Megasis E-Learning Admin platform.
         </h1>
       </div>
       <Card className="w-[400px] py-8 px-16 lg:w-[600px] lg:py-12 lg:px-24">

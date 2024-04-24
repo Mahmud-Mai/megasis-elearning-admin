@@ -16,14 +16,14 @@ export default function ContentCard({ title, mediaType, url }: Props) {
       {mediaType == "VIDEO" ? (
         <ReactPlayer className="react-player" url={url} width="100%" />
       ) : mediaType == "DOCUMENT" ? (
-        <div className="flex my-4 items-center justify-center h-full">
+        <div className="flex my-12 items-center justify-center h-full">
           <Link
             href={url}
             target="_blank"
             download={title}
             className="text-blue-500 hover:underline"
           >
-            <Image alt="pdf icon" src={"/pdf.png"} width={120} height={120} />
+            <Image alt="pdf icon" src={"/pdf.png"} width={1800} height={250} />
           </Link>
         </div>
       ) : (
