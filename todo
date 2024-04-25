@@ -19,7 +19,7 @@ subscriptions: /subscriptions
     *- update sub :             POST    /updateSubscriptionOffer            (subscriptionId, title, description, price, period, active?)
     *- delete sub :             POST    /deleteSubscriptionOffer            (subscriptionId)
     - user has sub:             POST    /checkCustomerHasActiveSubscription (userId, )
-    - confirm subscription:     POST    /confirmSubscription                (clientSecret, userId)
+    - confirm subscription:     POST    /confirmSubscription                (paymentIntentId, userId)
     *- buy sub:                 POST    /buySubscription                    (userId, subscriptionId)
     *- get subs bought:         GET     /getSubscriptionsBought             (userId)
 
