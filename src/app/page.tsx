@@ -95,14 +95,6 @@ export default function LoginPage() {
                 {!isProcessing ? "Login" : "Processing..."}
               </PrimaryBtn>
             </div>
-            <p className="mt-4 text-[15px]">
-              Are you new here?
-              <Link href="/register" className="">
-                <span className="ml-2 text-[#2D88D4] hover:border-b border-[#2D88D4] font-bold">
-                  Create an Account
-                </span>
-              </Link>
-            </p>
           </div>
         </CardFooter>
       </Card>
