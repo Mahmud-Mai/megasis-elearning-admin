@@ -21,12 +21,6 @@ export default function BarChart({
         }
         // colors: colors
       }}
-      plotOptions={{
-        bar: {
-          borderRadius: 8,
-          borderRadiusApplication: "end"
-        }
-      }}
       series={[{ data }]}
       type="bar"
       height="350"
