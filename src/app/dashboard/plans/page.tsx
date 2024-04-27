@@ -125,6 +125,9 @@ export default function Plans() {
 
   return (
     <div className="container p-16 h-full">
+      <h1 className="text-left my-4 text-2xl uppercase font-bold">
+        Subscription Plans
+      </h1>
       <PageHeading>
         <Dialog open={showForm} onOpenChange={setShowForm}>
           <DialogTrigger asChild>

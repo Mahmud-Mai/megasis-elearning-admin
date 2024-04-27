@@ -1,125 +1,175 @@
-"use client"
-import ImageAvater from '@/components/imageAvater/imageAvater'
-import Link from 'next/link';
-import React from 'react'
-import { useState, useEffect } from 'react';
+"use client";
+import ImageAvater from "@/components/imageAvater/imageAvater";
 import ProfileDTO from "@/core/dto/login/ProfileDTO";
 import { getProfile } from "@/core/services/login-service";
-
-import { Button } from "@/components/ui/button"
+import Link from "next/link";
+import React, { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+  CardTitle
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-
-
+  SelectValue
+} from "@/components/ui/select";
+import PrimaryBtn from "@/components/reusables/PrimaryBtn";
+import PrimaryLink from "@/components/reusables/PrimaryLink";
+import { profile } from "console";
+import Image from "next/image";
 
 export default function ProfilePage() {
-  const [refresher, setRefresher] = useState(false);
-  const [editMode, setEditMode] = useState(false);
-  const [profileData, setProfileData] = useState<ProfileDTO>();
+  const [isLoading, setIsLoading] = useState(false);
+  const [profileData, setProfileData] = useState<ProfileDTO | null>(null);
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [digits, setDigits] = useState("");
   const [country, setCountry] = useState("");
 
+  const countries = [
+    { value: "NG", label: "Nigeria" },
+    { value: "US", label: "United States" },
+    { value: "GB", label: "United Kingdom" }
+  ];
 
-  //TODO : FIX This all to coincide with server API
+  // Fetch profile data only once on initial render
+  useEffect(() => {
+    console.log("fetch /profile");
+    const fetchData = async () => {
+      try {
+        const profile = await getProfile(localStorage.getItem("userId")!);
+        console.log("🚀 ~ fetchData ~ profile:", profile);
+        setProfileData(profile);
+      } catch (err) {
+        console.log("error loading profile", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-  // const updateProfile = () => {
-  //   fetch(updateProfileUrl, {
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //       'Authorization': `Bearer ${token}`,
-  //     },
-  //     body: JSON.stringify(profileData),
-  //     method: "post",
-  //     mode: "no-cors",
-  //   })
-  //     .then((res) => res.json())
-  //     .then((responses) => {
-  //       const { profileData } = responses
-  //       setProfileData(profileData)
-  //     }).catch((error) => {
-  //       console.log("Operation failed")
-  //     });
-  // }
+    fetchData();
+  }, []);
 
-  // load profile data
-  useEffect(
-    () => {
-      getProfile()
-        .then((profileData) => {
-          setProfileData(profileData)
-        }).catch((error) => {
-          alert("Failed to load Profile")
-        });
-    }, [refresher]);
+  const handleFormSubmit = async () => {
+    // Implement profile update logic here
 
-  const handleFormSubmit = () => {
-    // TODO implement profile update
-  }
+    console.log("🚀 ~ handleFormSubmit ~ profile update btn cliced:");
+    // ...
+  };
 
   return (
-    <div className="py-3 px-5 flex items-center justify-center align-middle">
-      <Card className="w-[350px]">
+    <div className=" flex p-16 items-center justify-center align-middle">
+      <Card className="w-full">
         <CardHeader>
-          <CardTitle className="text-center uppercase font-bold">My Profile</CardTitle>
-          <CardDescription className="text-center">
-            <Button variant="ghost">
-              <Link href="/dashboard/profile/changepassword">change password</Link>
-            </Button>
-          </CardDescription>
+          <CardTitle className="text-left my-4 text-2xl uppercase font-bold">
+            Profile & settings
+          </CardTitle>
         </CardHeader>
         <CardContent>
-          <form>
-            <div className="grid w-full items-center gap-4">
+          <form className="flex flex-col md:flex-row">
+            <div className="w-full m-1 lg:m-4 grid grid-cols-1 md:grid-cols-2 pl-8 items-center gap-6">
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="name">Name</Label>
-                <Input readOnly={!editMode} value={name} onChange={(e) => setName(e.target.value)} id="name" placeholder="Your Full Name" />
+                <Input
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  id="name"
+                  placeholder={profileData?.name || "Your Full Name"}
+                />
               </div>
               <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="name">Email Address</Label>
-                <Input readOnly={!editMode} value={email} onChange={(e) => setEmail(e.target.value)} id="email" placeholder="Your Email Address" />
+                <Label className="text-[#2d2f31]" htmlFor="name">
+                  Email Address
+                </Label>
+                <Input
+                  readOnly
+                  disabled
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  id="email"
+                  placeholder={
+                    profileData?.emailAddress || "Your Email Address"
+                  }
+                />
               </div>
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="name">Phone Number</Label>
-                <Input readOnly={!editMode} value={digits} onChange={(e) => setDigits(e.target.value)} id="phone" placeholder="Your Phone Number" />
+                <Input
+                  value={digits}
+                  onChange={(e) => setDigits(e.target.value)}
+                  id="phone"
+                  placeholder={profileData?.digits || "Your Phone Number"}
+                />
+              </div>
+              <div className="flex flex-col space-y-1.5">
+                <Label htmlFor="framework">Language</Label>
+                <Select>
+                  <SelectTrigger id="framework">
+                    <SelectValue placeholder="English UK">
+                      Select language
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent position="popper">
+                    {["English UK", "English US"].map((item, i) => (
+                      <SelectItem key={i} value={item}>
+                        {item}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="framework">Country</Label>
-                <Select onValueChange={(val) => setCountry(val)} disabled={!editMode}>
+                <Select>
                   <SelectTrigger id="framework">
-                    <SelectValue placeholder="Select" />
+                    <SelectValue placeholder="Select Country">
+                      {country}
+                    </SelectValue>
                   </SelectTrigger>
                   <SelectContent position="popper">
-                    <SelectItem value="next">Next.js</SelectItem>
+                    {countries.map((item) => (
+                      <SelectItem key={item.value} value={item.value}>
+                        {item.label}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
             </div>
+            <div className="flex p-2 justify-center items-center">
+              <Image
+                alt="profile pic"
+                src={"/assets/images/user_circle.png"}
+                width={300}
+                height={300}
+              />
+            </div>
           </form>
         </CardContent>
-        <CardFooter className="flex justify-evenly">
-          {editMode && <Button>Save</Button>}
-          {editMode && <Button variant="destructive" onClick={() => setEditMode(false)} >Cancel</Button>}
-          {!editMode && <Button variant="secondary" onClick={() => setEditMode(true)} >Edit</Button>}
+        <CardFooter className="flex justify-evenly mt-8 mb-6">
+          <PrimaryBtn
+            isProcessing={isLoading}
+            variant="secondary"
+            onClick={handleFormSubmit}
+          >
+            Save Changes
+          </PrimaryBtn>
+          {/* <div className="mt-2">
+            <PrimaryLink
+              linkText="Change password"
+              linkUrl="dashboard/profile/changepassword"
+            />
+          </div> */}
         </CardFooter>
       </Card>
     </div>
-  )
+  );
 }
