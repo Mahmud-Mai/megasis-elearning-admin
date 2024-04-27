@@ -141,7 +141,7 @@ export default function Courses() {
               </Button>
             </DialogFooter>
           </DialogContent>
-        </Dialog>
+    </Dialog>
       </PageHeading>
 
       <Table className="table-fixed border border-slate-400 rounded-md p-2">
