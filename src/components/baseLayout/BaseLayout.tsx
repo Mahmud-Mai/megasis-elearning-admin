@@ -21,6 +21,10 @@ export default function BaseAdminLayout({
     }
   };
 
+    const handleLinkClick = () => {
+      setExpanded(false);
+    };
+
   return (
     <div className={`w-[100%] flex flex-row  m-0 p-0`}>
       <button

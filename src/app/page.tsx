@@ -1,8 +1,10 @@
 "use client";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { loginUser } from "@/core/services/login-service";
 import Link from "next/link";
+import { loginUser } from "@/core/services/login-service";
+import AuthData from "@/core/dto/login/AuthData";
+
 import {
   Card,
   CardContent,
@@ -12,19 +14,17 @@ import {
   CardTitle
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import AuthData from "@/core/dto/login/AuthData";
+
 import PrimaryBtn from "@/components/reusables/PrimaryBtn";
 
 export default function LoginPage() {
+  const user = "CUSTOMER";
   const router = useRouter();
 
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
   const [loginErrorMessage, setLoginErrorMessage] = useState("");
   const [isProcessing, setIsProcessing] = useState<boolean>();
-
-  const user = "ADMIN";
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     setIsProcessing(true);
@@ -52,16 +52,14 @@ export default function LoginPage() {
 
   return (
     <section className="h-screen flex flex-col items-center pt-56 bg-[#fcfafa]">
-      <div className="mb-10">
-        <h1 className="capitalize px-1 md:px-2 text-xl lg:text-4xl">
+      <div className="mb-10 mx-auto">
+        <h1 className="text-center capitalize  m-4 px-1 md:px-2 text-xl lg:text-4xl">
           Welcome to Megasis E-Learning Admin platform.
         </h1>
       </div>
-      <Card className="w-[400px] py-8 px-16 lg:w-[600px] lg:py-12 lg:px-24">
+      <Card className="mx-auto w-fit py-8 px-4 md:px-12 m-4 mb-8 lg:w-[600px] lg:py-12 lg:px-24">
         <CardHeader>
-          <CardTitle className="mb-4 text-md md:text-xl tracking-wider ">
-            LOGIN
-          </CardTitle>
+          <CardTitle className="mb-4  text-xl tracking-wider ">LOGIN</CardTitle>
           <CardDescription className="my-2">
             Please enter your email and password.
           </CardDescription>
