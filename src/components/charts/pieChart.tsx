@@ -27,6 +27,7 @@ export default function PieChart({
       series={data}
       type="pie"
       height="350"
+      width={"100%"}
     />
   );
 }
