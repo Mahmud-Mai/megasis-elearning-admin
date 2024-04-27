@@ -34,9 +34,12 @@ export async function loginUser(
       body: JSON.stringify(req)
     });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData?.message || "Login failed");
+    if (!response.ok || !response) {
+      // const errorData = await response.json();
+      // throw new Error(errorData?.message || "Login failed");
+      throw new Error(
+        `Login failed. Encountered an error: ${response.status}] [${response.statusText}] [${response.url}]`
+      );
     }
 
     const authData = await response.json();

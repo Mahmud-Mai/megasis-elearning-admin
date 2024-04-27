@@ -18,7 +18,7 @@ import { Input } from "@/components/ui/input";
 import PrimaryBtn from "@/components/reusables/PrimaryBtn";
 
 export default function LoginPage() {
-  const user = "CUSTOMER";
+  const user = "ADMIN";
   const router = useRouter();
 
   const [emailAddress, setEmailAddress] = useState("");
