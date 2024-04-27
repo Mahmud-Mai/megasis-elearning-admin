@@ -14,6 +14,7 @@ export default function TopBar({ title }: { title?: string }) {
         margin: "0",
         position: "sticky",
         top: "0",
+        zIndex: "50",
         right: "0",
         width: "100%"
       }}

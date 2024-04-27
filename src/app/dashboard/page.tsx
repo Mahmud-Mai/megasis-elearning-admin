@@ -3,11 +3,12 @@ import { Button } from "@/components/ui/button";
 import RevenueStatsDTO from "@/core/dto/content/RevenueStatsDTO";
 import SubscriptionStatsDTO from "@/core/dto/content/SubscriptionStatsDTO";
 import UserStatsDTO from "@/core/dto/content/UserStatsDTO";
-import {
-  getRevenueStats,
-  getSubscriptionStats,
-  getUserStats
-} from "@/core/services/stats-service";
+// Endpoints not yet available
+// import {
+//   getRevenueStats,
+//   getSubscriptionStats,
+//   getUserStats
+// } from "@/core/services/stats-service";
 import { useEffect, useState } from "react";
 import PieChart from "@/components/charts/pieChart";
 import BarChart from "@/components/charts/barChart";
@@ -23,9 +24,10 @@ import {
 
 export default function Home() {
   const [userCount, setUserCount] = useState<UserStatsDTO>({
-    admins: 0,
-    users: 0
+    admins: 4,
+    users: 23
   });
+
   const yearOptions = [2024, 2025, 2026, 2027, 2028, 2029];
   const monthOptions = [
     "january",
@@ -41,9 +43,27 @@ export default function Home() {
     "november",
     "december"
   ];
-  const [subscriptionsCount, setSubscriptionsCount] =
-    useState<SubscriptionStatsDTO[]>();
-  const [revenueCount, setRevenueCount] = useState<RevenueStatsDTO[]>();
+  const [subscriptionsCount, setSubscriptionsCount] = useState<
+    SubscriptionStatsDTO[]
+  >([
+    { plan: "Basic", count: 100, month: "January", year: "2024" },
+    { plan: "Standard", count: 150, month: "January", year: "2024" },
+    { plan: "Premium", count: 200, month: "January", year: "2024" },
+    { plan: "Basic", count: 120, month: "February", year: "2024" },
+    { plan: "Standard", count: 180, month: "February", year: "2024" },
+    { plan: "Premium", count: 240, month: "February", year: "2024" }
+  ]);
+  const [revenueCount, setRevenueCount] = useState<RevenueStatsDTO[]>([
+    { month: "january", amount: 800, year: 2023 },
+    { month: "february", amount: 1200, year: 2023 },
+    { month: "march", amount: 1500, year: 2023 },
+    // Sample data for current year (replace with your actual data)
+    { month: "january", amount: 1000, year: 204 },
+    { month: "february", amount: 1500, year: 204 },
+    // Add more data for the current year here (replace with your actual data)
+    { month: "march", amount: 2000, year: 204 },
+    { month: "april", amount: 1800, year: 204 }
+  ]);
 
   const [selectedYear, setSelectedYear] = useState<string>();
   const [subsMonth, setSubsMonth] = useState<string>();
@@ -54,38 +74,51 @@ export default function Home() {
     month?: string,
     year?: string
   ): { plans: string[]; values: number[] } => {
-    const plans: string[] = [];
-    const values: number[] = [];
-    subs.forEach((sub) => {
-      if (month && sub.month == month) {
-        if (year && sub.year == year) {
-          plans.push(sub.plan);
-          values.push(sub.count);
-        } else {
-          plans.push(sub.plan);
-          values.push(sub.count);
-        }
-      }
-    });
-    return { plans, values };
+    return {
+      plans: subs
+        .filter(
+          (sub) =>
+            (month ? sub.month === month : true) &&
+            (year ? sub.year === year : true)
+        )
+        .map((sub) => sub.plan),
+      values: subs
+        .filter(
+          (sub) =>
+            (month ? sub.month === month : true) &&
+            (year ? sub.year === year : true)
+        )
+        .map((sub) => sub.count)
+    };
   };
 
-  const loadStats = () => {
-    getUserStats()
-      .then((res) => setUserCount(res))
-      .catch((err) => console.log("failed to load users"));
+  //Endpoints aren't available yet
+  // const loadStats = () => {
+  //   getUserStats()
+  //     .then((res) => {
+  //       console.log("🚀 ~ loadStats ~ res:", res);
+  //       return setUserCount(res);
+  //     })
+  //     .catch((err) => console.log("failed to load users"));
 
-    getSubscriptionStats()
-      .then((res) => setSubscriptionsCount(res))
-      .catch((err) => console.log("failed to load subscriptions"));
+  //   getSubscriptionStats()
+  //     .then((res) => {
+  //       console.log("🚀 ~ loadStats ~ res:", res);
+  //       return setSubscriptionsCount(res);
+  //     })
+  //     .catch((err) => console.log("failed to load subscriptions"));
 
-    getRevenueStats()
-      .then((res) => setRevenueCount(res))
-      .catch((err) => console.log("failed to load revenue"));
-  };
-  useEffect(() => {
-    loadStats();
-  }, []);
+  //   getRevenueStats()
+  //     .then((res) => {
+  //       console.log("🚀 ~ loadStats ~ res:", res);
+  //       return setRevenueCount(res);
+  //     })
+  //     .catch((err) => console.log("failed to load revenue"));
+  // };
+  // useEffect(() => {
+  //   loadStats();
+  // }, []);
+
   return (
     <div>
       <div className="h-full overflow-auto flex flex-row items-end align-middle justify-end">
@@ -131,79 +164,75 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="p-3">
-        {/* users */}
-        <Card className="p-5 my-3 w-full">
-          <CardTitle>
-            <div className="uppercase font-bold">Users</div>
-          </CardTitle>
-          <CardContent>
-            {userCount ? (
-              <PieChart
-                labels={["Admins", "Students"]}
-                data={[userCount?.admins, userCount?.users]}
-              />
-            ) : (
-              <div className="text-center text-secondary">Users</div>
-            )}
-          </CardContent>
-        </Card>
-        {/* subscriptions */}
-        <Card className="p-5 my-3 w-full">
-          <CardTitle className="flex justify-between align-middle items-center">
-            <div className="uppercase font-bold">Subscriptions</div>
-            <div className="w-[130px]">
-              <Select
-                onValueChange={(val) => setSubsMonth(val)}
-                value={subsMonth}
-              >
-                <SelectTrigger id="sub year">
-                  <SelectValue placeholder="Select Month" />
-                </SelectTrigger>
-                <SelectContent position="popper">
-                  {monthOptions.map((month) => (
-                    <SelectItem
-                      key={month}
-                      className="capitalize"
-                      value={month}
-                    >
-                      {month}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </CardTitle>
-          <CardContent>
-            {subscriptionsCount ? (
-              <BarChart
-                colors={[]}
-                labels={
-                  processSubscriptions(
-                    subscriptionsCount ?? [],
-                    subsMonth,
-                    selectedYear
-                  ).plans
-                }
-                data={
-                  processSubscriptions(
-                    subscriptionsCount ?? [],
-                    subsMonth,
-                    selectedYear
-                  ).values
-                }
-              />
-            ) : (
-              <div className="text-center text-secondary">Subscriptions</div>
-            )}
-          </CardContent>
-        </Card>
+      {/* All Charts Wrapper  */}
+      <div className="p-3 flex flex-col gap-4">
+        <div className="flex flex-col lg:flex-row lg:space-x-4">
+          {/* users */}
+          <Card className="p-5 my-3 w-full">
+            <CardTitle>
+              <div className="uppercase font-bold">Users</div>
+            </CardTitle>
+            <CardContent>
+              {userCount ? (
+                <PieChart
+                  labels={["Admins", "Students"]}
+                  data={[userCount?.admins, userCount?.users]}
+                  colors={["#509CDB", "#152259"]}
+                />
+              ) : (
+                <div className="text-center text-secondary">
+                  There are no users at the moment
+                </div>
+              )}
+            </CardContent>
+          </Card>
+          {/* subscriptions */}
+          <Card className="p-5 my-3 w-full">
+            <CardTitle className="flex justify-between align-middle items-center">
+              <div className="uppercase font-bold">Subscriptions</div>
+              {/* <div className="w-[130px]">
+                <Select
+                  onValueChange={(val) => setSubsMonth(val)}
+                  value={subsMonth}
+                >
+                  <SelectTrigger id="sub year">
+                    <SelectValue placeholder="Select Month" />
+                  </SelectTrigger>
+                  <SelectContent position="popper">
+                    {monthOptions.map((month) => (
+                      <SelectItem
+                        key={month}
+                        className="capitalize"
+                        value={month}
+                      >
+                        {month}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div> */}
+            </CardTitle>
+            <CardContent>
+              {subscriptionsCount ? (
+                <BarChart
+                  colors={subscriptionsCount.map(() => "#152259")}
+                  labels={subscriptionsCount.map((sub) => sub.plan)}
+                  data={subscriptionsCount.map((sub) => sub.count)}
+                />
+              ) : (
+                <div className="text-center text-secondary">
+                  There are no Subscriptions at the moment
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
 
         {/* revenue */}
         <Card className="p-5 my-3 w-full">
           <CardTitle className="flex justify-between align-middle items-center">
             <div className="uppercase font-bold">Revenue</div>
-            <div className="w-[130px]">
+            {/* <div className="w-[130px]">
               <Select
                 onValueChange={(val) => setRevenueMonth(val)}
                 value={revenueMonth}
@@ -223,22 +252,14 @@ export default function Home() {
                   ))}
                 </SelectContent>
               </Select>
-            </div>
+            </div> */}
           </CardTitle>
           <CardContent>
             {revenueCount ? (
               <LineChart
-                colors={[]}
-                labels={
-                  revenueCount
-                    ?.filter((revenue) => revenue.year == selectedYear)
-                    .map<string>((revenue) => revenue.month) ?? []
-                }
-                data={
-                  revenueCount
-                    ?.filter((revenue) => revenue.year == selectedYear)
-                    .map((revenue) => revenue.amount) ?? []
-                }
+                colors={revenueCount.map(() => "#152259")}
+                labels={revenueCount.map((revenue) => revenue.month)}
+                data={revenueCount.map((revenue) => revenue.amount)}
               />
             ) : (
               <div className="text-center text-secondary">Revenue</div>
