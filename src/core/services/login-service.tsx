@@ -28,14 +28,14 @@ export async function loginUser(
   try {
     const response = await fetch(loginUrl, {
       method: "POST",
-      mode: "no-cors",
       headers: {
         "Content-Type": "application/json"
       },
       body: JSON.stringify(req)
     });
 
-    if (!response.ok) {
+    console.log("🚀 ~ response:", response);
+    if (!response.ok || !response) {
       const errorData = await response.json();
       throw new Error(errorData?.message || "Login failed");
     }
