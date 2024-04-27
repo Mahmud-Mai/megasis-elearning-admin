@@ -7,6 +7,7 @@ export interface MenuNavLinkObj {
   name: string;
   address: string;
   icon: React.ReactNode;
+  onCloseSidebar;
 }
 
 export default function SideBar({
@@ -15,6 +16,7 @@ export default function SideBar({
 }: {
   username?: string;
   onPageChanged?: (name: string) => void;
+  onCloseSidebar?: () => void;
 }) {
   const navPages: MenuNavLinkObj[] = [
     {
@@ -114,7 +116,7 @@ export default function SideBar({
               <MenuTile name={e.name} icon={e.icon} address={e.address} />
             </li>
           ))}
-          <li className="absolute bottom-7 left-35">
+          <li className="absolute bottom-9 lg:bottom-7 left-35">
             <button
               onClick={logout}
               className="flex items-center bg-black/35 hover:scale-110 duration-200 ease-linear px-8 py-3 shadow-2xl text-white"
