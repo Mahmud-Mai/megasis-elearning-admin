@@ -1,12 +1,9 @@
-import React, { useEffect } from "react";
-import TopNavBar from "../topNavBar/topBar";
-import SideMenu from "../menu/sideBar";
+import React from "react";
+
 import SideBar from "@/components/menu/sideBar";
 import TopBar from "@/components/topNavBar/topBar";
 import { useState } from "react";
-import { Button } from "../ui/button";
 import ProfileDTO from "@/core/dto/login/ProfileDTO";
-import { getProfile } from "@/core/services/login-service";
 
 export default function BaseAdminLayout({
   children
@@ -17,14 +14,21 @@ export default function BaseAdminLayout({
   const [profile, setProfile] = useState<ProfileDTO>();
   const [pageTitle, setPageTitle] = useState("");
 
-  useEffect(() => {
-    getProfile().then((res) => setProfile(res));
-  });
+  const handleOverlayClick = () => {
+    if (expanded) {
+      setExpanded(false);
+      console.log("overlay clicked");
+    }
+  };
 
   return (
-    <div className="w-[100%] h-full flex flex-row  m-0 p-0">
-      <Button
-        className="lg:collapse md:visible sm:visible fixed top-3 left-3 z-50"
+    <div className={`w-[100%] flex flex-row  m-0 p-0`}>
+      <button
+        className={`flex items-center text-md px-2 py-2 ${
+          expanded ? "bg-white shadow-xl rounded-full p-2" : ""
+        } text-black hover:opacity-90 hover:scale-110 group lg:collapse md:visible sm:visible fixed top-3 ${
+          expanded ? "left-64" : "left-3"
+        } duration-300 z-50 ease-in`}
         onClick={() => setExpanded(!expanded)}
       >
         {expanded ? (
@@ -53,27 +57,28 @@ export default function BaseAdminLayout({
             />
           </svg>
         )}
-      </Button>
-      {expanded ? (
+      </button>
+      {expanded && (
         <div
-          className="block lg:hidden xl:hidden fixed top-0 left-0"
+          className="block w-full h-screen lg:hidden xl:hidden fixed top-0 left-0 bg-black/80"
           style={{ zIndex: "49" }}
         >
           <SideBar username={profile?.name} onPageChanged={setPageTitle} />
         </div>
-      ) : (
-        <></>
       )}
-      <div className="h-full w-[100%] flex flex-row">
-        <div className="fixed h-screen hidden lg:block xl:block z-50">
+      <div
+        className="h-screen w-[100%] flex flex-row"
+        onClick={handleOverlayClick}
+      >
+        <div className="h-screen hidden lg:block xl:block z-50">
           <SideBar username={profile?.name} onPageChanged={setPageTitle} />
         </div>
         <div
-          className="w-[100%] h-full p-0 m-0"
+          className="w-[100%] h-screen p-0 m-0 overflow-auto"
           style={{ backgroundColor: "#F6F6F6" }}
         >
           <TopBar title={pageTitle} />
-          <main className="min-h-screen p-3 m-0">{children}</main>
+          <main className="p-3 m-0">{children}</main>
         </div>
       </div>
     </div>

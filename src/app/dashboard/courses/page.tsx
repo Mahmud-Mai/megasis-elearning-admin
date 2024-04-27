@@ -91,6 +91,7 @@ export default function Courses() {
 
   return (
     <div className="container p-16 h-full">
+      <h1 className="text-left my-4 text-2xl uppercase font-bold">Courses</h1>
       <PageHeading>
         <Dialog open={show} onOpenChange={setShow}>
           <DialogTrigger asChild className="grid justify-end">

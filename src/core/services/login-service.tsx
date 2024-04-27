@@ -28,6 +28,7 @@ export async function loginUser(
   try {
     const response = await fetch(loginUrl, {
       method: "POST",
+      mode: "no-cors",
       headers: {
         "Content-Type": "application/json"
       },
