@@ -66,7 +66,7 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className=" flex p-16 items-center justify-center align-middle">
+    <div className="flex container p-16 items-center justify-center align-middle">
       <Card className="w-full">
         <CardHeader>
           <CardTitle className="text-left my-4 text-2xl uppercase font-bold">
