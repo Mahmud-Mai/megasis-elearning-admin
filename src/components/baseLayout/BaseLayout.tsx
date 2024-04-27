@@ -21,12 +21,15 @@ export default function BaseAdminLayout({
     }
   };
 
-    const handleLinkClick = () => {
-      setExpanded(false);
-    };
+  const handleLinkClick = () => {
+    setExpanded(false);
+  };
 
   return (
-    <div className={`w-[100%] flex flex-row  m-0 p-0`}>
+    <div
+      className={`w-[100%] flex flex-row  m-0 p-0`}
+      onClick={handleOverlayClick}
+    >
       <button
         className={`flex items-center text-md px-2 py-2 ${
           expanded ? "bg-white shadow-xl rounded-full p-2" : ""
@@ -70,10 +73,7 @@ export default function BaseAdminLayout({
           <SideBar username={profile?.name} onPageChanged={setPageTitle} />
         </div>
       )}
-      <div
-        className="h-screen w-[100%] flex flex-row"
-        onClick={handleOverlayClick}
-      >
+      <div className="h-screen w-[100%] flex flex-row">
         <div className="h-screen hidden lg:block xl:block z-50">
           <SideBar username={profile?.name} onPageChanged={setPageTitle} />
         </div>
