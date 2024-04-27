@@ -120,8 +120,8 @@ export default function Home() {
   // }, []);
 
   return (
-    <div>
-      <div className="h-full overflow-auto flex flex-row items-end align-middle justify-end">
+    <div className="p-4 container">
+      {/* <div className="h-full overflow-auto flex flex-row items-end align-middle justify-end">
         <div className="w-[130px]">
           <Select
             onValueChange={(val) => setSelectedYear(val)}
@@ -162,15 +162,15 @@ export default function Home() {
             <span className="m-2"> Refresh </span>
           </Button>
         </div>
-      </div>
+      </div> */}
 
       {/* All Charts Wrapper  */}
-      <div className="p-3 flex flex-col gap-4">
-        <div className="flex flex-col lg:flex-row lg:space-x-4">
+      <div className="my-8 flex flex-col gap-4">
+        <div className="flex flex-col lg:flex-row gap-4">
           {/* users */}
-          <Card className="p-5 my-3 w-full">
+          <Card className="w-full">
             <CardTitle>
-              <div className="uppercase font-bold">Users</div>
+              <div className="px-5 py-5 uppercase font-bold">Users</div>
             </CardTitle>
             <CardContent>
               {userCount ? (
@@ -187,9 +187,9 @@ export default function Home() {
             </CardContent>
           </Card>
           {/* subscriptions */}
-          <Card className="p-5 my-3 w-full">
+          <Card className="w-full">
             <CardTitle className="flex justify-between align-middle items-center">
-              <div className="uppercase font-bold">Subscriptions</div>
+              <div className="px-5 py-5 uppercase font-bold">Subscriptions</div>
               {/* <div className="w-[130px]">
                 <Select
                   onValueChange={(val) => setSubsMonth(val)}
@@ -229,9 +229,9 @@ export default function Home() {
         </div>
 
         {/* revenue */}
-        <Card className="p-5 my-3 w-full">
+        <Card className="y-3 w-full">
           <CardTitle className="flex justify-between align-middle items-center">
-            <div className="uppercase font-bold">Revenue</div>
+            <div className="px-5 py-5 uppercase font-bold">Revenue</div>
             {/* <div className="w-[130px]">
               <Select
                 onValueChange={(val) => setRevenueMonth(val)}

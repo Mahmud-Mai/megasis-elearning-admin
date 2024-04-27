@@ -29,8 +29,7 @@ export default function BarChart({
       }}
       series={[{ data }]}
       type="bar"
-      height="350"
-      width={"100%"}
+      // height="350"
     />
   );
 }
