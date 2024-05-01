@@ -15,6 +15,7 @@ import {
 import ChapterDTO from "@/core/dto/content/ChapterDTO";
 import MediaDTO from "@/core/dto/content/MediaDTO";
 
+import { FaRegCirclePlay } from "react-icons/fa6";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import {
@@ -46,6 +47,10 @@ import { MediaSource } from "@/core/enums/MediaSource.enum";
 import { MediaType } from "@/core/enums/MediaType.enum";
 import DialogTriggerBtn from "@/components/reusables/DialogTriggerBtn";
 import PageHeading from "@/components/reusables/PageHeading";
+import PrimaryBtn from "@/components/reusables/PrimaryBtn";
+import Image from "next/image";
+import Link from "next/link";
+import ReactPlayer from "react-player";
 
 export default function ChapterDetailsPage({
   params
@@ -72,6 +77,11 @@ export default function ChapterDetailsPage({
 
   const [chapter, setChapter] = useState<ChapterDTO>();
   const [mediaList, setMediaList] = useState<MediaDTO[]>([]);
+
+  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
+  const [selectedVideo, setSelectedVideo] = useState<MediaDTO | null>(null);
+
+  const wrapperId = "video-modal-wrapper"; // ID for the modal container
 
   const performFileUpload = async () => {
     // get signed upload url and upload file to S3
@@ -183,6 +193,16 @@ export default function ChapterDetailsPage({
         setMediaList([]);
       });
   }, [params.chapterId, refresher]);
+
+  const openVideoModal = (media: MediaDTO) => {
+    setSelectedVideo(media);
+    setIsVideoModalOpen(true);
+  };
+
+  const closeVideoModal = () => {
+    setSelectedVideo(null);
+    setIsVideoModalOpen(false);
+  };
 
   return (
     <div className="container p-16 h-full">
@@ -307,13 +327,19 @@ export default function ChapterDetailsPage({
             ) : (
               <span></span>
             )}
-            <Button
+            <DialogTriggerBtn
+              disabled={loading}
+              onClick={() => (updating ? updateMediaFunction() : saveMedia())}
+            >
+              {loading ? "Saving..." : "Save"}
+            </DialogTriggerBtn>
+            {/* <Button
               disabled={loading}
               onClick={() => (updating ? updateMediaFunction() : saveMedia())}
               type="submit"
             >
               {loading ? "Saving..." : "Save"}
-            </Button>
+            </Button> */}
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -322,30 +348,95 @@ export default function ChapterDetailsPage({
         <span className="font-bold uppercase">Media List</span>
       </div>
       <hr />
-      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-24">
+      <div className="max-w-[1200px] mx-auto my-1 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 space-y-4">
         {mediaList.map((media, index) => (
-          <Card key={index} className="w-[350px]">
-            <CardContent>
-              <ContentCard
-                title={media.title}
-                mediaType={media.mediaType}
-                url={media.url}
-              />
-            </CardContent>
-            <CardFooter className="flex justify-between">
-              <Button onClick={() => editMedia(media)} variant="secondary">
-                Edit
-              </Button>
-              <Button
-                onClick={() => deleteMediaFunction(media.id)}
-                variant="destructive"
-              >
-                Delete
-              </Button>
-            </CardFooter>
+          <Card
+            key={index}
+            className="max-w-[300px] rounded-2xl hover:shadow-xl"
+          >
+            <div className="h-[280px] rounded-t-lg w-full overflow-hidden relative">
+              <div className="h-[280px] rounded-t-lg w-full overflow-hidden relative">
+                {media.mediaType === "VIDEO" ? (
+                  <div
+                    className="bg-transparent bg-[url('/assets/images/course_img_2.jpg')] bg-cover h-full"
+                    onClick={() => openVideoModal(media)}
+                  >
+                    <div className="w-full h-full  flex items-center justify-center bg-black/60 ">
+                      <FaRegCirclePlay
+                        className="text-white w-12 lg:w-20 h-12 lg:h-20 hover:scale-110 duration-300 hover:cursor-pointer"
+                        width={200}
+                      />
+                    </div>
+                  </div>
+                ) : media.mediaType === "DOCUMENT" ? (
+                  <div className="h-full">
+                    <Link
+                      href={media.url}
+                      target="_blank"
+                      download={media.title}
+                      className="text-blue-500 hover:underline"
+                    >
+                      <Image
+                        alt="pdf icon"
+                        src={"/assets/images/pdf.png"}
+                        fill
+                      />
+                    </Link>
+                  </div>
+                ) : (
+                  <p className="flex justify-center items-center text-red-700">
+                    Unsupported Media Format
+                  </p>
+                )}
+              </div>
+            </div>
+            {/* Card Footer  */}
+            <div className="mt-4 text-center px-4">
+              <h3 className="font-bold mb-2">{media.title}</h3>
+              <p className="text-gray-600 pl-2">
+                {"Some description comes here"}
+              </p>
+              <div className="flex justify-between my-3">
+                <PrimaryBtn
+                  onClick={() => editMedia(media)}
+                  variant="secondary"
+                >
+                  Edit
+                </PrimaryBtn>
+                <PrimaryBtn
+                  variant="delete"
+                  onClick={() => deleteMediaFunction(media.id)}
+                >
+                  Delete
+                </PrimaryBtn>
+              </div>
+            </div>
           </Card>
         ))}
       </div>
+
+      {/* Video modal (conditional rendering) */}
+      {isVideoModalOpen && selectedVideo && (
+        <div
+          className="fixed inset-0 bg-black/60 z-50 overflow-auto"
+          onClick={closeVideoModal}
+        >
+          <div className="flex items-center justify-center min-h-screen">
+            <div className="bg-gray-700 p-3 rounded-lg shadow-lg w-[70%] max-h-[70%]">
+              <ReactPlayer
+                url={selectedVideo.url}
+                controls
+                height={"44rem"}
+                width="100%"
+                onUnmount={closeVideoModal} // Close modal when video finishes
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal container (created outside the component) */}
+      <div id={wrapperId} style={{ display: "none" }} />
     </div>
   );
 }

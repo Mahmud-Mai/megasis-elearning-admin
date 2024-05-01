@@ -21,12 +21,22 @@ import {
   SelectTrigger,
   SelectValue
 } from "@/components/ui/select";
+import { getUserStats } from "@/core/services/stats-service";
 
 export default function Home() {
   const [userCount, setUserCount] = useState<UserStatsDTO>({
     admins: 4,
     users: 23
   });
+
+  useEffect(() => {
+    const fetchUserStat = async () => {
+      const resp = await getUserStats();
+      console.log("🚀 ~ fetchUserStat ~ resp:", resp);
+      return resp;
+    };
+    fetchUserStat();
+  }, []);
 
   const yearOptions = [2024, 2025, 2026, 2027, 2028, 2029];
   const monthOptions = [

@@ -4,9 +4,9 @@ import { apiRoot } from "@/constants";
 import UserStatsDTO from "../dto/content/UserStatsDTO";
 import RevenueStatsDTO from "../dto/content/RevenueStatsDTO";
 
-const subscriptionStatsUrl = `${apiRoot}`;
-const usersStatsUrl = `${apiRoot}`;
-const revenueStatsUrl = `${apiRoot}`;
+const usersStatsUrl = `${apiRoot}/usersStats`;
+const revenueStatsUrl = `${apiRoot}/revenueStats`;
+const subscriptionStatsUrl = `${apiRoot}/subscriptionStats`;
 
 export async function getSubscriptionStats(): Promise<SubscriptionStatsDTO[]> {
   return await fetch(subscriptionStatsUrl, {
@@ -14,7 +14,9 @@ export async function getSubscriptionStats(): Promise<SubscriptionStatsDTO[]> {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("bearer-token")}`
     }
-  }).then((res) => res.json());
+  })
+    .then((res) => res.json())
+    .catch((e: any) => e);
 }
 export async function getUserStats(): Promise<UserStatsDTO> {
   return await fetch(usersStatsUrl, {

@@ -12,18 +12,18 @@ interface Props {
 
 export default function ContentCard({ title, mediaType, url }: Props) {
   return (
-    <div className="p-1   ">
+    <div className="h-full ">
       {mediaType == "VIDEO" ? (
         <ReactPlayer className="react-player" url={url} width="100%" />
       ) : mediaType == "DOCUMENT" ? (
-        <div className="flex my-12 items-center justify-center h-full">
+        <div className="h-full">
           <Link
             href={url}
             target="_blank"
             download={title}
             className="text-blue-500 hover:underline"
           >
-            <Image alt="pdf icon" src={"/pdf.png"} width={1800} height={250} />
+            <Image alt="pdf icon" src={"/pdf.png"} fill />
           </Link>
         </div>
       ) : (
