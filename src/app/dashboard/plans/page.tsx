@@ -204,13 +204,12 @@ export default function Plans() {
               </div>
             </div>
             <DialogFooter>
-              <Button
+              <DialogTriggerBtn
                 disabled={loading}
                 onClick={() => (updating ? updatePlan() : addNewPlan())}
-                type="submit"
               >
                 {loading ? "Saving..." : "Save"}
-              </Button>
+              </DialogTriggerBtn>
             </DialogFooter>
           </DialogContent>
         </Dialog>

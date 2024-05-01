@@ -131,15 +131,14 @@ export default function Courses() {
               </div>
             </div>
             <DialogFooter>
-              <Button
+              <DialogTriggerBtn
                 disabled={loading}
                 onClick={() =>
                   updating ? updateCourseFunction() : createCourseFunction()
                 }
-                type="submit"
               >
                 {loading ? "Saving..." : "Save"}
-              </Button>
+              </DialogTriggerBtn>
             </DialogFooter>
           </DialogContent>
         </Dialog>
