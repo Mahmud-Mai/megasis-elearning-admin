@@ -75,6 +75,8 @@ export default function Plans() {
         setLoading(false);
         setPlans([]);
       });
+
+    setLoading(false);
   };
 
   const updatePlan = () => {
@@ -99,8 +101,8 @@ export default function Plans() {
       });
   };
 
-  const deletePlan = () => {
-    deleteSubscriptionOffer({ subscriptionId: id })
+  const deletePlan = (subscriptionId: string) => {
+    deleteSubscriptionOffer(subscriptionId)
       .then((res) => setRefresher(!refresher))
       .catch((err) => {
         console.log("Unable to delete offer");
@@ -266,7 +268,7 @@ export default function Plans() {
                       className="text-blue-950 hover:scale-125 duration-300 ease-in-out"
                     />
                   </button>
-                  <button onClick={() => deletePlan()}>
+                  <button onClick={() => deletePlan(plan.id)}>
                     <IoTrashOutline
                       size={22}
                       className="text-red-800 hover:scale-125 duration-300 ease-in-out"

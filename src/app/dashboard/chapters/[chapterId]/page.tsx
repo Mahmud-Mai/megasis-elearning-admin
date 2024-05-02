@@ -51,6 +51,7 @@ import PrimaryBtn from "@/components/reusables/PrimaryBtn";
 import Image from "next/image";
 import Link from "next/link";
 import ReactPlayer from "react-player";
+import axios from "axios";
 
 export default function ChapterDetailsPage({
   params
@@ -81,25 +82,47 @@ export default function ChapterDetailsPage({
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState<MediaDTO | null>(null);
 
-  const wrapperId = "video-modal-wrapper"; // ID for the modal container
+  const wrapperId = "video-modal-wrapper";
 
+  async function uploadFile(file, signedUrl: string) {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const response = await axios.put(signedUrl, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data"
+        },
+        onUploadProgress: (progressEvent) => {
+          const uploadProgress = Math.round(
+            (progressEvent.loaded * 100) / progressEvent.total
+          );
+          setUploadProgress(uploadProgress);
+        }
+      });
+
+      // Handle successful upload (clear file selection, update UI)
+      console.log("File uploaded successfully:", response.data);
+    } catch (error) {
+      // Handle upload errors (display error message to user)
+      console.error("Upload failed:", error);
+    }
+  }
+
+  // get signed upload url and upload file to S3
   const performFileUpload = async () => {
-    // get signed upload url and upload file to S3
-    if (mediaSource == MediaSource.UPLOAD) {
-      if (!file) {
-        return;
-      }
+    console.log(" ~ performFileUpload fileExists? :", file);
+
+    if (mediaSource === MediaSource.UPLOAD && file) {
       const result = await getSignedUploadUrl({
         fileName: file.name,
         fileSize: file.size,
         fileType: file.type
       });
+      console.log(" ~ getSignedUploadUrl result:", result);
 
-      setUploadingFile(true);
       await uploadFile(result.url, file, uploadProgress);
-
       setUrl(result.objectRef);
-      setUploadingFile(false);
     }
   };
 
@@ -107,28 +130,29 @@ export default function ChapterDetailsPage({
     const chapterId = params.chapterId;
     setLoading(true);
 
-    await performFileUpload();
+    const fileUploadResult = await performFileUpload();
+    console.log("🚀 ~ saveMedia ~ fileUploadResult:", fileUploadResult);
 
-    createMedia({
-      chapterId,
-      title,
-      description,
-      url,
-      mediaType,
-      source: mediaSource
-    })
-      .then((res) => {
-        console.log("🚀 ~ .then ~ res:", res);
-        setLoading(false);
-        setShow(false);
-        setRefresher(!refresher);
-      })
-      .catch((err) => {
-        console.log("🚀 ~ saveMedia ~ err:", err);
-        setLoading(false);
-        alert("Failed to save new media");
-        console.log("Unable to save Media");
-      });
+    // createMedia({
+    //   chapterId,
+    //   title,
+    //   description,
+    //   url,
+    //   mediaType,
+    //   source: mediaSource
+    // })
+    //   .then((res) => {
+    //     console.log("🚀 ~ .then ~ saveMedia res:", res);
+    //     setLoading(false);
+    //     setShow(false);
+    //     setRefresher(!refresher);
+    //   })
+    //   .catch((err) => {
+    //     console.log("🚀 ~ saveMedia ~ err:", err);
+    //     setLoading(false);
+    //     alert("Failed to save new media");
+    //     console.log("Unable to save Media");
+    //   });
   };
 
   const updateMediaFunction = async () => {
@@ -173,7 +197,6 @@ export default function ChapterDetailsPage({
   useEffect(() => {
     getChapter(params.chapterId)
       .then((res) => {
-        console.log("🚀 ~ .then ~ res:", res);
         setChapter(chapter);
       })
       .catch((error) => {
@@ -185,7 +208,6 @@ export default function ChapterDetailsPage({
   useEffect(() => {
     getMediaByChapterId(params.chapterId)
       .then((mediaList) => {
-        console.log("🚀 ~ .then ~ mediaList:", mediaList);
         setMediaList(mediaList);
       })
       .catch((error) => {
@@ -272,7 +294,7 @@ export default function ChapterDetailsPage({
                   className="col-span-3"
                   value={url}
                   onChange={(e) => setUrl(e.target.value)}
-                  placeholder="https://youtube.com"
+                  placeholder="video url"
                 />
               </div>
             ) : (
@@ -283,7 +305,12 @@ export default function ChapterDetailsPage({
                 <Label htmlFor="file" className="text-right">
                   Select File
                 </Label>
-                <Input id="file" type="file" className="col-span-3" />
+                <Input
+                  id="file"
+                  type="file"
+                  className="col-span-3"
+                  onChange={(e) => setFile(e.target.files[0])}
+                />
               </div>
             ) : (
               <></>
@@ -319,7 +346,7 @@ export default function ChapterDetailsPage({
             {uploadingFile ? (
               <div className="w-full text-center">
                 <div className="text-center">
-                  Uploading Document...{" "}
+                  Uploading Document...
                   <span>{uploadProgress} % completed</span>
                 </div>
                 <Progress value={uploadProgress} className="w-[60%]" />
@@ -333,13 +360,6 @@ export default function ChapterDetailsPage({
             >
               {loading ? "Saving..." : "Save"}
             </DialogTriggerBtn>
-            {/* <Button
-              disabled={loading}
-              onClick={() => (updating ? updateMediaFunction() : saveMedia())}
-              type="submit"
-            >
-              {loading ? "Saving..." : "Save"}
-            </Button> */}
           </DialogFooter>
         </DialogContent>
       </Dialog>
