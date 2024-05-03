@@ -32,7 +32,7 @@ export const getMediaByChapterIdUrl: string = `${apiRoot}/getMediaByChapterId`;
 export const getAllMediaByMediaTypeUrl: string = `${apiRoot}/getAllMediaByMediaType`;
 export const mediaNameAvailableUrl: string = `${apiRoot}/mediaNameAvailable`;
 export const uploadDocumentUrl: string = `${apiRoot}/uploadDocument`;
-export const getSingedUploadUrl: string = `${apiRoot}/uploadVideo`; // TODO update this for the correct url
+export const getSingedUploadUrl: string = `${apiRoot}/getSignedUrl`;
 
 export async function createCourse(
   req: CreateCourseRequest
