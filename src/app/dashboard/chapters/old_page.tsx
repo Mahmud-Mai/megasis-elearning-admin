@@ -1,5 +1,5 @@
 "use client";
-import React, { FormEvent, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import ContentCard from "@/components/contentCard/ContentCard";
 import { useRouter } from "next/navigation";
@@ -52,9 +52,6 @@ import Image from "next/image";
 import Link from "next/link";
 import ReactPlayer from "react-player";
 import axios from "axios";
-import { Video } from "@/components/reusables/Video";
-import PrimarySpinner from "@/components/reusables/PrimarySpinner";
-import { CldUploadWidget } from "next-cloudinary";
 
 export default function ChapterDetailsPage({
   params
@@ -73,50 +70,70 @@ export default function ChapterDetailsPage({
   const [updating, setUpdating] = useState(false);
   const [file, setFile] = useState<File>();
   const [loading, setLoading] = useState(false);
+
   const [uploadingFile, setUploadingFile] = useState(false);
   const [mediaSource, setMediaSource] = useState<string>(MediaSource.URL);
+
   const [uploadProgress, setUploadProgress] = useState(0);
+
   const [chapter, setChapter] = useState<ChapterDTO>();
   const [mediaList, setMediaList] = useState<MediaDTO[]>([]);
+
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState<MediaDTO | null>(null);
 
-  const [showSpinner, setShowSpinner] = useState(false);
-  const [showVideo, setShowVideo] = useState(false);
-  const [publicId, setPublicId] = useState("");
-
   const wrapperId = "video-modal-wrapper";
 
-  async function uploadFile() {}
-
-  const handleChange = async (event: any) => {
-    setShowSpinner(true);
-    event.preventDefault();
+  async function uploadFile(file, signedUrl) {
     const formData = new FormData();
-    const file = event.target.files[0];
-    formData.append("inputFile", file);
+    formData.append("file", file);
 
     try {
-      const response = await fetch("/api/upload", {
-        method: "POST",
-        body: formData
+      await axios.put(signedUrl, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data"
+        },
+        onUploadProgress: (progressEvent) => {
+          const uploadProgress = Math.round(
+            (progressEvent.loaded * 100) / progressEvent.total
+          );
+          console.log("🚀 ~ uploadFile ~ uploadProgress:", uploadProgress);
+          setUploadProgress(uploadProgress);
+        }
       });
-      const data = await response.json();
-      setPublicId(data.public_id);
+
+      console.log("File uploaded successfully:");
+      return true;
     } catch (error) {
-      setShowSpinner(false);
-    } finally {
-      setShowSpinner(false);
-      setShowVideo(true);
+      console.error("Upload failed:", error);
+      return false;
     }
-  };
+  }
 
   // get signed upload url and upload file to S3
-  const performFileUpload = async () => {};
+  const performFileUpload = async () => {
+    console.log(" ~ performFileUpload fileExists? :", file);
+
+    if (mediaSource === MediaSource.UPLOAD && file) {
+      const result = await getSignedUploadUrl({
+        fileName: file.name,
+        fileSize: file.size,
+        fileType: file.type
+      });
+      console.log(" ~ getSignedUploadUrl result:", result);
+
+      await uploadFile(result, file);
+    }
+    console.log("🚀 ~ performFileUpload ~ uploadProgress 2:", uploadProgress);
+  };
 
   const saveMedia = async () => {
     const chapterId = params.chapterId;
     setLoading(true);
+
+    const fileUploadResult = await performFileUpload();
+    console.log("🚀 ~ saveMedia ~ fileUploadResult:", fileUploadResult);
+    console.log("🚀 ~ saveMedia ~ url:", url);
 
     createMedia({
       chapterId,
@@ -220,25 +237,13 @@ export default function ChapterDetailsPage({
 
       <Dialog open={show} onOpenChange={setShow}>
         <PageHeading>
-          <div className="flex space-x-6 justify-between">
-            <DialogTriggerBtn>Add New Media</DialogTriggerBtn>
-            <CldUploadWidget uploadPreset="megasis-lms-media">
-              {({ open }) => {
-                return (
-                  <DialogTriggerBtn onClick={() => open()}>
-                    Upload an Media
-                  </DialogTriggerBtn>
-                );
-                //  <button onClick={() => open()}>Upload an Image</button>
-              }}
-            </CldUploadWidget>
-          </div>
+          <DialogTriggerBtn>Add New Media</DialogTriggerBtn>
         </PageHeading>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>{updating ? "Update" : "Add New"} Media </DialogTitle>
           </DialogHeader>
-          <div className="grid gap-x-4 gap-y-8 py-4">
+          <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="media-type" className="text-right">
                 Media Type
@@ -306,7 +311,7 @@ export default function ChapterDetailsPage({
                   id="file"
                   type="file"
                   className="col-span-3"
-                  onChange={handleChange}
+                  onChange={(e) => setFile(e.target.files[0])}
                 />
               </div>
             ) : (
@@ -365,9 +370,6 @@ export default function ChapterDetailsPage({
         <span className="font-bold uppercase">Media List</span>
       </div>
       <hr />
-      {showSpinner && <PrimarySpinner />}
-
-      {/* <Video publicId={publicId} /> */}
       <div className="max-w-[1200px] mx-auto my-1 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 space-y-4">
         {mediaList.map((media, index) => (
           <Card

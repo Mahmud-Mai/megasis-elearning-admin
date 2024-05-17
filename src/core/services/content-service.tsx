@@ -32,7 +32,7 @@ export const getMediaByChapterIdUrl: string = `${apiRoot}/getMediaByChapterId`;
 export const getAllMediaByMediaTypeUrl: string = `${apiRoot}/getAllMediaByMediaType`;
 export const mediaNameAvailableUrl: string = `${apiRoot}/mediaNameAvailable`;
 export const uploadDocumentUrl: string = `${apiRoot}/uploadDocument`;
-export const getSingedUploadUrl: string = `${apiRoot}/getSignedUrl`;
+export const getSingedUploadUrl: string = `${apiRoot}/generateUploadURL`;
 
 export async function createCourse(
   req: CreateCourseRequest
@@ -241,7 +241,7 @@ export async function mediaNameAvailable(
 //TODO: Implement Multi part form upload later on!
 export async function getSignedUploadUrl(
   req: GetSignedUploadUrlRequest
-): Promise<SignedUploadUrlDTO> {
+): Promise<string> {
   return await fetch(getSingedUploadUrl, {
     method: "POST",
     headers: {
