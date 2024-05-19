@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-export function Video({ publicId }) {
+export function Video({ src }) {
   const [videoPublicId, setPublicId] = useState(publicId);
   useEffect(() => {
     setPublicId(publicId);
@@ -14,7 +14,7 @@ export function Video({ publicId }) {
       autoPlay
       controls
       muted
-      src={`https://res.cloudinary.com/tamas-demo/video/upload/vc_auto,q_auto,w_800/${videoPublicId}`}
+      src={src}
     ></video>
   );
 }

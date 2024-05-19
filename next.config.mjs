@@ -3,7 +3,8 @@ const nextConfig = {
   images: {
     remotePatterns: [
       { hostname: "www.youtube.com", protocol: "https" },
-      { hostname: "www.facebook.com", protocol: "https" }
+      { hostname: "www.facebook.com", protocol: "https" },
+      { hostname: "res.cloudinary.com" }
     ]
   },
   typescript: {
