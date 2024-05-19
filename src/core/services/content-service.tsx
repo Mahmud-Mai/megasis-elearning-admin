@@ -32,7 +32,7 @@ export const getMediaByChapterIdUrl: string = `${apiRoot}/getMediaByChapterId`;
 export const getAllMediaByMediaTypeUrl: string = `${apiRoot}/getAllMediaByMediaType`;
 export const mediaNameAvailableUrl: string = `${apiRoot}/mediaNameAvailable`;
 export const uploadDocumentUrl: string = `${apiRoot}/uploadDocument`;
-export const getSingedUploadUrlUrl: string = `${apiRoot}/uploadVideo`; // TODO update this for the correct url
+export const getSingedUploadUrl: string = `${apiRoot}/generateUploadURL`;
 
 export async function createCourse(
   req: CreateCourseRequest
@@ -61,7 +61,7 @@ export async function updateCourse(
 }
 
 export async function deleteCourse(courseId: string): Promise<void> {
-  return await fetch(`deleteCourseUrl/${courseId}`, {
+  return await fetch(`${deleteCourseUrl}/${courseId}`, {
     method: "DELETE",
     headers: {
       Authorization: `Bearer ${localStorage.getItem("bearer-token")}`,
@@ -241,8 +241,8 @@ export async function mediaNameAvailable(
 //TODO: Implement Multi part form upload later on!
 export async function getSignedUploadUrl(
   req: GetSignedUploadUrlRequest
-): Promise<SignedUploadUrlDTO> {
-  return await fetch(getSingedUploadUrlUrl, {
+): Promise<string> {
+  return await fetch(getSingedUploadUrl, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${localStorage.getItem("bearer-token")}`
@@ -251,17 +251,17 @@ export async function getSignedUploadUrl(
   }).then((res) => res.json());
 }
 
-export async function uploadFile(
-  signedUrl: string,
-  file: File,
-  onUploadProgress: (prog: ProgressEvent) => void
-): Promise<void> {
-  return await axios.put(signedUrl, {
-    method: "PUT",
-    body: file,
-    headers: {
-      "Content-Type": file.type
-    },
-    onUploadProgress
-  });
-}
+// export async function uploadFile(
+//   signedUrl: string,
+//   file: File,
+//   onUploadProgress: (prog: ProgressEvent) => void
+// ): Promise<void> {
+//   return await axios.put(signedUrl, {
+//     method: "PUT",
+//     body: file,
+//     headers: {
+//       "Content-Type": file.type
+//     },
+//     onUploadProgress
+//   });
+// }

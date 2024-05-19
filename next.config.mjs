@@ -3,7 +3,8 @@ const nextConfig = {
   images: {
     remotePatterns: [
       { hostname: "www.youtube.com", protocol: "https" },
-      { hostname: "www.facebook.com", protocol: "https" }
+      { hostname: "www.facebook.com", protocol: "https" },
+      { hostname: "res.cloudinary.com" }
     ]
   },
   typescript: {
@@ -12,6 +13,15 @@ const nextConfig = {
     // your project has type errors.
     // !! WARN !!
     ignoreBuildErrors: true
+  },
+  webpack: (config) => {
+    config.resolve = {
+      ...config.resolve,
+      fallback: {
+        fs: false
+      }
+    };
+    return config;
   }
 };
 
