@@ -60,7 +60,9 @@ export default function ChapterDetailsPage({
     (async function fetchCloudinaryMedia() {
       setState("loading");
       try {
-        const response = await fetch("/api/resources");
+        const response = await fetch(
+          `/api/resources?chapterId=${params.chapterId}`
+        );
         const { results } = await response.json();
         setCldResources(results);
         setState("success");
@@ -108,20 +110,17 @@ export default function ChapterDetailsPage({
 
       <PageHeading>
         <CldUploadWidget
-          onTags={() => {
-            "chapter-media";
-          }}
           uploadPreset={`megasis-lms-media`}
           onSuccess={(results: CloudinaryUploadWidgetResults) => {
             if (results) {
-              console.log("Public ID", results);
               revalidatePath("/");
             }
           }}
           options={{
             sources: ["local", "google_drive", "url"],
             multiple: true,
-            maxFiles: 5
+            maxFiles: 5,
+            tags: [`${params.chapterId}`]
           }}
         >
           {({ open }) => {
