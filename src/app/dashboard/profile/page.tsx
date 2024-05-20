@@ -21,7 +21,6 @@ import {
   SelectValue
 } from "@/components/ui/select";
 import PrimaryBtn from "@/components/reusables/PrimaryBtn";
-import PrimaryLink from "@/components/reusables/PrimaryLink";
 import { profile } from "console";
 import Image from "next/image";
 
@@ -45,9 +44,9 @@ export default function ProfilePage() {
     console.log("fetch /profile");
     const fetchData = async () => {
       try {
-        const profile = await getProfile(localStorage.getItem("userId")!);
-        console.log("🚀 ~ fetchData ~ profile:", profile);
-        setProfileData(profile);
+        const response = await getProfile(localStorage.getItem("userId")!);
+        console.log("🚀 ~ fetchData ~ profile:", response);
+        setProfileData(response);
       } catch (err) {
         console.log("error loading profile", err);
       } finally {
@@ -59,10 +58,7 @@ export default function ProfilePage() {
   }, []);
 
   const handleFormSubmit = async () => {
-    // Implement profile update logic here
-
     console.log("🚀 ~ handleFormSubmit ~ profile update btn cliced:");
-    // ...
   };
 
   return (
@@ -162,12 +158,6 @@ export default function ProfilePage() {
           >
             Save Changes
           </PrimaryBtn>
-          {/* <div className="mt-2">
-            <PrimaryLink
-              linkText="Change password"
-              linkUrl="dashboard/profile/changepassword"
-            />
-          </div> */}
         </CardFooter>
       </Card>
     </div>
