@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import CourseDTO from "@/core/dto/content/CourseDTO";
 import {
   createCourse,
+  deleteCourse,
   getCourses,
   updateCourse
 } from "@/core/services/content-service";
@@ -33,6 +34,7 @@ import { Textarea } from "@/components/ui/textarea";
 import PageHeading from "@/components/reusables/PageHeading";
 import DialogTriggerBtn from "@/components/reusables/DialogTriggerBtn";
 import PrimarySpinner from "@/components/reusables/PrimarySpinner";
+import { revalidatePath } from "next/cache";
 
 export default function Courses() {
   const router = useRouter();
@@ -52,7 +54,7 @@ export default function Courses() {
     setState("loading");
     createCourse({ title, description })
       .then((res) => {
-        setState("success");
+        setTimeout(() => setState("success"), 3000);
         setShow(false);
         setRefresher(!refresher);
       })
@@ -67,7 +69,7 @@ export default function Courses() {
     setState("loading");
     updateCourse({ title, description, courseId })
       .then((res) => {
-        setState("success");
+        setTimeout(() => setState("success"), 3000);
         setShow(false);
         setRefresher(!refresher);
       })
@@ -84,13 +86,28 @@ export default function Courses() {
     getCourses()
       .then((courses) => {
         setCourses(courses);
-        setState("success");
+        setTimeout(() => setState("success"), 3000);
       })
       .catch((err) => {
         console.log("Could not load courses");
         setState("error");
         setErrorMessage("Could not load courses");
         setCourses([]);
+      });
+  };
+
+  const deleteCourseFunction = () => {
+    setState("loading");
+
+    deleteCourse(courseId)
+      .then(() => {
+        setTimeout(() => setState("success"), 3000);
+        revalidatePath("page");
+      })
+      .catch((err) => {
+        console.log("Could not delete course");
+        setState("error");
+        setErrorMessage("Could not delete course");
       });
   };
 
@@ -195,7 +212,7 @@ export default function Courses() {
               >
                 <TableCell>{course.title}</TableCell>
                 <TableCell>{course.description}</TableCell>
-                <TableCell>
+                <TableCell className="space-x-2">
                   <Button variant="link">
                     <Link
                       href={`/dashboard/courses/${course.id}`}
@@ -203,6 +220,9 @@ export default function Courses() {
                     >
                       Open
                     </Link>
+                  </Button>
+                  <Button variant="link" onClick={deleteCourseFunction}>
+                    Delete
                   </Button>
                 </TableCell>
               </TableRow>

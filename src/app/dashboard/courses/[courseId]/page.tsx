@@ -71,10 +71,10 @@ export default function CourseDetails({
   const handleShow = () => setShow(true);
 
   const createChapterFunction = () => {
-    setState("success");
+    setTimeout(() => setState("success"), 3000);
     createChapter({ courseId, title, description })
       .then((_) => {
-        setState("success");
+        setTimeout(() => setState("success"), 3000);
         setShow(false);
         setRefresher(!refresher);
       })
@@ -86,10 +86,10 @@ export default function CourseDetails({
   };
 
   const updateChapterFunction = () => {
-    setState("success");
+    setTimeout(() => setState("success"), 3000);
     updateChapter({ chapterId, title, description })
       .then((_) => {
-        setState("success");
+        setTimeout(() => setState("success"), 3000);
         setShow(false);
         setRefresher(!refresher);
       })
@@ -122,7 +122,7 @@ export default function CourseDetails({
     getCourse(params.courseId)
       .then((course) => {
         setCourse(course);
-        setState("success");
+        setTimeout(() => setState("success"), 3000);
       })
       .catch((error) => {
         console.log("Unable to load data");
@@ -138,7 +138,7 @@ export default function CourseDetails({
     getChaptersByCourseId(params.courseId)
       .then((chapters) => {
         setChapters(chapters);
-        setState("success");
+        setTimeout(() => setState("success"), 3000);
       })
       .catch((error) => {
         console.log("failed to load chapters");

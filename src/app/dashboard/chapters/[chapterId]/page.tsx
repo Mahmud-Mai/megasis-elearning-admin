@@ -53,7 +53,7 @@ export default function ChapterDetailsPage({
       .catch((error) => {
         console.log("Unable to load data");
       });
-  }, [chapter, params.chapterId]);
+  }, [params.chapterId]);
 
   // load cloudinary media
   useEffect(() => {
@@ -65,11 +65,13 @@ export default function ChapterDetailsPage({
         );
         const { results } = await response.json();
         setCldResources(results);
-        setState("success");
+        setTimeout(() => setState("success"), 3000);
       } catch (error) {
         console.log("🚀 ~ fetchCloudinaryMedia ~ error:", error);
         setState("error");
-        setErrorMessage(errorMessage);
+        setErrorMessage(
+          "Error encountered fetching from media from cloudinary"
+        );
       }
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -180,8 +182,13 @@ export default function ChapterDetailsPage({
                         </div>
                       );
                     } else if (
-                      cld_media.resource_type === "image" &&
-                      cld_media.format !== "pdf"
+                      (cld_media.resource_type === "image" &&
+                        cld_media.format !== "pdf") ||
+                      cld_media.format === "jpg" ||
+                      cld_media.format === "png" ||
+                      cld_media.format === "jpeg" ||
+                      cld_media.format === "gif" ||
+                      cld_media.format === "svg"
                     ) {
                       return (
                         <>

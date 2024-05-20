@@ -9,9 +9,10 @@ cloudinary.config({
 });
 
 export async function GET(req: NextApiRequest, res: NextApiResponse) {
-  const { chapterId } = req.query as { chapterId: string };
+  const chapterId = req.nextUrl.searchParams.get("chapterId");
+
   const { resources } = await cloudinary.search
-    .expression(`folder:megasis/lms AND tags:${chapterId}`)
+    .expression(`tags=${chapterId}`)
     .execute();
-  return res.status(200).json({ results: resources });
+  return Response.json({ results: resources });
 }

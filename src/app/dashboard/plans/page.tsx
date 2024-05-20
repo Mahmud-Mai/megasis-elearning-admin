@@ -57,7 +57,7 @@ export default function Plans() {
     getSubscriptionOffers()
       .then((subscriptionOffers) => {
         setPlans(subscriptionOffers);
-        setState("success");
+        setTimeout(() => setState("success"), 3000);
       })
       .catch((err) => {
         console.log("Unable to load offers");
