@@ -10,14 +10,11 @@ import SubscriptionOffer from "@/core/dto/subscription/SubscriptionOffer";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow
 } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -34,11 +31,16 @@ import PageHeading from "@/components/reusables/PageHeading";
 import { GoPencil } from "react-icons/go";
 import { IoTrashOutline } from "react-icons/io5";
 import DialogTriggerBtn from "@/components/reusables/DialogTriggerBtn";
+import PrimarySpinner from "@/components/reusables/PrimarySpinner";
 
 export default function Plans() {
   const [refresher, setRefresher] = useState(false);
   const [updating, setUpdating] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [state, setState] = useState<"idle" | "loading" | "success" | "error">(
+    "loading"
+  );
+  const [errorMessage, setErrorMessage] = useState("");
   const [showForm, setShowForm] = useState<boolean>(false);
   // plan
   const [plans, setPlans] = useState<SubscriptionOffer[]>([]);
@@ -55,15 +57,18 @@ export default function Plans() {
     getSubscriptionOffers()
       .then((subscriptionOffers) => {
         setPlans(subscriptionOffers);
+        setState("success");
       })
       .catch((err) => {
         console.log("Unable to load offers");
         setPlans([]);
+        setState("error");
+        setErrorMessage("Unable to load offers. Try again!");
       });
   };
 
   const addNewPlan = () => {
-    setLoading(true);
+    setState("loading");
     createSubscriptionOffer({ title, description, price, period, active })
       .then((res) => setRefresher(!refresher))
       .then(() => {
@@ -80,7 +85,7 @@ export default function Plans() {
   };
 
   const updatePlan = () => {
-    setLoading(true);
+    setState("loading");
     updateSubscriptionOffer({
       subscriptionId: id,
       title,
@@ -217,69 +222,90 @@ export default function Plans() {
         </Dialog>
       </PageHeading>
 
-      <Table className="border border-slate-200 rounded-md p-2">
-        <TableHeader>
-          <TableRow className="odd:bg-gray-100 hover:!bg-slate-200">
-            <TableHead className="py-3  font-bold text-lg text-[#333] capitalize">
-              Title
-            </TableHead>
-            <TableHead className="py-3  font-bold text-lg text-[#333] capitalize">
-              Description
-            </TableHead>
-            <TableHead className="py-3  font-bold text-lg text-[#333] capitalize">
-              Price
-            </TableHead>
-            <TableHead className="py-3  font-bold text-lg text-[#333] capitalize">
-              period
-            </TableHead>
-            <TableHead className="py-3  font-bold text-lg text-[#333] capitalize">
-              Active
-            </TableHead>
-            <TableHead className="py-3  font-bold text-lg text-[#333] capitalize">
-              Action
-            </TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody className="text-gray-500">
-          {plans.map((plan, index) => (
-            <TableRow
-              className="odd:bg-gray-100 hover:!bg-slate-200"
-              key={index}
-            >
-              <TableCell className="p-2 font-medium">{plan.title}</TableCell>
-              <TableCell className="p-2">{plan.description}</TableCell>
-              <TableCell className="p-2">{plan.price}</TableCell>
-              <TableCell className="p-2">{plan.period} Months</TableCell>
-              <TableCell className="p-2 text-center">
-                <div
-                  style={{
-                    height: "15px",
-                    width: "15px",
-                    borderRadius: "50%",
-                    backgroundColor: plan.active ? "green" : "red"
-                  }}
-                ></div>
-              </TableCell>
-              <TableCell className="p-2">
-                <div className="flex space-x-8 items-center">
-                  <button onClick={() => editPlan(plan)}>
-                    <GoPencil
-                      size={22}
-                      className="text-blue-950 hover:scale-125 duration-300 ease-in-out"
-                    />
-                  </button>
-                  <button onClick={() => deletePlan(plan.id)}>
-                    <IoTrashOutline
-                      size={22}
-                      className="text-red-800 hover:scale-125 duration-300 ease-in-out"
-                    />
-                  </button>
-                </div>
-              </TableCell>
+      {state === "loading" && !plans && (
+        <div className="flex justify-center">
+          <PrimarySpinner />
+        </div>
+      )}
+      {state === "error" && !plans && (
+        <div className="text-red-500 py-4 text-center">
+          Error: {errorMessage}
+        </div>
+      )}
+      {state === "success" && plans && (
+        <Table className="border border-slate-200 rounded-md p-2">
+          <TableHeader>
+            <TableRow className="odd:bg-gray-100 hover:!bg-slate-200">
+              <TableHead className="py-3  font-bold text-lg text-[#333] capitalize">
+                Title
+              </TableHead>
+              <TableHead className="py-3  font-bold text-lg text-[#333] capitalize">
+                Description
+              </TableHead>
+              <TableHead className="py-3  font-bold text-lg text-[#333] capitalize">
+                Price
+              </TableHead>
+              <TableHead className="py-3  font-bold text-lg text-[#333] capitalize">
+                period
+              </TableHead>
+              <TableHead className="py-3  font-bold text-lg text-[#333] capitalize">
+                Active
+              </TableHead>
+              <TableHead className="py-3  font-bold text-lg text-[#333] capitalize">
+                Action
+              </TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody className="text-gray-500">
+            {state === "success" && !plans && (
+              <TableRow>
+                <TableCell colSpan={6}>
+                  <div className="py-4 w-full text-center">
+                    You have not created any plans.
+                  </div>
+                </TableCell>
+              </TableRow>
+            )}
+            {plans.map((plan, index) => (
+              <TableRow
+                className="odd:bg-gray-100 hover:!bg-slate-200"
+                key={index}
+              >
+                <TableCell className="p-2 font-medium">{plan.title}</TableCell>
+                <TableCell className="p-2">{plan.description}</TableCell>
+                <TableCell className="p-2">{plan.price}</TableCell>
+                <TableCell className="p-2">{plan.period} Months</TableCell>
+                <TableCell className="p-2 text-center">
+                  <div
+                    style={{
+                      height: "15px",
+                      width: "15px",
+                      borderRadius: "50%",
+                      backgroundColor: plan.active ? "green" : "red"
+                    }}
+                  ></div>
+                </TableCell>
+                <TableCell className="p-2">
+                  <div className="flex space-x-8 items-center">
+                    <button onClick={() => editPlan(plan)}>
+                      <GoPencil
+                        size={22}
+                        className="text-blue-950 hover:scale-125 duration-300 ease-in-out"
+                      />
+                    </button>
+                    <button onClick={() => deletePlan(plan.id)}>
+                      <IoTrashOutline
+                        size={22}
+                        className="text-red-800 hover:scale-125 duration-300 ease-in-out"
+                      />
+                    </button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      )}
     </div>
   );
 }
