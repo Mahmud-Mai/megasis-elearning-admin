@@ -21,22 +21,17 @@ import {
   SelectTrigger,
   SelectValue
 } from "@/components/ui/select";
-import { getUserStats } from "@/core/services/stats-service";
+import {
+  getRevenueStats,
+  getSubscriptionStats,
+  getUserStats
+} from "@/core/services/stats-service";
 
 export default function Home() {
   const [userCount, setUserCount] = useState<UserStatsDTO>({
     admins: 4,
     users: 23
   });
-
-  useEffect(() => {
-    const fetchUserStat = async () => {
-      const resp = await getUserStats();
-      console.log("🚀 ~ fetchUserStat ~ resp:", resp);
-      return resp;
-    };
-    fetchUserStat();
-  }, []);
 
   const yearOptions = [2024, 2025, 2026, 2027, 2028, 2029];
   const monthOptions = [
@@ -67,12 +62,10 @@ export default function Home() {
     { month: "january", amount: 800, year: 2023 },
     { month: "february", amount: 1200, year: 2023 },
     { month: "march", amount: 1500, year: 2023 },
-    // Sample data for current year (replace with your actual data)
-    { month: "january", amount: 1000, year: 204 },
-    { month: "february", amount: 1500, year: 204 },
-    // Add more data for the current year here (replace with your actual data)
-    { month: "march", amount: 2000, year: 204 },
-    { month: "april", amount: 1800, year: 204 }
+    { month: "january", amount: 1000, year: 2024 },
+    { month: "february", amount: 1500, year: 2024 },
+    { month: "march", amount: 2000, year: 2024 },
+    { month: "april", amount: 1800, year: 2024 }
   ]);
 
   const [selectedYear, setSelectedYear] = useState<string>();
@@ -103,31 +96,31 @@ export default function Home() {
   };
 
   //Endpoints aren't available yet
-  // const loadStats = () => {
-  //   getUserStats()
-  //     .then((res) => {
-  //       console.log("🚀 ~ loadStats ~ res:", res);
-  //       return setUserCount(res);
-  //     })
-  //     .catch((err) => console.log("failed to load users"));
+  const loadStats = () => {
+    getUserStats()
+      .then((res) => {
+        console.log("🚀 ~ getUserStats() ~ res:", res);
+        return setUserCount(res);
+      })
+      .catch((err) => console.log("failed to load users"));
 
-  //   getSubscriptionStats()
-  //     .then((res) => {
-  //       console.log("🚀 ~ loadStats ~ res:", res);
-  //       return setSubscriptionsCount(res);
-  //     })
-  //     .catch((err) => console.log("failed to load subscriptions"));
+    getSubscriptionStats()
+      .then((res) => {
+        console.log("🚀 ~ getSubscriptionStats() ~ res:", res);
+        return setSubscriptionsCount(res);
+      })
+      .catch((err) => console.log("failed to load subscriptions"));
 
-  //   getRevenueStats()
-  //     .then((res) => {
-  //       console.log("🚀 ~ loadStats ~ res:", res);
-  //       return setRevenueCount(res);
-  //     })
-  //     .catch((err) => console.log("failed to load revenue"));
-  // };
-  // useEffect(() => {
-  //   loadStats();
-  // }, []);
+    getRevenueStats()
+      .then((res) => {
+        console.log("🚀 ~ getRevenueStats() ~ res:", res);
+        return setRevenueCount(res);
+      })
+      .catch((err) => console.log("failed to load revenue"));
+  };
+  useEffect(() => {
+    loadStats();
+  }, []);
 
   return (
     <div className="p-4 container">

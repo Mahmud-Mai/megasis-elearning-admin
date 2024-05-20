@@ -39,6 +39,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import PageHeading from "@/components/reusables/PageHeading";
 import DialogTriggerBtn from "@/components/reusables/DialogTriggerBtn";
+import PrimarySpinner from "@/components/reusables/PrimarySpinner";
 
 export default function CourseDetails({
   params
@@ -50,6 +51,10 @@ export default function CourseDetails({
   const [refresher, setRefresher] = useState(false);
   const [course, setCourse] = useState<CourseDTO>();
   const [loading, setLoading] = useState(false);
+  const [state, setState] = useState<"idle" | "loading" | "success" | "error">(
+    "loading"
+  );
+  const [errorMessage, setErrorMessage] = useState("");
   const [show, setShow] = useState(false);
   const [updating, setUpdating] = useState(false);
   const [chapters, setChapters] = useState<ChapterDTO[]>([]);
@@ -66,30 +71,31 @@ export default function CourseDetails({
   const handleShow = () => setShow(true);
 
   const createChapterFunction = () => {
-    setLoading(true);
+    setState("success");
     createChapter({ courseId, title, description })
       .then((_) => {
-        setLoading(false);
+        setState("success");
         setShow(false);
         setRefresher(!refresher);
       })
       .catch((err) => {
-        setLoading(true);
-        alert("Failed to save new chapter");
+        setState("error");
+        setErrorMessage("Failed to save new chapter");
         console.log(err);
       });
   };
 
   const updateChapterFunction = () => {
-    setLoading(true);
+    setState("success");
     updateChapter({ chapterId, title, description })
       .then((_) => {
-        setLoading(false);
+        setState("success");
         setShow(false);
         setRefresher(!refresher);
       })
       .catch((err) => {
-        setLoading(false);
+        setState("error");
+        setErrorMessage(err);
         console.log(err);
       });
   };
@@ -111,25 +117,34 @@ export default function CourseDetails({
 
   // load course info
   useEffect(() => {
+    setState("loading");
     setCourseId(params.courseId);
     getCourse(params.courseId)
       .then((course) => {
         setCourse(course);
+        setState("success");
       })
       .catch((error) => {
         console.log("Unable to load data");
+        setState("error");
+        setErrorMessage("Unable to load data");
       });
   }, [params.courseId]);
 
   // get list of chapters
   useEffect(() => {
+    setState("loading");
+
     getChaptersByCourseId(params.courseId)
       .then((chapters) => {
         setChapters(chapters);
+        setState("success");
       })
       .catch((error) => {
         console.log("failed to load chapters");
         setChapters([]);
+        setState("error");
+        setErrorMessage("Failed to load chapters");
       });
   }, [params.courseId, refresher]);
 
@@ -200,60 +215,79 @@ export default function CourseDetails({
           </DialogContent>
         </Dialog>
       </PageHeading>
-
       <div className="text-center mb-8">
         <h3 className="font-bold text-xl">{course?.title}</h3>
         <p className="text-lg">{course?.description}</p>
       </div>
-
-      <Table className="table-fixed border border-slate-400 rounded-md p-2">
-        <TableHeader>
-          <TableRow>
-            <TableHead className="font-bold text-lg text-[#333] capitalize">
-              Title
-            </TableHead>
-            <TableHead className="font-bold text-lg text-[#333] capitalize">
-              Description
-            </TableHead>
-            <TableHead className="font-bold text-lg text-[#333] capitalize">
-              Action
-            </TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody className="text-gray-500">
-          {chapters.map((chapter) => (
-            <TableRow
-              key={chapter.id}
-              className="odd:bg-gray-100 hover:!bg-slate-200"
-            >
-              <TableCell>{chapter.title}</TableCell>
-              <TableCell width={"600px"}>{chapter.description}</TableCell>
-              <TableCell className="flex space-x-8 items-center">
-                <button>
-                  <Link href={`/dashboard/chapters/${chapter.id}`}>
-                    <IoEyeOutline
-                      size={22}
-                      className="text-green-800 hover:scale-125 duration-300 ease-in-out"
-                    />
-                  </Link>
-                </button>
-                <button onClick={() => editChapter(chapter)}>
-                  <GoPencil
-                    size={22}
-                    className="text-blue-950 hover:scale-125 duration-300 ease-in-out"
-                  />
-                </button>
-                <button onClick={() => deleteChapterFunction(chapter)}>
-                  <IoTrashOutline
-                    size={22}
-                    className="text-red-800 hover:scale-125 duration-300 ease-in-out"
-                  />
-                </button>
-              </TableCell>
+      {state === "loading" && !chapters && (
+        <div className="flex justify-center">
+          <PrimarySpinner />
+        </div>
+      )}
+      {state === "error" && chapters && (
+        <div className="text-red-500 py-4 text-center">
+          Error: {errorMessage}
+        </div>
+      )}
+      {state === "success" && chapters && (
+        <Table className="table-fixed border border-slate-400 rounded-md p-2">
+          <TableHeader>
+            <TableRow>
+              <TableHead className="font-bold text-lg text-[#333] capitalize">
+                Title
+              </TableHead>
+              <TableHead className="font-bold text-lg text-[#333] capitalize">
+                Description
+              </TableHead>
+              <TableHead className="font-bold text-lg text-[#333] capitalize">
+                Action
+              </TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody className="text-gray-500">
+            {state === "success" && !chapters && (
+              <TableRow>
+                <TableCell colSpan={6}>
+                  <div className="py-4 w-full text-center">
+                    No chapters found.
+                  </div>
+                </TableCell>
+              </TableRow>
+            )}
+            {chapters.map((chapter) => (
+              <TableRow
+                key={chapter.id}
+                className="odd:bg-gray-100 hover:!bg-slate-200"
+              >
+                <TableCell>{chapter.title}</TableCell>
+                <TableCell width={"600px"}>{chapter.description}</TableCell>
+                <TableCell className="flex space-x-8 items-center">
+                  <button>
+                    <Link href={`/dashboard/chapters/${chapter.id}`}>
+                      <IoEyeOutline
+                        size={22}
+                        className="text-green-800 hover:scale-125 duration-300 ease-in-out"
+                      />
+                    </Link>
+                  </button>
+                  <button onClick={() => editChapter(chapter)}>
+                    <GoPencil
+                      size={22}
+                      className="text-blue-950 hover:scale-125 duration-300 ease-in-out"
+                    />
+                  </button>
+                  <button onClick={() => deleteChapterFunction(chapter)}>
+                    <IoTrashOutline
+                      size={22}
+                      className="text-red-800 hover:scale-125 duration-300 ease-in-out"
+                    />
+                  </button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      )}
     </div>
   );
 }

@@ -32,11 +32,15 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import PageHeading from "@/components/reusables/PageHeading";
 import DialogTriggerBtn from "@/components/reusables/DialogTriggerBtn";
+import PrimarySpinner from "@/components/reusables/PrimarySpinner";
 
 export default function Courses() {
   const router = useRouter();
   const [refresher, setRefresher] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [state, setState] = useState<"idle" | "loading" | "success" | "error">(
+    "loading"
+  );
+  const [errorMessage, setErrorMessage] = useState("");
   const [updating, setUpdating] = useState(false);
   const [courses, setCourses] = useState<CourseDTO[]>([]);
   const [show, setShow] = useState(false);
@@ -45,42 +49,47 @@ export default function Courses() {
   const [description, setDescription] = useState("");
 
   const createCourseFunction = () => {
-    setLoading(true);
+    setState("loading");
     createCourse({ title, description })
       .then((res) => {
-        setLoading(false);
+        setState("success");
         setShow(false);
         setRefresher(!refresher);
       })
       .catch((err) => {
-        setLoading(false);
-        alert("Unable to save course");
+        setState("error");
+        setErrorMessage("Unable to create course. Try again!");
         console.log("Unable to save Course");
       });
   };
 
   const updateCourseFunction = () => {
-    setLoading(true);
+    setState("loading");
     updateCourse({ title, description, courseId })
       .then((res) => {
-        setLoading(false);
+        setState("success");
         setShow(false);
         setRefresher(!refresher);
       })
       .catch((err) => {
-        setLoading(false);
-        alert("Unable to save course");
+        setState("error");
+        setErrorMessage("Updating course failed. Try again!");
         console.log("Unable to update Course");
       });
   };
 
   const loadCoursesFunction = () => {
+    setState("loading");
+
     getCourses()
       .then((courses) => {
         setCourses(courses);
+        setState("success");
       })
       .catch((err) => {
         console.log("Could not load courses");
+        setState("error");
+        setErrorMessage("Could not load courses");
         setCourses([]);
       });
   };
@@ -132,54 +141,75 @@ export default function Courses() {
             </div>
             <DialogFooter>
               <DialogTriggerBtn
-                disabled={loading}
+                disabled={state === "loading"}
                 onClick={() =>
                   updating ? updateCourseFunction() : createCourseFunction()
                 }
               >
-                {loading ? "Saving..." : "Save"}
+                {state === "loading" ? "Saving..." : "Save"}
               </DialogTriggerBtn>
             </DialogFooter>
           </DialogContent>
         </Dialog>
       </PageHeading>
 
-      <Table className="table-fixed border border-slate-400 rounded-md p-2">
-        <TableHeader>
-          <TableRow>
-            <TableHead className="font-bold text-lg text-[#333] capitalize">
-              Title
-            </TableHead>
-            <TableHead className="font-bold text-lg text-[#333] capitalize">
-              Description
-            </TableHead>
-            <TableHead className="font-bold text-lg text-[#333] capitalize">
-              Action
-            </TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody className="text-gray-500">
-          {courses.map((course) => (
-            <TableRow
-              key={course.id}
-              className="odd:bg-gray-100 hover:!bg-slate-200"
-            >
-              <TableCell>{course.title}</TableCell>
-              <TableCell>{course.description}</TableCell>
-              <TableCell>
-                <Button variant="link">
-                  <Link
-                    href={`/dashboard/courses/${course.id}`}
-                    className="btn btn-primary"
-                  >
-                    Open
-                  </Link>
-                </Button>
-              </TableCell>
+      {state === "loading" && !courses && (
+        <div className="flex justify-center">
+          <PrimarySpinner />
+        </div>
+      )}
+      {state === "error" && !courses && (
+        <div className="text-red-500 py-4 text-center">
+          Error: {errorMessage}
+        </div>
+      )}
+      {state == "success" && courses && (
+        <Table className="table-fixed border border-slate-400 rounded-md p-2">
+          <TableHeader>
+            <TableRow>
+              <TableHead className="font-bold text-lg text-[#333] capitalize">
+                Title
+              </TableHead>
+              <TableHead className="font-bold text-lg text-[#333] capitalize">
+                Description
+              </TableHead>
+              <TableHead className="font-bold text-lg text-[#333] capitalize">
+                Action
+              </TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody className="text-gray-500">
+            {state === "success" && !courses && (
+              <TableRow>
+                <TableCell colSpan={6}>
+                  <div className="py-4 w-full text-center">
+                    No courses found.
+                  </div>
+                </TableCell>
+              </TableRow>
+            )}
+            {courses.map((course) => (
+              <TableRow
+                key={course.id}
+                className="odd:bg-gray-100 hover:!bg-slate-200"
+              >
+                <TableCell>{course.title}</TableCell>
+                <TableCell>{course.description}</TableCell>
+                <TableCell>
+                  <Button variant="link">
+                    <Link
+                      href={`/dashboard/courses/${course.id}`}
+                      className="btn btn-primary"
+                    >
+                      Open
+                    </Link>
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      )}
     </div>
   );
 }
