@@ -19,7 +19,9 @@ export async function getProfile(): Promise<ProfileDTO> {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("bearer-token")}`
     }
-  }).then((res) => res.json());
+  })
+    .then((res) => res.json())
+    .catch((err) => console.log(err));
 }
 
 export async function loginUser(
@@ -60,7 +62,9 @@ export async function updatePassword(
       Authorization: `Bearer ${localStorage.getItem("bearer-token")}`
     },
     body: JSON.stringify(req)
-  }).then((res) => res.json());
+  })
+    .then((res) => res.json())
+    .catch((err) => console.log(err));
 }
 
 export async function createUser(req: CreateUserRequest): Promise<AuthData> {
@@ -80,5 +84,7 @@ export async function userExists(userId: string): Promise<boolean> {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("bearer-token")}`
     }
-  }).then((res) => res.json());
+  })
+    .then((res) => res.json())
+    .catch((err) => console.log(err));
 }

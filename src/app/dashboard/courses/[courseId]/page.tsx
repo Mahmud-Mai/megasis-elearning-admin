@@ -71,39 +71,43 @@ export default function CourseDetails({
   const handleShow = () => setShow(true);
 
   const createChapterFunction = () => {
-    setState("success");
+    alert("Created new chapter successfully!");
     createChapter({ courseId, title, description })
       .then((_) => {
-        setState("success");
+        setTimeout(() => setState("success"), 2000);
         setShow(false);
         setRefresher(!refresher);
       })
       .catch((err) => {
-        setState("error");
-        setErrorMessage("Failed to save new chapter");
+        alert("Failed to save new chapter");
         console.log(err);
       });
   };
 
   const updateChapterFunction = () => {
-    setState("success");
+    alert("Updated chapter successfully!");
     updateChapter({ chapterId, title, description })
       .then((_) => {
-        setState("success");
+        setTimeout(() => setState("success"), 2000);
         setShow(false);
         setRefresher(!refresher);
       })
       .catch((err) => {
-        setState("error");
-        setErrorMessage(err);
+        alert("Failed to update chapter");
         console.log(err);
       });
   };
 
   const deleteChapterFunction = (chapter: ChapterDTO) => {
     deleteChapter(chapter.id)
-      .then((_) => setRefresher(!refresher))
-      .catch((err) => console.log(err));
+      .then((_) => {
+        alert("Deleted chapter successfully!");
+        setRefresher(!refresher);
+      })
+      .catch((err) => {
+        alert("Failed to delete chapter");
+        console.log(err);
+      });
   };
 
   const editChapter = (chapter: ChapterDTO) => {
@@ -122,12 +126,12 @@ export default function CourseDetails({
     getCourse(params.courseId)
       .then((course) => {
         setCourse(course);
-        setState("success");
+        setTimeout(() => setState("success"), 2000);
       })
       .catch((error) => {
-        console.log("Unable to load data");
+        console.log("Unable to chapter info");
         setState("error");
-        setErrorMessage("Unable to load data");
+        setErrorMessage("Unable to chapter info");
       });
   }, [params.courseId]);
 
@@ -138,7 +142,7 @@ export default function CourseDetails({
     getChaptersByCourseId(params.courseId)
       .then((chapters) => {
         setChapters(chapters);
-        setState("success");
+        setTimeout(() => setState("success"), 2000);
       })
       .catch((error) => {
         console.log("failed to load chapters");
@@ -219,17 +223,20 @@ export default function CourseDetails({
         <h3 className="font-bold text-xl">{course?.title}</h3>
         <p className="text-lg">{course?.description}</p>
       </div>
-      {state === "loading" && !chapters && (
+      {state === "loading" && (
         <div className="flex justify-center">
           <PrimarySpinner />
         </div>
       )}
-      {state === "error" && chapters && (
+      {state === "error" && (
         <div className="text-red-500 py-4 text-center">
           Error: {errorMessage}
         </div>
       )}
-      {state === "success" && chapters && (
+      {state === "success" && chapters.length === 0 && (
+        <div className="py-4 w-full text-center">No chapters found.</div>
+      )}
+      {state === "success" && chapters.length !== 0 && (
         <Table className="table-fixed border border-slate-400 rounded-md p-2">
           <TableHeader>
             <TableRow>
@@ -245,15 +252,6 @@ export default function CourseDetails({
             </TableRow>
           </TableHeader>
           <TableBody className="text-gray-500">
-            {state === "success" && !chapters && (
-              <TableRow>
-                <TableCell colSpan={6}>
-                  <div className="py-4 w-full text-center">
-                    No chapters found.
-                  </div>
-                </TableCell>
-              </TableRow>
-            )}
             {chapters.map((chapter) => (
               <TableRow
                 key={chapter.id}

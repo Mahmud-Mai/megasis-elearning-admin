@@ -23,7 +23,6 @@ import {
   CldUploadWidget,
   CloudinaryUploadWidgetResults
 } from "next-cloudinary";
-import { revalidatePath } from "next/cache";
 
 export default function ChapterDetailsPage({
   params
@@ -35,12 +34,14 @@ export default function ChapterDetailsPage({
   );
   const [errorMessage, setErrorMessage] = useState("");
   const [chapter, setChapter] = useState<ChapterDTO>();
+  const [refresher, setRefresher] = useState(false);
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState<MediaDTO | null>(null);
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState<MediaDTO | null>(null);
 
   const [CldResources, setCldResources] = useState("");
+  console.log("🚀 ~ CldResources:", CldResources);
 
   const wrapperId = "video-modal-wrapper";
 
@@ -53,7 +54,7 @@ export default function ChapterDetailsPage({
       .catch((error) => {
         console.log("Unable to load data");
       });
-  }, [chapter, params.chapterId]);
+  }, [params.chapterId]);
 
   // load cloudinary media
   useEffect(() => {
@@ -65,15 +66,17 @@ export default function ChapterDetailsPage({
         );
         const { results } = await response.json();
         setCldResources(results);
-        setState("success");
+        setTimeout(() => setState("success"), 2000);
       } catch (error) {
         console.log("🚀 ~ fetchCloudinaryMedia ~ error:", error);
         setState("error");
-        setErrorMessage(errorMessage);
+        setErrorMessage(
+          "Error encountered fetching from media from cloudinary"
+        );
       }
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [refresher]);
 
   const openVideoModal = (cld_media: MediaDTO) => {
     setSelectedVideo(cld_media);
@@ -101,11 +104,16 @@ export default function ChapterDetailsPage({
 
   return (
     <div className="container p-16 h-full">
-      <div className="text-center mb-8">
-        <h3 className="fw-bold-fs-3 text-capitalize">
-          {chapter?.title || "Chapter title"}
-        </h3>
-        <p>{chapter?.description}</p>
+      <div className="mb-16 bg-[url('/assets/images/books.jpg')] bg-center">
+        <div className="text-center text-white bg-black/70 py-20">
+          <h2 className="text-2xl uppercase font-bold">{chapter?.title}</h2>
+          <p className="mt-5 text-lg font-bold">{chapter?.description}</p>
+          {chapter && (
+            <span className="text-md mt-4">
+              Medium of Instruction: <span className="font-bold">English</span>{" "}
+            </span>
+          )}
+        </div>
       </div>
 
       <PageHeading>
@@ -113,7 +121,7 @@ export default function ChapterDetailsPage({
           uploadPreset={`megasis-lms-media`}
           onSuccess={(results: CloudinaryUploadWidgetResults) => {
             if (results) {
-              revalidatePath("/");
+              setRefresher(!refresher);
             }
           }}
           options={{
@@ -149,13 +157,13 @@ export default function ChapterDetailsPage({
           Error: {errorMessage}
         </div>
       )}
-      {state === "success" && !CldResources && (
+      {state === "success" && CldResources.length === 0 && (
         <div className="py-4 text-center">
           No media files are currently associated with this chapter.
         </div>
       )}
       {/* Conditionally render media based on media type */}
-      {state === "success" && CldResources && (
+      {state === "success" && CldResources.length !== 0 && (
         <div className="max-w-[1200px] mx-auto my-1 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-y-8">
           {Array.isArray(CldResources) &&
             CldResources.map((cld_media: MediaDTO) => (
@@ -180,8 +188,13 @@ export default function ChapterDetailsPage({
                         </div>
                       );
                     } else if (
-                      cld_media.resource_type === "image" &&
-                      cld_media.format !== "pdf"
+                      (cld_media.resource_type === "image" &&
+                        cld_media.format !== "pdf") ||
+                      cld_media.format === "jpg" ||
+                      cld_media.format === "png" ||
+                      cld_media.format === "jpeg" ||
+                      cld_media.format === "gif" ||
+                      cld_media.format === "svg"
                     ) {
                       return (
                         <>
@@ -199,12 +212,9 @@ export default function ChapterDetailsPage({
                                 ? cld_media.secure_url
                                 : "/assets/images/docs_collage.png"
                             }
-                            loading="lazy"
                             fill
                             className="m-0"
                           />
-                          <div className="py-4">{cld_media.resource_type}</div>
-                          <div className="py-4">{cld_media.format}</div>
                         </>
                       );
                     } else if (
@@ -287,7 +297,6 @@ export default function ChapterDetailsPage({
                   : "Enlarged picture"
               }
               src={selectedImage.secure_url}
-              loading="lazy"
               width={800}
               height={600}
             />

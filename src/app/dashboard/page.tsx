@@ -216,7 +216,7 @@ export default function Home() {
               </div> */}
             </CardTitle>
             <CardContent>
-              {subscriptionsCount ? (
+              {Array.isArray(subscriptionsCount) ? (
                 <BarChart
                   colors={subscriptionsCount.map(() => "#152259")}
                   labels={subscriptionsCount.map((sub) => sub.plan)}
@@ -258,7 +258,7 @@ export default function Home() {
             </div> */}
           </CardTitle>
           <CardContent>
-            {revenueCount ? (
+            {Array.isArray(revenueCount) ? (
               <LineChart
                 colors={revenueCount.map(() => "#152259")}
                 labels={revenueCount.map((revenue) => revenue.month)}

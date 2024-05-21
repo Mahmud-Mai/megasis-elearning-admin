@@ -1,11 +1,12 @@
 "use client";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { MouseEventHandler, useEffect, useState } from "react";
 // import { Modal } from 'react-bootstrap';
 import { useRouter } from "next/navigation";
 import CourseDTO from "@/core/dto/content/CourseDTO";
 import {
   createCourse,
+  deleteCourse,
   getCourses,
   updateCourse
 } from "@/core/services/content-service";
@@ -49,32 +50,28 @@ export default function Courses() {
   const [description, setDescription] = useState("");
 
   const createCourseFunction = () => {
-    setState("loading");
     createCourse({ title, description })
       .then((res) => {
-        setState("success");
+        alert("Created course successfully!");
         setShow(false);
         setRefresher(!refresher);
       })
       .catch((err) => {
-        setState("error");
-        setErrorMessage("Unable to create course. Try again!");
+        alert("Unable to create course. Try again!");
         console.log("Unable to save Course");
       });
   };
 
   const updateCourseFunction = () => {
-    setState("loading");
     updateCourse({ title, description, courseId })
       .then((res) => {
-        setState("success");
+        alert("Updated course successfully!");
         setShow(false);
         setRefresher(!refresher);
       })
       .catch((err) => {
-        setState("error");
-        setErrorMessage("Updating course failed. Try again!");
-        console.log("Unable to update Course");
+        alert("Updating course failed. Try again!");
+        console.error(err);
       });
   };
 
@@ -92,6 +89,20 @@ export default function Courses() {
         setErrorMessage("Could not load courses");
         setCourses([]);
       });
+  };
+
+  const deleteCourseFunction = (
+    courseId: string
+  ): MouseEventHandler<HTMLButtonElement> | undefined => {
+    try {
+      deleteCourse(courseId);
+      alert("Course deleted successfully!");
+      setRefresher(!refresher);
+    } catch (error) {
+      console.log(error);
+      alert("Unable to delete course");
+    }
+    return;
   };
 
   useEffect(() => {
@@ -153,17 +164,20 @@ export default function Courses() {
         </Dialog>
       </PageHeading>
 
-      {state === "loading" && !courses && (
+      {state === "loading" && (
         <div className="flex justify-center">
           <PrimarySpinner />
         </div>
       )}
-      {state === "error" && !courses && (
+      {state === "error" && (
         <div className="text-red-500 py-4 text-center">
           Error: {errorMessage}
         </div>
       )}
-      {state == "success" && courses && (
+      {state === "success" && courses.length === 0 && (
+        <div className="py-4 w-full text-center">No courses found.</div>
+      )}
+      {state == "success" && courses.length !== 0 && (
         <Table className="table-fixed border border-slate-400 rounded-md p-2">
           <TableHeader>
             <TableRow>
@@ -179,15 +193,6 @@ export default function Courses() {
             </TableRow>
           </TableHeader>
           <TableBody className="text-gray-500">
-            {state === "success" && !courses && (
-              <TableRow>
-                <TableCell colSpan={6}>
-                  <div className="py-4 w-full text-center">
-                    No courses found.
-                  </div>
-                </TableCell>
-              </TableRow>
-            )}
             {courses.map((course) => (
               <TableRow
                 key={course.id}
@@ -195,7 +200,7 @@ export default function Courses() {
               >
                 <TableCell>{course.title}</TableCell>
                 <TableCell>{course.description}</TableCell>
-                <TableCell>
+                <TableCell className="space-x-2">
                   <Button variant="link">
                     <Link
                       href={`/dashboard/courses/${course.id}`}
@@ -203,6 +208,12 @@ export default function Courses() {
                     >
                       Open
                     </Link>
+                  </Button>
+                  <Button
+                    variant="link"
+                    onClick={() => deleteCourseFunction(course.id)}
+                  >
+                    Delete
                   </Button>
                 </TableCell>
               </TableRow>

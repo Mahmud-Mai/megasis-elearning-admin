@@ -8,7 +8,17 @@ export default interface MediaDTO {
   url: string;
 
   asset_id: string;
-  format: "png" | "jpg" | "jpeg" | "mp4" | "pdf" | "ppt" | "docx" | "xls";
+  format:
+    | "png"
+    | "jpg"
+    | "jpeg"
+    | "mp4"
+    | "pdf"
+    | "ppt"
+    | "docx"
+    | "xls"
+    | "gif"
+    | "svg";
   version: number;
   resource_type: "image" | "video" | "pdf" | "raw";
   type: "upload";

@@ -44,7 +44,9 @@ export async function createCourse(
       "Content-Type": "application/json"
     },
     body: JSON.stringify(req)
-  }).then((res) => res.json());
+  })
+    .then((res) => res.json())
+    .catch((err) => console.log(err));
 }
 
 export async function updateCourse(
@@ -57,7 +59,9 @@ export async function updateCourse(
       "Content-Type": "application/json"
     },
     body: JSON.stringify(req)
-  }).then((res) => res.json());
+  })
+    .then((res) => res.json())
+    .catch((err) => console.log(err));
 }
 
 export async function deleteCourse(courseId: string): Promise<void> {
@@ -67,7 +71,9 @@ export async function deleteCourse(courseId: string): Promise<void> {
       Authorization: `Bearer ${localStorage.getItem("bearer-token")}`,
       "Content-Type": "application/json"
     }
-  }).then((res) => res.json());
+  })
+    .then((res) => res.json())
+    .catch((err) => console.log(err));
 }
 
 export async function getCourse(courseId: string): Promise<CourseDTO> {
@@ -76,7 +82,9 @@ export async function getCourse(courseId: string): Promise<CourseDTO> {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("bearer-token")}`
     }
-  }).then((res) => res.json());
+  })
+    .then((res) => res.json())
+    .catch((err) => console.log(err));
 }
 
 export async function getCourses(): Promise<CourseDTO[]> {
@@ -85,7 +93,9 @@ export async function getCourses(): Promise<CourseDTO[]> {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("bearer-token")}`
     }
-  }).then((res) => res.json());
+  })
+    .then((res) => res.json())
+    .catch((err) => console.log(err));
 }
 
 export async function getChapter(chapterId: string): Promise<ChapterDTO> {
@@ -94,7 +104,9 @@ export async function getChapter(chapterId: string): Promise<ChapterDTO> {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("bearer-token")}`
     }
-  }).then((res) => res.json());
+  })
+    .then((res) => res.json())
+    .catch((err) => console.log(err));
 }
 
 export async function getChaptersByCourseId(
@@ -105,7 +117,9 @@ export async function getChaptersByCourseId(
     headers: {
       Authorization: `Bearer ${localStorage.getItem("bearer-token")}`
     }
-  }).then((res) => res.json());
+  })
+    .then((res) => res.json())
+    .catch((err) => console.log(err));
 }
 
 export async function createChapter(
@@ -118,7 +132,9 @@ export async function createChapter(
       "Content-Type": "application/json"
     },
     body: JSON.stringify(req)
-  }).then((res) => res.json());
+  })
+    .then((res) => res.json())
+    .catch((err) => console.log(err));
 }
 
 export async function updateChapter(
@@ -131,7 +147,9 @@ export async function updateChapter(
       "Content-Type": "application/json"
     },
     body: JSON.stringify(req)
-  }).then((res) => res.json());
+  })
+    .then((res) => res.json())
+    .catch((err) => console.log(err));
 }
 
 export async function deleteChapter(chapterId: string): Promise<void> {
@@ -141,7 +159,9 @@ export async function deleteChapter(chapterId: string): Promise<void> {
       Authorization: `Bearer ${localStorage.getItem("bearer-token")}`,
       "Content-Type": "application/json"
     }
-  }).then((res) => res.json());
+  })
+    .then((res) => res.json())
+    .catch((err) => console.log(err));
 }
 
 export async function deleteChaptersByCourseId(
@@ -152,7 +172,9 @@ export async function deleteChaptersByCourseId(
     headers: {
       Authorization: `Bearer ${localStorage.getItem("bearer-token")}`
     }
-  }).then((res) => res.json());
+  })
+    .then((res) => res.json())
+    .catch((err) => console.log(err));
 }
 
 export async function createMedia(req: CreateMediaRequest): Promise<MediaDTO> {
@@ -163,7 +185,9 @@ export async function createMedia(req: CreateMediaRequest): Promise<MediaDTO> {
       "Content-Type": "application/json"
     },
     body: JSON.stringify(req)
-  }).then((res) => res.json());
+  })
+    .then((res) => res.json())
+    .catch((err) => console.log(err));
 }
 
 export async function updateMedia(req: UpdateMediaRequest): Promise<MediaDTO> {
@@ -174,7 +198,9 @@ export async function updateMedia(req: UpdateMediaRequest): Promise<MediaDTO> {
       "Content-Type": "application/json"
     },
     body: JSON.stringify(req)
-  }).then((res) => res.json());
+  })
+    .then((res) => res.json())
+    .catch((err) => console.log(err));
 }
 
 export async function deleteMedia(mediaId: string): Promise<void> {
@@ -183,7 +209,9 @@ export async function deleteMedia(mediaId: string): Promise<void> {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("bearer-token")}`
     }
-  }).then((res) => res.json());
+  })
+    .then((res) => res.json())
+    .catch((err) => console.log(err));
 }
 
 export async function deleteMediaByChapterId(chapterId: string): Promise<void> {
@@ -192,7 +220,9 @@ export async function deleteMediaByChapterId(chapterId: string): Promise<void> {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("bearer-token")}`
     }
-  }).then((res) => res.json());
+  })
+    .then((res) => res.json())
+    .catch((err) => console.log(err));
 }
 
 export async function getMedia(mediaId: string): Promise<MediaDTO> {
@@ -201,7 +231,9 @@ export async function getMedia(mediaId: string): Promise<MediaDTO> {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("bearer-token")}`
     }
-  }).then((res) => res.json());
+  })
+    .then((res) => res.json())
+    .catch((err) => console.log(err));
 }
 
 export async function getMediaByChapterId(
@@ -212,7 +244,9 @@ export async function getMediaByChapterId(
     headers: {
       Authorization: `Bearer ${localStorage.getItem("bearer-token")}`
     }
-  }).then((res) => res.json());
+  })
+    .then((res) => res.json())
+    .catch((err) => console.log(err));
 }
 
 export async function getAllMediaByMediaType(
@@ -223,7 +257,9 @@ export async function getAllMediaByMediaType(
     headers: {
       Authorization: `Bearer ${localStorage.getItem("bearer-token")}`
     }
-  }).then((res) => res.json());
+  })
+    .then((res) => res.json())
+    .catch((err) => console.log(err));
 }
 
 export async function mediaNameAvailable(
@@ -235,7 +271,9 @@ export async function mediaNameAvailable(
     headers: {
       Authorization: `Bearer ${localStorage.getItem("bearer-token")}`
     }
-  }).then((res) => res.json());
+  })
+    .then((res) => res.json())
+    .catch((err) => console.log(err));
 }
 
 //TODO: Implement Multi part form upload later on!
@@ -248,7 +286,9 @@ export async function getSignedUploadUrl(
       Authorization: `Bearer ${localStorage.getItem("bearer-token")}`
     },
     body: JSON.stringify(req)
-  }).then((res) => res.json());
+  })
+    .then((res) => res.json())
+    .catch((err) => console.log(err));
 }
 
 // export async function uploadFile(
