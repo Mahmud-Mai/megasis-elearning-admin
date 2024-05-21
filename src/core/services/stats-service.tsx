@@ -19,7 +19,7 @@ export async function getSubscriptionStats(): Promise<SubscriptionStatsDTO[]> {
     .catch((e: any) => e);
 }
 export async function getUserStats(): Promise<UserStatsDTO> {
-  return await fetch(subscriptionStatsUrl, {
+  return await fetch(usersStatsUrl, {
     method: "GET",
     headers: {
       Authorization: `Bearer ${localStorage.getItem("bearer-token")}`
