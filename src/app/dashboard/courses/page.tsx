@@ -175,14 +175,10 @@ export default function Courses() {
           Error: {errorMessage}
         </div>
       )}
-      {state === "success" && !courses && (
-        <TableRow>
-          <TableCell colSpan={6}>
-            <div className="py-4 w-full text-center">No courses found.</div>
-          </TableCell>
-        </TableRow>
+      {state === "success" && courses.length === 0 && (
+        <div className="py-4 w-full text-center">No courses found.</div>
       )}
-      {state == "success" && courses && (
+      {state == "success" && courses.length !== 0 && (
         <Table className="table-fixed border border-slate-400 rounded-md p-2">
           <TableHeader>
             <TableRow>
@@ -198,15 +194,6 @@ export default function Courses() {
             </TableRow>
           </TableHeader>
           <TableBody className="text-gray-500">
-            {state === "success" && !courses && (
-              <TableRow>
-                <TableCell colSpan={6}>
-                  <div className="py-4 w-full text-center">
-                    No courses found.
-                  </div>
-                </TableCell>
-              </TableRow>
-            )}
             {courses.map((course) => (
               <TableRow
                 key={course.id}
