@@ -70,7 +70,7 @@ export default function Plans() {
   const addNewPlan = () => {
     createSubscriptionOffer({ title, description, price, period, active })
       .then((res) => {
-        alert("Created Plan successfylly!");
+        alert("Created Plan successfully!");
         setRefresher(!refresher);
       })
       .then(() => {
@@ -96,7 +96,7 @@ export default function Plans() {
       active
     })
       .then((res) => {
-        alert("Updated Plan successfylly!");
+        alert("Updated Plan successfully!");
 
         setRefresher(!refresher);
       })
