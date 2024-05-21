@@ -223,7 +223,7 @@ export default function CourseDetails({
         <h3 className="font-bold text-xl">{course?.title}</h3>
         <p className="text-lg">{course?.description}</p>
       </div>
-      {state === "loading" && !chapters && (
+      {state === "loading" && (
         <div className="flex justify-center">
           <PrimarySpinner />
         </div>

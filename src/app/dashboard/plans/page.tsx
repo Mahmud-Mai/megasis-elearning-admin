@@ -68,24 +68,25 @@ export default function Plans() {
   };
 
   const addNewPlan = () => {
-    setState("loading");
     createSubscriptionOffer({ title, description, price, period, active })
-      .then((res) => setRefresher(!refresher))
+      .then((res) => {
+        alert("Created Plan successfylly!");
+        setRefresher(!refresher);
+      })
       .then(() => {
         setShowForm(false);
         setLoading(false);
       })
       .catch((err) => {
-        console.log("Unable to save offer");
+        console.log(err);
+        alert("Unable to create Plan");
         setLoading(false);
-        setPlans([]);
       });
 
     setLoading(false);
   };
 
   const updatePlan = () => {
-    setState("loading");
     updateSubscriptionOffer({
       subscriptionId: id,
       title,
@@ -94,7 +95,11 @@ export default function Plans() {
       period,
       active
     })
-      .then((res) => setRefresher(!refresher))
+      .then((res) => {
+        alert("Updated Plan successfylly!");
+
+        setRefresher(!refresher);
+      })
       .then(() => {
         setShowForm(false);
         setLoading(false);
@@ -102,16 +107,19 @@ export default function Plans() {
       .catch((err) => {
         console.log("Unable to save offer");
         setLoading(false);
-        setPlans([]);
       });
   };
 
   const deletePlan = (subscriptionId: string) => {
     deleteSubscriptionOffer(subscriptionId)
-      .then((res) => setRefresher(!refresher))
+      .then((res) => {
+        alert("Updated Plan successfylly!");
+
+        setRefresher(!refresher);
+      })
       .catch((err) => {
-        console.log("Unable to delete offer");
-        setPlans([]);
+        alert("Unable to delete Plan");
+        console.log(err);
       });
   };
 
@@ -222,17 +230,22 @@ export default function Plans() {
         </Dialog>
       </PageHeading>
 
-      {state === "loading" && !plans && (
+      {state === "loading" && (
         <div className="flex justify-center">
           <PrimarySpinner />
         </div>
       )}
-      {state === "error" && !plans && (
+      {state === "error" && (
         <div className="text-red-500 py-4 text-center">
           Error: {errorMessage}
         </div>
       )}
-      {state === "success" && plans && (
+      {state === "success" && plans.length === 0 && (
+        <div className="py-4 w-full text-center">
+          You have not created any plans.
+        </div>
+      )}
+      {state === "success" && plans.length !== 0 && (
         <Table className="border border-slate-200 rounded-md p-2">
           <TableHeader>
             <TableRow className="odd:bg-gray-100 hover:!bg-slate-200">
@@ -257,15 +270,6 @@ export default function Plans() {
             </TableRow>
           </TableHeader>
           <TableBody className="text-gray-500">
-            {state === "success" && !plans && (
-              <TableRow>
-                <TableCell colSpan={6}>
-                  <div className="py-4 w-full text-center">
-                    You have not created any plans.
-                  </div>
-                </TableCell>
-              </TableRow>
-            )}
             {plans.map((plan, index) => (
               <TableRow
                 className="odd:bg-gray-100 hover:!bg-slate-200"
