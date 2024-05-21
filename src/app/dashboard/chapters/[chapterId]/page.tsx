@@ -24,12 +24,14 @@ import {
   CloudinaryUploadWidgetResults
 } from "next-cloudinary";
 import { revalidatePath } from "next/cache";
+import { useRouter } from "next/router";
 
 export default function ChapterDetailsPage({
   params
 }: {
   params: { chapterId: string };
 }) {
+  const router = useRouter();
   const [state, setState] = useState<"idle" | "loading" | "success" | "error">(
     "loading"
   );
@@ -65,7 +67,7 @@ export default function ChapterDetailsPage({
         );
         const { results } = await response.json();
         setCldResources(results);
-        setTimeout(() => setState("success"), 3000);
+        setTimeout(() => setState("success"), 2000);
       } catch (error) {
         console.log("🚀 ~ fetchCloudinaryMedia ~ error:", error);
         setState("error");
@@ -116,6 +118,7 @@ export default function ChapterDetailsPage({
           onSuccess={(results: CloudinaryUploadWidgetResults) => {
             if (results) {
               revalidatePath("/");
+              router.refresh();
             }
           }}
           options={{

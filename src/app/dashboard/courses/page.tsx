@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { MouseEventHandler, useEffect, useState } from "react";
 // import { Modal } from 'react-bootstrap';
 import { useRouter } from "next/navigation";
 import CourseDTO from "@/core/dto/content/CourseDTO";
@@ -34,7 +34,6 @@ import { Textarea } from "@/components/ui/textarea";
 import PageHeading from "@/components/reusables/PageHeading";
 import DialogTriggerBtn from "@/components/reusables/DialogTriggerBtn";
 import PrimarySpinner from "@/components/reusables/PrimarySpinner";
-import { revalidatePath } from "next/cache";
 
 export default function Courses() {
   const router = useRouter();
@@ -51,32 +50,28 @@ export default function Courses() {
   const [description, setDescription] = useState("");
 
   const createCourseFunction = () => {
-    setState("loading");
     createCourse({ title, description })
       .then((res) => {
-        setTimeout(() => setState("success"), 3000);
+        alert("Created course successfully!");
         setShow(false);
         setRefresher(!refresher);
       })
       .catch((err) => {
-        setState("error");
-        setErrorMessage("Unable to create course. Try again!");
+        alert("Unable to create course. Try again!");
         console.log("Unable to save Course");
       });
   };
 
   const updateCourseFunction = () => {
-    setState("loading");
     updateCourse({ title, description, courseId })
       .then((res) => {
-        setTimeout(() => setState("success"), 3000);
+        alert("Updated course successfully!");
         setShow(false);
         setRefresher(!refresher);
       })
       .catch((err) => {
-        setState("error");
-        setErrorMessage("Updating course failed. Try again!");
-        console.log("Unable to update Course");
+        alert("Updating course failed. Try again!");
+        console.error(err);
       });
   };
 
@@ -86,7 +81,7 @@ export default function Courses() {
     getCourses()
       .then((courses) => {
         setCourses(courses);
-        setTimeout(() => setState("success"), 3000);
+        setState("success");
       })
       .catch((err) => {
         console.log("Could not load courses");
@@ -96,19 +91,19 @@ export default function Courses() {
       });
   };
 
-  const deleteCourseFunction = () => {
-    setState("loading");
-
-    deleteCourse(courseId)
-      .then(() => {
-        setTimeout(() => setState("success"), 3000);
-        revalidatePath("page");
-      })
-      .catch((err) => {
-        console.log("Could not delete course");
-        setState("error");
-        setErrorMessage("Could not delete course");
-      });
+  const deleteCourseFunction = (
+    courseId: string
+  ): MouseEventHandler<HTMLButtonElement> | undefined => {
+    console.log("🚀 ~ deleteCourseFunction ~ courseId:", courseId);
+    try {
+      deleteCourse(courseId);
+      alert("Course deleted successfully!");
+      setRefresher(!refresher);
+    } catch (error) {
+      console.log(error);
+      alert("Could not delete course");
+    }
+    return;
   };
 
   useEffect(() => {
@@ -170,15 +165,22 @@ export default function Courses() {
         </Dialog>
       </PageHeading>
 
-      {state === "loading" && !courses && (
+      {state === "loading" && (
         <div className="flex justify-center">
           <PrimarySpinner />
         </div>
       )}
-      {state === "error" && !courses && (
+      {state === "error" && (
         <div className="text-red-500 py-4 text-center">
           Error: {errorMessage}
         </div>
+      )}
+      {state === "success" && !courses && (
+        <TableRow>
+          <TableCell colSpan={6}>
+            <div className="py-4 w-full text-center">No courses found.</div>
+          </TableCell>
+        </TableRow>
       )}
       {state == "success" && courses && (
         <Table className="table-fixed border border-slate-400 rounded-md p-2">
@@ -221,7 +223,10 @@ export default function Courses() {
                       Open
                     </Link>
                   </Button>
-                  <Button variant="link" onClick={deleteCourseFunction}>
+                  <Button
+                    variant="link"
+                    onClick={() => deleteCourseFunction(course.id)}
+                  >
                     Delete
                   </Button>
                 </TableCell>
