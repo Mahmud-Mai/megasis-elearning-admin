@@ -24,7 +24,9 @@ export async function getUserStats(): Promise<UserStatsDTO> {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("bearer-token")}`
     }
-  }).then((res) => res.json());
+  })
+    .then((res) => res.json())
+    .catch((err) => console.log(err));
 }
 export async function getRevenueStats(): Promise<RevenueStatsDTO[]> {
   return await fetch(revenueStatsUrl, {
@@ -32,5 +34,7 @@ export async function getRevenueStats(): Promise<RevenueStatsDTO[]> {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("bearer-token")}`
     }
-  }).then((res) => res.json());
+  })
+    .then((res) => res.json())
+    .catch((err) => console.log(err));
 }

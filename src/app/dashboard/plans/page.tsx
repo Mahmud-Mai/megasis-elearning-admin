@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, MouseEventHandler } from "react";
 import {
   createSubscriptionOffer,
   deleteSubscriptionOffer,
@@ -110,17 +110,23 @@ export default function Plans() {
       });
   };
 
-  const deletePlan = (subscriptionId: string) => {
-    deleteSubscriptionOffer(subscriptionId)
-      .then((res) => {
-        alert("Updated Plan successfylly!");
-
+  const deletePlan = async (
+    subscriptionId: string
+  ): Promise<MouseEventHandler<HTMLButtonElement> | undefined> => {
+    try {
+      const result = await deleteSubscriptionOffer(subscriptionId);
+      console.log("🚀 ~ Plans ~ result:", result);
+      if (result) {
+        alert("Plan deleted successfully!");
         setRefresher(!refresher);
-      })
-      .catch((err) => {
+      } else {
         alert("Unable to delete Plan");
-        console.log(err);
-      });
+      }
+    } catch (error) {
+      alert("An error occurred while deleting the Plan");
+      console.error(error);
+    }
+    return;
   };
 
   const editPlan = (plan: SubscriptionOffer) => {

@@ -94,14 +94,13 @@ export default function Courses() {
   const deleteCourseFunction = (
     courseId: string
   ): MouseEventHandler<HTMLButtonElement> | undefined => {
-    console.log("🚀 ~ deleteCourseFunction ~ courseId:", courseId);
     try {
       deleteCourse(courseId);
       alert("Course deleted successfully!");
       setRefresher(!refresher);
     } catch (error) {
       console.log(error);
-      alert("Could not delete course");
+      alert("Unable to delete course");
     }
     return;
   };

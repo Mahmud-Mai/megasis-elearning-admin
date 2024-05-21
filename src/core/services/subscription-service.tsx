@@ -25,7 +25,9 @@ export async function getSubscriptionOffer(
     headers: {
       Authorization: `Bearer ${localStorage.getItem("bearer-token")}`
     }
-  }).then((res) => res.json());
+  })
+    .then((res) => res.json())
+    .catch((err) => console.log(err));
 }
 
 export async function getSubscriptionOffers(): Promise<SubscriptionOffer[]> {
@@ -34,7 +36,9 @@ export async function getSubscriptionOffers(): Promise<SubscriptionOffer[]> {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("bearer-token")}`
     }
-  }).then((res) => res.json());
+  })
+    .then((res) => res.json())
+    .catch((err) => console.log(err));
 }
 
 export async function getSubscriptionsBought(
@@ -45,7 +49,9 @@ export async function getSubscriptionsBought(
     headers: {
       Authorization: `Bearer ${localStorage.getItem("bearer-token")}`
     }
-  }).then((res) => res.json());
+  })
+    .then((res) => res.json())
+    .catch((err) => console.log(err));
 }
 
 export async function buySubscription(
@@ -59,7 +65,9 @@ export async function buySubscription(
       Authorization: `Bearer ${localStorage.getItem("bearer-token")}`
     },
     body: JSON.stringify(req)
-  }).then((res) => res.json());
+  })
+    .then((res) => res.json())
+    .catch((err) => console.log(err));
 }
 
 export async function createSubscriptionOffer(
@@ -72,7 +80,9 @@ export async function createSubscriptionOffer(
       Authorization: `Bearer ${localStorage.getItem("bearer-token")}`
     },
     body: JSON.stringify(req)
-  }).then((res) => res.json());
+  })
+    .then((res) => res.json())
+    .catch((err) => console.log(err));
 }
 
 export async function updateSubscriptionOffer(
@@ -85,19 +95,34 @@ export async function updateSubscriptionOffer(
       Authorization: `Bearer ${localStorage.getItem("bearer-token")}`
     },
     body: JSON.stringify(req)
-  }).then((res) => res.json());
+  })
+    .then((res) => res.json())
+    .catch((err) => console.log(err));
 }
 
 export async function deleteSubscriptionOffer(
   subscriptionId: string
 ): Promise<boolean> {
-  return await fetch(`${deleteSubscriptionOfferUrl}/${subscriptionId}`, {
-    method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${localStorage.getItem("bearer-token")}`
+  const response = await fetch(
+    `${deleteSubscriptionOfferUrl}/${subscriptionId}`,
+    {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("bearer-token")}`
+      }
     }
-  }).then((res) => res.json());
+  );
+  console.log("🚀 ~ response:", response);
+
+  if (response.ok) {
+    return true;
+  } else {
+    const errorData = await response.json();
+    throw new Error(
+      `Failed to delete subscription: ${errorData.message || "Unknown error"}`
+    );
+  }
 }
 
 export async function checkCustomerHasActiveSubscription(
@@ -122,5 +147,7 @@ export async function confirmSubscription(
       Authorization: `Bearer ${localStorage.getItem("bearer-token")}`
     },
     body: JSON.stringify(req)
-  }).then((res) => res.json());
+  })
+    .then((res) => res.json())
+    .catch((err) => console.log(err));
 }
