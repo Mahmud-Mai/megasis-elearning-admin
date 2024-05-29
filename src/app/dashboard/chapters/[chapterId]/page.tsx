@@ -1,16 +1,12 @@
 "use client";
-import React, { FormEvent, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
-import {
-  getChapter,
-  getMediaByChapterId
-} from "@/core/services/content-service";
+import { getChapter } from "@/core/services/content-service";
 import ChapterDTO from "@/core/dto/content/ChapterDTO";
 import MediaDTO from "@/core/dto/content/MediaDTO";
 
 import { FaRegCirclePlay } from "react-icons/fa6";
 import { Card } from "@/components/ui/card";
-import { MediaSource } from "@/core/enums/MediaSource.enum";
 import PageHeading from "@/components/reusables/PageHeading";
 import PrimaryBtn from "@/components/reusables/PrimaryBtn";
 import Image from "next/image";
@@ -19,7 +15,6 @@ import ReactPlayer from "react-player";
 
 import PrimarySpinner from "@/components/reusables/PrimarySpinner";
 import {
-  CldImage,
   CldUploadWidget,
   CloudinaryUploadWidgetResults
 } from "next-cloudinary";
@@ -41,7 +36,6 @@ export default function ChapterDetailsPage({
   const [selectedImage, setSelectedImage] = useState<MediaDTO | null>(null);
 
   const [CldResources, setCldResources] = useState("");
-  console.log("🚀 ~ CldResources:", CldResources);
 
   const wrapperId = "video-modal-wrapper";
 

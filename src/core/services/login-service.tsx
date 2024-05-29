@@ -12,8 +12,7 @@ const registerUrl: string = `${apiRoot}/createUser`;
 const userExistsUrl: string = `${apiRoot}/userExists`;
 const updatePasswordUrl: string = `${apiRoot}/updatePassword`;
 
-export async function getProfile(): Promise<ProfileDTO> {
-  const userId = localStorage.getItem("userId") || "";
+export async function getProfile(userId: string): Promise<ProfileDTO> {
   return await fetch(`${getProfileUrl}/${userId}`, {
     method: "GET",
     headers: {

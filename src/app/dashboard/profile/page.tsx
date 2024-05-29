@@ -70,74 +70,35 @@ export default function ProfilePage() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <form className="flex flex-col md:flex-row">
+          <div className="flex flex-col md:flex-row">
             <div className="w-full m-1 lg:m-4 grid grid-cols-1 md:grid-cols-2 pl-8 items-center gap-6">
               <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="name">Name</Label>
-                <Input
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  id="name"
-                  placeholder={profileData?.name || "Your Full Name"}
-                />
+                <p>
+                  <span className="capitalize font-semibold mx-2">Name:</span>{" "}
+                  {profileData?.name}
+                </p>
               </div>
               <div className="flex flex-col space-y-1.5">
-                <Label className="text-[#2d2f31]" htmlFor="name">
-                  Email Address
-                </Label>
-                <Input
-                  readOnly
-                  disabled
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  id="email"
-                  placeholder={
-                    profileData?.emailAddress || "Your Email Address"
-                  }
-                />
+                <p>
+                  <span className="capitalize font-semibold mx-2">Email:</span>{" "}
+                  {profileData?.emailAddress}
+                </p>
               </div>
               <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="name">Phone Number</Label>
-                <Input
-                  value={digits}
-                  onChange={(e) => setDigits(e.target.value)}
-                  id="phone"
-                  placeholder={profileData?.digits || "Your Phone Number"}
-                />
+                <p>
+                  <span className="capitalize font-semibold mx-2">
+                    Phone Number:
+                  </span>{" "}
+                  {profileData?.digits}
+                </p>
               </div>
               <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="framework">Language</Label>
-                <Select>
-                  <SelectTrigger id="framework">
-                    <SelectValue placeholder="English UK">
-                      Select language
-                    </SelectValue>
-                  </SelectTrigger>
-                  <SelectContent position="popper">
-                    {["English UK", "English US"].map((item, i) => (
-                      <SelectItem key={i} value={item}>
-                        {item}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="framework">Country</Label>
-                <Select>
-                  <SelectTrigger id="framework">
-                    <SelectValue placeholder="Select Country">
-                      {country}
-                    </SelectValue>
-                  </SelectTrigger>
-                  <SelectContent position="popper">
-                    {countries.map((item) => (
-                      <SelectItem key={item.value} value={item.value}>
-                        {item.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <p>
+                  <span className="capitalize font-semibold mx-2">
+                    Language:
+                  </span>{" "}
+                  English
+                </p>
               </div>
             </div>
             <div className="flex p-2 justify-center items-center">
@@ -148,17 +109,8 @@ export default function ProfilePage() {
                 height={300}
               />
             </div>
-          </form>
+          </div>
         </CardContent>
-        <CardFooter className="flex justify-evenly mt-8 mb-6">
-          <PrimaryBtn
-            isProcessing={isLoading}
-            variant="secondary"
-            onClick={handleFormSubmit}
-          >
-            Save Changes
-          </PrimaryBtn>
-        </CardFooter>
       </Card>
     </div>
   );
